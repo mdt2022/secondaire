@@ -1,0 +1,43 @@
+<div class="page-header mb-3">
+    <h3>Gestion des matières enseignées dans le groupe INTEC</h3>
+    <button class="btn btn-info" [routerLink]="['/matierecreation']">Ajouter une matière</button>
+</div>
+
+
+<div class="panel panel-default ">
+
+
+    <div class="panel-body ">
+        <div class="col-sm-12 ">
+            <table class="table table-bordered ">
+                <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Libellé</th>
+                        <th>Coefficient</th>
+                        <th>Horaire</th>
+                        <th>État</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let matiere of matieres; let i=i ndex ">
+                        <td>{{ i + 1 }}</td>
+                        <td>{{ matiere.libelle }}</td>
+                        <td>{{ matiere.coefficient }}</td>
+                        <td>{{ matiere.horaire }}</td>
+                        <td>{{ matiere.etat === 1 ? 'Active' : 'Inactive' }}</td>
+                        <td>
+                            <button class="btn btn-info me-2 " (click)="modifierMatiere(matiere.id) ">
+                              <i class="material-icons ">edit</i>
+                          </button>
+                            <button class="btn btn-danger " (click)="supprimerMatiere(matiere.id) ">
+                              <i class="material-icons ">delete</i>
+                          </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

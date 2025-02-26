@@ -1,0 +1,41 @@
+<div class="row">
+    <nav>
+        <button class="btn btn-primary" [routerLink]="['/matieres/matieres']">Retour</button>
+    </nav>
+</div>
+
+<div class="page-header m-5">
+    <h3>Enregistrer une matière</h3>
+</div>
+
+<form (ngSubmit)="onSubmit()" class="form-horizontal">
+    <!-- Nom de la matière -->
+    <div class="form-group d-flex align-items-center">
+        <label class="col-sm-2 control-label mb-0">Nom de la matière</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" formControlName="libelle" placeholder="Nom de la matière" required>
+        </div>
+    </div>
+
+    <!-- Coefficient, Horaire et État sur la même ligne -->
+    <div class="form-group d-flex align-items-center mt-3 gap-2">
+        <label class="col-auto control-label mb-0">Coefficient</label>
+        <input type="number" class="form-control w-auto" formControlName="coefficient" required>
+
+        <label class="col-auto control-label mb-0">Horaire</label>
+        <input type="number" class="form-control w-auto" formControlName="horaire" required>
+
+        <label class="col-auto control-label mb-0">État</label>
+        <select class="form-control w-auto" formControlName="etat">
+          <option value="1">Active</option>
+          <option value="0">Inactive</option>
+      </select>
+    </div>
+
+    <!-- Bouton d'enregistrement -->
+    <div class="form-group mt-3">
+        <div class="col-sm-2">
+            <button type="submit" class="btn btn-info">Enregistrer</button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,63 @@
+<div class="row">
+    <nav>
+        <button class="btn btn-primary" (click)="navigateTo('/fraisecondaire/fraisecondaire')">
+          Retour sur le formulaire de recherche
+      </button>
+    </nav>
+</div>
+
+<div class="page-header">
+    <h3>Enregistrer un frais scolaire</h3>
+</div>
+
+<form (ngSubmit)="onSubmit()" class="form-horizontal">
+    <!-- Sélection de l'année, classe et élève sur la même ligne -->
+    <div class="form-group d-flex align-items-center">
+        <!-- Année scolaire -->
+        <div class="col-sm-2 me-3">
+            <select class="form-control" formControlName="annee" required>
+              <option value="">-- Année --</option>
+              <option *ngFor="let annee of annees" [value]="annee.id">{{ annee.nom }}</option>
+          </select>
+        </div>
+
+        <!-- Classe -->
+        <div class="col-sm-2 me-3">
+            <select class="form-control" formControlName="classe" (change)="onClasseChange()" required>
+              <option value="">-- Classe --</option>
+              <option *ngFor="let classe of classes" [value]="classe.id">{{ classe.nom }}</option>
+          </select>
+        </div>
+
+        <!-- Élève -->
+        <div class="col-sm-8">
+            <select class="form-control" formControlName="eleve" required *ngIf="eleves.length > 0">
+              <option value="">-- Élève --</option>
+              <option *ngFor="let eleve of eleves" [value]="eleve.id">{{ eleve.nom }}</option>
+          </select>
+            <span class="alert alert-warning">
+              Sélectionnez l'année et la classe pour afficher la liste des élèves.
+          </span>
+        </div>
+    </div>
+
+    <!-- Montant et réduction sur la même ligne -->
+    <div class="form-group d-flex align-items-center mt-3">
+        <label class="col-sm-2 control-label me-3">Montant</label>
+        <div class="col-sm-4 me-3">
+            <input type="number" class="form-control" formControlName="montant" required />
+        </div>
+
+        <label class="col-sm-2 control-label me-3">Réduction</label>
+        <div class="col-sm-4">
+            <input type="number" class="form-control" formControlName="reduction" value="0" />
+        </div>
+    </div>
+
+    <!-- Bouton de soumission -->
+    <div class="form-group mt-3">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-info">Enregistrer</button>
+        </div>
+    </div>
+</form>

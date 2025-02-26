@@ -1,0 +1,42 @@
+<!-- Formulaire caché par défaut -->
+<div class="card p-4">
+    <h3>Recherche d'empreinte pour les professeurs</h3>
+    <div>
+        <a [routerLink]="['/nouvelle-empreinte']">Nouvelle empreinte</a>
+    </div>
+    <div class="container mt-4">
+        <form (ngSubmit)="onSubmit()">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <select id="professeur" formControlName="professeur" class="form-select">
+              <option value="" disabled selected>Choisissez un professeur</option>
+              <option *ngFor="let prof of professeurs" [value]="prof.id">{{ prof.nom }}</option>
+            </select>
+                </div>
+
+                <div class="col-md-3">
+                    <select id="mois" formControlName="mois" class="form-select">
+              <option value="" disabled selected>Choisissez un mois</option>
+              <option *ngFor="let m of mois" [value]="m">{{ m }}</option>
+            </select>
+                </div>
+
+                <div class="col-md-3">
+                    <select id="anneeScolaire" formControlName="anneeScolaire" class="form-select">
+              <option value="" disabled selected>Choisissez une année scolaire</option>
+              <option *ngFor="let annee of anneesScolaires" [value]="annee">{{ annee }}</option>
+            </select>
+                </div>
+
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">
+              Enregistrer
+            </button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+
+</div>
