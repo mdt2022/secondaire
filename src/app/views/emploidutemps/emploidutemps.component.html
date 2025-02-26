@@ -1,0 +1,54 @@
+<h2>Les emplois du temps</h2>
+<div class="d-flex justify-content-between mb-2">
+    <!-- Bouton Affecter une classe aligné à gauche -->
+    <button class="btn btn-primary">Par professeurs</button>
+    <button class="btn btn-primary">Par semaines</button>
+    <button class="btn btn-primary">Journalier</button>
+    <button class="btn btn-primary">Par classe</button>
+    <button class="btn btn-primary">Ajouter un programme</button>
+    <!-- Input de filtre aligné à droite -->
+</div>
+<div class="container mt-4">
+    <!-- Filtre et bouton sur la même ligne -->
+    <div class="d-flex justify-content-between mb-2">
+        <input id="filter" class="form-control w-auto ms-3" placeholder="Rechercher un emploidutemps...">
+    </div>
+    <!-- Table -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>N°</th>
+                <th>Jour</th>
+                <th>Matière</th>
+                <th>Professeur</th>
+                <th>Heure-debut</th>
+                <th>Heure-fin</th>
+                <th>Durée</th>
+                <th>Coefficient</th>
+                <th>Classe</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>ddd</td>
+                <td>dd</td>
+                <td>ff</td>
+                <td>12H</td>
+                <td>13H</td>
+                <td>1H</td>
+                <td>2</td>
+                <td>4eme</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination justify-content-center">
+        <button class="btn btn-secondary" (click)="changePage(page - 1)" [disabled]="page <= 1">Précédent</button>
+        <span class="mx-3">Page {{ page }} / {{ totalPages }}</span>
+        <button class="btn btn-secondary" (click)="changePage(page + 1)" [disabled]="page >= totalPages">Suivant</button>
+    </div>
+</div>

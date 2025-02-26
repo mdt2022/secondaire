@@ -1,0 +1,42 @@
+<div class="page-header mb-3">
+    <h3>Liste des matières enseignées</h3>
+    <button class="btn btn-info" [routerLink]="['/enseignercreate']">Affecter des matières à un enseignant</button>
+</div>
+
+
+<div class="panel panel-default ">
+
+
+    <div class="panel-body ">
+        <div class="col-sm-12 ">
+            <table class="table table-bordered ">
+                <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Classe</th>
+                        <th>Professeurs</th>
+                        <th>Matières</th>
+
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let matiere of matieres; let i=i ndex ">
+                        <td>{{ i + 1 }}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <button class="btn btn-info me-2 " (click)="modifierMatiere(matiere.id) ">
+                            <i class="material-icons ">edit</i>
+                        </button>
+                            <button class="btn btn-danger " (click)="supprimerMatiere(matiere.id) ">
+                            <i class="material-icons ">delete</i>
+                        </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

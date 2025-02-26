@@ -1,0 +1,29 @@
+<h2>Formulaire de recherche de frais scolaires</h2>
+<p>
+    <button class="btn btn-success" (click)="navigateTo('enregistrer-frai')">Enregistrer le frais scolaire pour un élève</button>
+</p>
+
+<form class="form-horizontal">
+    <div class="form-group row">
+        <!-- Sélection de la classe -->
+        <div class="col-sm-4">
+            <select id="classe" class="form-control" formControlName="classe" required>
+                <option value="">-- Selectionnez la classe --</option>
+                <option *ngFor="let classe of classes" [value]="classe.id">{{ classe.nom }}</option>
+            </select>
+        </div>
+
+        <!-- Sélection de l'année scolaire -->
+        <div class="col-sm-4">
+            <select id="annee" class="form-control" formControlName="annee" required>
+                <option value="">-- Selectionnez l'année --</option>
+                <option *ngFor="let annee of annees" [value]="annee.id">{{ annee.nom }}</option>
+            </select>
+        </div>
+
+        <!-- Bouton de soumission -->
+        <div class="col-sm-2">
+            <button type="submit" class="btn btn-info">Rechercher</button>
+        </div>
+    </div>
+</form>

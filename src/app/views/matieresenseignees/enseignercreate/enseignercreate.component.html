@@ -1,0 +1,50 @@
+<div class="row">
+    <nav>
+        <button class="btn btn-primary" [routerLink]="['/matieresenseignees/matieresenseignees']">Retour</button>
+    </nav>
+</div>
+
+<div class="page-header m-4">
+    <h3>
+        Enregistre une matière enseignée à {{ etablissement }}
+    </h3>
+</div>
+
+<form (ngSubmit)="onSubmit()" class="form-horizontal">
+
+    <!-- Sélection du professeur et Nombre de classes en charge sur la même ligne -->
+    <div class="form-group row">
+        <div class="col-sm-4">
+            <label class="form-label">Professeur</label>
+            <select class="form-control" formControlName="professeur" required>
+              <option value="">Selectionnez un prof</option>
+              <option *ngFor="let enseignant of enseignants" [value]="enseignant.id">
+                  {{ enseignant.prenom }} {{ enseignant.nom }}
+              </option>
+          </select>
+        </div>
+
+        <div class="col-sm-4">
+            <label class="form-label">Nombre de classes en charge du prof</label>
+            <input class="form-control" type="number" formControlName="nombreclasse" required />
+        </div>
+
+        <div class="col-sm-2">
+            <button type="button" class="btn btn-success" (click)="affecter()">Affecter</button>
+        </div>
+    </div>
+
+    <!-- Affichage du retour de l'affectation -->
+    <div id="retourjquery">{{ retourAffectation }}</div>
+
+    <!-- Champ caché pour l'école -->
+    <input type="hidden" [value]="idetablissement" formControlName="ecole">
+
+    <!-- Bouton d'enregistrement -->
+    <div class="form-group m-3">
+        <div class="col-sm-10">
+            <button type="submit" class="btn btn-info">Enregistrer</button>
+        </div>
+    </div>
+
+</form>
