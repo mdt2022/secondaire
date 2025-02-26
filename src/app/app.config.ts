@@ -6,6 +6,7 @@ import { DropdownModule, SidebarModule } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // ✅ Ajouté ici
 import { routes } from './app.routes';
+import { provideHttpClient } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,10 +20,11 @@ export const appConfig: ApplicationConfig = {
       }),
       withEnabledBlockingInitialNavigation(),
       withViewTransitions(),
-      withHashLocation()
+      withHashLocation(),      
     ),
     importProvidersFrom(SidebarModule, DropdownModule, ReactiveFormsModule, RouterModule, FormsModule),
     IconSetService,
-    provideAnimations()
+    provideAnimations(),
+    provideHttpClient()
   ]
 };
