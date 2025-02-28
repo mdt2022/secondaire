@@ -9,7 +9,7 @@ import { ProfesseurcreateComponent } from './views/professeurs/professeurcreate/
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'login',
     pathMatch: 'full'
   },
   {

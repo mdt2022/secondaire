@@ -8,13 +8,18 @@
         <form (ngSubmit)="onSubmit()">
             <div class="row g-3 align-items-end">
                 <div class="col-md-3">
-                    <select id="professeur" formControlName="professeur" class="form-select">
-              <option value="" disabled selected>Choisissez un professeur</option>
-              <option *ngFor="let prof of professeurs" [value]="prof.id">{{ prof.nom }}</option>
-            </select>
+                    <option value="" disabled selected>Choisissez un professeur</option>
+                    <select id="enseignant" formControlName="enseignant" class="form-select">
+                      <option value="" disabled selected>Choisissez un professeur</option>
+              <option *ngFor="let enseignant of enseignants" [value]="enseignant.id">
+                {{ enseignant.nom }} {{ enseignant.prenom }}
+              </option>
+                          </select>
                 </div>
 
                 <div class="col-md-3">
+                    <option value="" disabled selected>Choisissez un mois</option>
+
                     <select id="mois" formControlName="mois" class="form-select">
               <option value="" disabled selected>Choisissez un mois</option>
               <option *ngFor="let m of mois" [value]="m">{{ m }}</option>
@@ -22,9 +27,11 @@
                 </div>
 
                 <div class="col-md-3">
+                    <option value="" disabled selected>Choisissez une année scolaire</option>
+
                     <select id="anneeScolaire" formControlName="anneeScolaire" class="form-select">
               <option value="" disabled selected>Choisissez une année scolaire</option>
-              <option *ngFor="let annee of anneesScolaires" [value]="annee">{{ annee }}</option>
+              <option *ngFor="let annee of anneesScolaires" [value]="annee">{{ annee.nom }}</option>
             </select>
                 </div>
 

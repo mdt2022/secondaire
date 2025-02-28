@@ -1,4 +1,4 @@
-import { Ecole } from "../../../../adminsup/src/app/model/ecole.model";
+import { Ecole } from "./ecole.model";
 
 export class Enseignant{
     id!: number;

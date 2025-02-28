@@ -53,15 +53,19 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>1</td>
-                <td>4eme</td>
-                <td>Lorem ipsum dis dolorum perferendis ipsum er?</td>
-                <td>administration</td>
-                <td>BT</td>
-                <td></td>
+            <tr *ngFor="let classe of filteredClasses(); let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ classe.nom }}</td>
+                <td>{{ classe.description }}</td>
+                <td>{{ classe.filiere }}</td>
+                <td>{{ classe.options }}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm">Modifier</button>
+                    <button class="btn btn-danger btn-sm">Supprimer</button>
+                </td>
             </tr>
         </tbody>
+
     </table>
 
     <!-- Pagination -->

@@ -2,47 +2,49 @@
     <a [routerLink]="['/avance/avance']" class="btn btn-primary mb-4">Retour</a>
     <h3>Enregistrer une empreinte pour un enseignant</h3>
 </div>
+
 <div class="card p-4">
-    <form (ngSubmit)="onSubmit() ">
-        <div class="row g-3 ">
+    <form [formGroup]="empreinteForm" (ngSubmit)="onSubmit()">
+        <div class="row g-3">
 
             <!-- Montant -->
-            <div class="col-md-4 ">
-                <input type="number " id="montant " formControlName="montant " class="form-control " placeholder="Montant " required>
+            <div class="col-md-4">
+                <input type="number" id="montant" formControlName="montant" class="form-control" placeholder="Montant" required>
             </div>
 
             <!-- Mois -->
-            <div class="col-md-4 ">
-                <select id="mois " formControlName="mois " class="form-select " required>
-          <option value=" " disabled selected>Choisissez un mois</option>
-          <option *ngFor="let m of mois " [value]="m ">{{ m }}</option>
-        </select>
+            <div class="col-md-4">
+                <select id="mois" formControlName="mois" class="form-select" required>
+                  <option value="" disabled selected>Choisissez un mois</option>
+                  <option *ngFor="let m of mois" [value]="m">{{ m }}</option>
+              </select>
             </div>
 
             <!-- Année -->
-            <div class="col-md-4 ">
-                <select id="annee " formControlName="annee " class="form-select " required>
-          <option value=" " disabled selected>Choisissez une année</option>
-          <option *ngFor="let annee of annees " [value]="annee ">{{ annee }}</option>
-        </select>
+            <div class="col-md-4">
+                <select id="anneeScolaire" formControlName="anneeScolaire" class="form-select" required>
+                  <option value="" disabled selected>Choisissez une année</option>
+                  <option *ngFor="let annee of anneesScolaires" [value]="annee.id">{{ annee.nom }}</option>
+              </select>
             </div>
 
-            <!-- Date d'empreinte (prend la date actuelle par défaut) -->
-            <div class="col-md-4 ">
-                <label for="dateEmpreinte " class="form-label ">Date d'empreinte</label>
-                <input type="date " id="dateEmpreinte " formControlName="dateEmpreinte " class="form-control " [value]="dateEmpreinte " required>
+            <!-- Date d'empreinte -->
+            <div class="col-md-4">
+                <label for="dateEmpreinte" class="form-label">Date d'empreinte</label>
+                <input type="date" id="dateEmpreinte" formControlName="dateEmpreinte" class="form-control" required>
             </div>
 
             <!-- Professeur -->
-            <div class="col-md-4 ">
-                <select id="professeur " formControlName="professeur " class="form-select " required>
-          <option value=" " disabled selected>Choisissez un professeur</option>
-          <option *ngFor="let prof of professeurs " [value]="prof.id ">{{ prof.nom }}</option>
-        </select>
+            <div class="col-md-4">
+                <select id="enseignant" formControlName="enseignant" class="form-select" required>
+                  <option value="" disabled selected>Choisissez un professeur</option>
+                  <option *ngFor="let prof of enseignants" [value]="prof.id">{{ prof.nom }} {{ prof.prenom }}</option>
+              </select>
             </div>
+
             <!-- Bouton d'enregistrement -->
-            <div class="col-md-12 mt-3 ">
-                <button type="submit " class="btn btn-primary ">Enregistrer</button>
+            <div class="col-md-12 mt-3">
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
             </div>
         </div>
     </form>
