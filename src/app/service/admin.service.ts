@@ -1,16 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { environment } from '../../../../EtudiantFRONTEND/src/environments/environment';
-import { Administrateur } from '../../../../EtudiantFRONTEND/src/app/model/administrateur.model';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { Administrateur } from '../model/admin.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
 
-  private apiUrl = environment.apiUrl;
+  private apiUrl = environment.apiURL;
   private tokenKey = 'auth-token';
 
   constructor(private http: HttpClient, private router: Router) {}
