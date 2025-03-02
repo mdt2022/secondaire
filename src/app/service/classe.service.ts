@@ -12,7 +12,7 @@ export class ClasseService {
 
   private apiUrl = environment.apiURL;
   
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient) {}
   //la liste des classes du secondaires
   getAllClasse(): Observable<Classe[]>{
     return this.http.get<Classe[]>(this.apiUrl+"/classes");

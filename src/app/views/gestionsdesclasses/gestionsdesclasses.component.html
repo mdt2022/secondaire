@@ -1,1 +1,81 @@
-<p>gestionsdesclasses works!</p>
+<h2>Gestion des Classes</h2>
+
+<div class="container mt-4">
+    <div class="card shadow-lg p-4">
+      <h3 class="text-center text-primary mb-4">Ajouter / Modifier une Classe</h3>
+  
+      <form (ngSubmit)="saveClasse()">
+        <div class="row">
+          <div class="col-sm-2">
+            <input type="text" class="form-control" [(ngModel)]="selectedClasse.nom" name="nom" required placeholder="Nom">
+          </div>
+       
+          <div class="col-sm-2">
+            <input type="text" class="form-control" [(ngModel)]="selectedClasse.description" name="description" placeholder="Description">
+          </div>
+        
+          <div class="col-sm-2">
+            <input type="text" class="form-control" [(ngModel)]="selectedClasse.filiere" name="filiere" placeholder="Filière">
+          </div>
+        
+          <div class="col-sm-2">
+            <input type="text" class="form-control" [(ngModel)]="selectedClasse.options" name="options" placeholder="Options">
+          </div>
+        
+  
+        <div class="col-sm-2">
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-save"></i> Enregistrer
+          </button>
+        </div>
+
+        <div class="col-sm-2">
+          <button type="reset" class="btn btn-secondary">
+            <i class="bi bi-x-circle"></i> Réinitialiser
+          </button>
+        </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+
+  <div class="container mt-4">
+    <div class="card shadow-lg p-4">
+      <h3 class="text-center text-primary mb-4">Liste des Classes</h3>
+  
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead class="table-dark">
+            <tr>
+              <th>#</th>
+              <th>Nom</th>
+              <th>Filière</th>
+              <th>Description</th>
+              <th>Options</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let classe of filteredClasses() | paginate: { itemsPerPage: 5, currentPage: currentPage }; let i = index" (click)="selectClasse(classe)" class="table-row">
+              <td>{{ (currentPage - 1) * 5 + i + 1 }}</td>
+              <td>{{ classe.nom }}</td>
+              <td>{{ classe.filiere }}</td>
+              <td>{{ classe.description }}</td>
+              <td>{{ classe.options }}</td>
+              <td>
+                <button class="btn btn-danger btn-sm" (click)="deleteClasse(classe.id); $event.stopPropagation();">
+                  <i class="bi bi-trash"></i> Supprimer
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Pagination -->
+    <div class="d-flex justify-content-center">
+        <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+    </div>
+    </div>
+  </div>
+  

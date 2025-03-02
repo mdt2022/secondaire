@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -5,7 +6,10 @@ import { Router, RouterModule } from '@angular/router';
 @Component({
   selector: 'app-enregistrer-frai',
   standalone: true,
-  imports: [RouterModule],
+  imports:[
+    RouterModule,
+    CommonModule
+  ],
   templateUrl: './enregistrer-frai.component.html',
   styleUrl: './enregistrer-frai.component.scss'
 })

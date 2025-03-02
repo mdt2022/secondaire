@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -5,7 +6,9 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-eleves',
   standalone: true,
-  imports: [],
+  imports: [
+    CommonModule
+  ],
   templateUrl: './eleves.component.html',
   styleUrl: './eleves.component.scss'
 })

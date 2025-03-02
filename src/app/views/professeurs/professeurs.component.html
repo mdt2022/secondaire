@@ -1,49 +1,90 @@
-<div class="page-header mb-3">
-    <h3>Liste des professeurs</h3>
-    <button class="btn btn-info" [routerLink]="['/professeurcreate']">Enregistrer un professeur</button>
-</div>
-
-
-<div class="panel panel-default ">
-
-
-    <div class="panel-body ">
-        <div class="col-sm-12 ">
-            <table class="table table-bordered ">
-                <thead>
-                    <tr>
-                        <th>N°</th>
-                        <th>Matricule</th>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Adresse</th>
-                        <th>Telephone</th>
-                        <th>Tarif(CFA)</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let matiere of matieres; let i=i ndex ">
-                        <td>{{ i + 1 }}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-
-                        <td>
-                            <button class="btn btn-info me-2 " (click)="modifierMatiere(matiere.id) ">
-                            <i class="material-icons ">edit</i>
-                        </button>
-                            <button class="btn btn-danger " (click)="supprimerMatiere(matiere.id) ">
-                            <i class="material-icons ">delete</i>
-                        </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+<h2>Gestion des Enseignants</h2>
+<div class="container mt-4 bg-white p-4">
+    <h3>Ajouter/Modifier un Enseignant</h3>
+    <form (ngSubmit)="saveEnseignant()" class="mt-4">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="matricule" class="form-label">Matricule:</label>
+          <input [(ngModel)]="selectedEnseignant.matricule" name="matricule" required class="form-control">
         </div>
-    </div>
-</div>
+  
+        <div class="col-md-6 mb-3">
+          <label for="nom" class="form-label">Nom:</label>
+          <input [(ngModel)]="selectedEnseignant.nom" name="nom" required class="form-control">
+        </div>
+  
+        <div class="col-md-6 mb-3">
+          <label for="prenom" class="form-label">Prénom:</label>
+          <input [(ngModel)]="selectedEnseignant.prenom" name="prenom" required class="form-control">
+        </div>
+  
+        <div class="col-md-6 mb-3">
+          <label for="adresse" class="form-label">Adresse:</label>
+          <input [(ngModel)]="selectedEnseignant.adresse" name="adresse" class="form-control">
+        </div>
+  
+        <div class="col-md-6 mb-3">
+          <label for="telephone" class="form-label">Téléphone:</label>
+          <input [(ngModel)]="selectedEnseignant.telephone" name="telephone" class="form-control">
+        </div>
+  
+        <div class="col-md-6 mb-3">
+          <label for="email" class="form-label">Email:</label>
+          <input [(ngModel)]="selectedEnseignant.email" name="email" class="form-control">
+        </div>
+  
+        <div class="col-md-6 mb-3">
+          <label for="lieun" class="form-label">Lieu de naissance:</label>
+          <input [(ngModel)]="selectedEnseignant.lieun" name="lieun" class="form-control">
+        </div>
+  
+        <div class="col-md-6 mb-3">
+          <label for="datedn" class="form-label">Date de naissance:</label>
+          <input [(ngModel)]="selectedEnseignant.datedn" name="datedn" class="form-control">
+        </div>
+  
+        <div class="col-md-6 mb-3">
+          <label for="photo" class="form-label">Photo:</label>
+          <input [(ngModel)]="selectedEnseignant.photo" name="photo" class="form-control">
+        </div>
+  
+        <div class="col-md-6 mb-3">
+          <label for="tarif" class="form-label">Tarif:</label>
+          <input [(ngModel)]="selectedEnseignant.tarif" name="tarif" type="number" class="form-control">
+        </div>
+  
+        <div class="col-md-12 mt-3">
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  
+
+
+  <div class="container mt-4 bg-white p-4">
+    <h3>Liste des Enseignants</h3>
+    
+    <table class="table table-striped mt-4">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Matricule</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let enseignant of enseignants" (click)="selectEnseignant(enseignant)">
+          <td>{{ enseignant.nom }}</td>
+          <td>{{ enseignant.prenom }}</td>
+          <td>{{ enseignant.matricule }}</td>
+          <td>
+            <button (click)="deleteEnseignant(enseignant.id)" class="btn btn-danger btn-sm">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+   
+  </div>
+  

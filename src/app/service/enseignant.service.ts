@@ -9,14 +9,28 @@ import { Enseignant } from '../model/enseignant.model';
     providedIn: 'root'
 })
 export class EnseignantService{
-    private apiUrl = environment.apiURL;
+    private apiUrl = environment.apiURL+"/enseignants";
     constructor(private http: HttpClient, private router: Router) {}
     getAllEnseignants(): Observable<Enseignant[]>{
-        return this.http.get<Enseignant[]>(this.apiUrl+"/enseignants");
+        return this.http.get<Enseignant[]>(this.apiUrl);
     } 
     getEnseignantsByEcole(ecole: number): Observable<Enseignant[]> {
-      return this.http.get<Enseignant[]>(this.apiUrl+"/enseignants/ecole/${ecoleId}");
+      return this.http.get<Enseignant[]>(this.apiUrl+"/ecole/${ecoleId}");
     }
     
+    getEnseignantById(id: number): Observable<Enseignant> {
+    return this.http.get<Enseignant>(`${this.apiUrl}/${id}`);
+    }
 
+    createEnseignant(enseignant: Enseignant): Observable<Enseignant> {
+    return this.http.post<Enseignant>(this.apiUrl, enseignant);
+    }
+
+    updateEnseignant(id: number, enseignant: Enseignant): Observable<Enseignant> {
+    return this.http.put<Enseignant>(`${this.apiUrl}/${id}`, enseignant);
+    }
+
+    deleteEnseignant(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    }
 }

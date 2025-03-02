@@ -1,10 +1,14 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-matieresenseignees',
   standalone: true,
-  imports: [RouterModule],
+  imports: [
+    RouterModule,
+    CommonModule
+  ],
   templateUrl: './matieresenseignees.component.html',
   styleUrl: './matieresenseignees.component.scss'
 })
