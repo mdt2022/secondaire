@@ -13,11 +13,11 @@ export class EnseignantService{
     constructor(private http: HttpClient, private router: Router) {}
     getAllEnseignants(): Observable<Enseignant[]>{
         return this.http.get<Enseignant[]>(this.apiUrl);
-    } 
-    getEnseignantsByEcole(ecole: number): Observable<Enseignant[]> {
+    }
+    getEnseignantsByEcole(ecoleId: number): Observable<Enseignant[]> {
       return this.http.get<Enseignant[]>(this.apiUrl+"/ecole/${ecoleId}");
     }
-    
+
     getEnseignantById(id: number): Observable<Enseignant> {
     return this.http.get<Enseignant>(`${this.apiUrl}/${id}`);
     }

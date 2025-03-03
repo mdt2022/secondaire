@@ -1,3 +1,4 @@
+import { Emploidutemp } from './../model/emploidutemp.model';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
@@ -7,12 +8,16 @@ import { environment } from '../../environments/environment';
 @Injectable({
     providedIn: 'root'
 })
-export class Emploidutemp{
+export class EmploidutempService{
     private apiUrl = environment.apiURL;
 
     constructor(private http: HttpClient, private router: Router) {}
-    
-    getAllEnseignant(): Observable<Emploidutemp[]>{
+
+    getAllemploidutemps(): Observable<Emploidutemp[]>{
         return this.http.get<Emploidutemp[]>(this.apiUrl+"/emploidutemps");
     }
+
+    getEmploiByProf(prof:string): Observable<Emploidutemp[]>{
+      return this.http.get<Emploidutemp[]>(this.apiUrl+"/emploidutemps/${prof}");
+  }
 }

@@ -1,4 +1,4 @@
-<h2>Liste des classes</h2>
+<h2 class="text-center text-primary mb-4">Liste des Classes</h2>
 <div class="container mt-4">
     <!-- Filtre et bouton sur la même ligne -->
     <div class="d-flex justify-content-between mb-2">
@@ -6,7 +6,7 @@
         <button class="btn btn-primary" (click)="toggleForm()">Affecter une classe</button>
 
         <!-- Input de filtre aligné à droite -->
-        <input id="filter" [(ngModel)]="filterTerm" class="form-control w-auto ms-3" placeholder="Rechercher une classe...">
+        <input id="filter" [(ngModel)]="searchText" class="form-control w-auto ms-3" placeholder="Rechercher une classe...">
     </div>
 
     <!-- Formulaire d'affectation (caché par défaut) -->
@@ -27,7 +27,7 @@
                     <label for="ecole">Ecole</label>
                     <select id="ecole" class="form-control" name="ecole" required>
                         <option value="" disabled selected>Choisir une école</option>
-                        <option *ngFor="let ecole of ecoles" [value]="ecole.id">{{ ecole.nom }}</option>
+                        <option *ngFor="let ecole of ecoles" [value]="ecole.idEcole">{{ ecole.nomEcole }}</option>
                     </select>
                 </div>
             </div>
@@ -41,37 +41,42 @@
     </div>
 
     <!-- Table -->
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>N°</th>
-                <th>Classe</th>
-                <th>Description</th>
-                <th>Filière</th>
-                <th>Option</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let classe of filteredClasses(); let i = index">
-                <td>{{ i + 1 }}</td>
-                <td>{{ classe.nom }}</td>
-                <td>{{ classe.description }}</td>
-                <td>{{ classe.filiere }}</td>
-                <td>{{ classe.options }}</td>
-                <td>
-                    <button class="btn btn-warning btn-sm">Modifier</button>
-                    <button class="btn btn-danger btn-sm">Supprimer</button>
-                </td>
-            </tr>
-        </tbody>
+    <div class="container mt-4">
+        <div class="card shadow-lg p-4">
 
-    </table>
-
-    <!-- Pagination -->
-    <div class="pagination justify-content-center">
-        <button class="btn btn-secondary" (click)="changePage(page - 1)" [disabled]="page <= 1">Précédent</button>
-        <span class="mx-3">Page {{ page }} / {{ totalPages }}</span>
-        <button class="btn btn-secondary" (click)="changePage(page + 1)" [disabled]="page >= totalPages">Suivant</button>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="table-blue">
+                        <tr>
+                            <th>#</th>
+                            <th>Nom</th>
+                            <th>Filière</th>
+                            <th>Description</th>
+                            <th>Options</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let classe of filteredClasses() | paginate: { itemsPerPage: 5, currentPage: currentPage }; let i = index" class="table-row">
+                            <td>{{ (currentPage - 1) * 5 + i + 1 }}</td>
+                            <td>{{ classe.nom }}</td>
+                            <td>{{ classe.filiere }}</td>
+                            <td>{{ classe.description }}</td>
+                            <td>{{ classe.options }}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" (click)="deleteClasse(classe.id); $event.stopPropagation();">
+                    <i class="bi bi-trash"></i> Supprimer
+                  </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center">
+                <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+            </div>
+        </div>
     </div>
+
 </div>

@@ -5,69 +5,105 @@ import { AuthService } from '../../service/auth.service';
 import { Classe } from '../../model/classe.model';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { Ecole } from 'src/app/model/ecole.model';
+import { EcoleService } from '../../service/ecole.service';
 
 @Component({
   selector: 'app-classe',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterModule],
+  imports: [FormsModule, CommonModule, RouterModule, NgxPaginationModule],
   templateUrl: './classe.component.html',
   styleUrls: ['./classe.component.scss']
 })
 export class ClasseComponent implements OnInit {
   classes: Classe[] = []; // Liste des classes de l'école
-  ecoles: any[] = []; // ✅ Déclarer la variable pour éviter l'erreur
-  page: number = 1;
-  pageSize: number = 5;
-  filterTerm: string = '';
+  ecoles: Ecole[] = []; // ✅ Déclarer la variable pour éviter l'erreur
   isFormVisible: boolean = false;
+  searchText: string = '';
+  currentPage: number = 1;
 
   constructor(
     private classeService: ClasseService,
+    private ecoleService: EcoleService,
+
     private authService: AuthService
   ) {}
 
-  ngOnInit() {
-    this.getClasseEcole();
-  }
+    ngOnInit(): void {
+            this.getAllEcole();
+      this.getAllClasse();
+      this.getClasseEcole();
 
-  getClasseEcole() {
-    const user = this.authService.getUserFromLocalStorage(); // ✅ Récupérer l'utilisateur connecté
-    const ecoleId = user?.ecole?.idEcole; // ✅ Extraire l'ID de l'école
+    }
 
-    if (ecoleId) {
-      this.classeService.getClasseEcole(ecoleId).subscribe(
+    getAllEcole() {
+      this.ecoleService.getAllEcole().subscribe(
         (data) => {
-          this.classes = data; // ✅ Stocker les classes récupérées
-          console.log(data);
+          this.ecoles = data; // ✅ Correction pour correspondre au template
         },
         (error) => {
-          console.error('Erreur lors de la récupération des classes', error);
+          console.error('Erreur lors de la récupération des ecoles', error);
         }
       );
-    } else {
-      console.error("Impossible de récupérer l'ID de l'école.");
+    }
+
+    getAllClasse() {
+     this.classeService.getAllClasse().subscribe(
+      (data)=>{
+        this.classes = data;
+      },
+      (error) => {
+        console.error('Erreur lors de la récupération des classes', error);
+      }
+    );
+    }
+
+    getClasseEcole() {
+      const user = this.authService.getUserFromLocalStorage(); // ✅ Récupérer l'utilisateur connecté
+      const ecoleId = user?.ecole?.idEcole; // ✅ Extraire l'ID de l'école
+
+      if (ecoleId) {
+        this.classeService.getClasseEcole(ecoleId).subscribe(
+          (data) => {
+            this.classes = data; // ✅ Stocker les classes récupérées
+            console.log("Classes après mise à jour :", this.classes);
+            this.classes.forEach((classe, index) => {
+              console.log(`Classe ${index + 1}:`, classe);
+            });
+          },
+          (error) => {
+            console.error('Erreur lors de la récupération des classes', error);
+          }
+        );
+      } else {
+        console.error("Impossible de récupérer l'ID de l'école.");
+      }
+    }
+
+
+
+    deleteClasse(id: number): void {
+      if (confirm('Voulez-vous vraiment supprimer cette classe ?')) {
+        ;
+      }
+    }
+    filteredClasses(){
+      return this.classes.filter(classe =>
+        (classe.nom ?? '').toLowerCase().includes(this.searchText.toLowerCase()) ||
+        (classe.filiere ?? '').toLowerCase().includes(this.searchText.toLowerCase()) ||
+        (classe.description ?? '').toLowerCase().includes(this.searchText.toLowerCase()) ||
+        (classe.options ?? '').toLowerCase().includes(this.searchText.toLowerCase())
+      );
+    }
+
+    toggleForm(): void {
+      this.isFormVisible = !this.isFormVisible;
     }
   }
 
-  filteredClasses() {
-    return this.classes
-      .filter((classe) =>
-        classe.nom.toLowerCase().includes(this.filterTerm.toLowerCase())
-      )
-      .slice((this.page - 1) * this.pageSize, this.page * this.pageSize);
-  }
 
-  get totalPages(): number {
-    return Math.ceil(this.filteredClasses().length / this.pageSize);
-  }
 
-  toggleForm(): void {
-    this.isFormVisible = !this.isFormVisible;
-  }
 
-  changePage(newPage: number) {
-    if (newPage >= 1 && newPage <= this.totalPages) {
-      this.page = newPage;
-    }
-  }
-}
+
+

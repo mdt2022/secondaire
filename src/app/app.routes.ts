@@ -4,6 +4,7 @@ import { NouvelleEmpreinteComponent } from './views/avance/nouvelle-empreinte/no
 import { EnregistrerFraiComponent } from './views/fraisecondaire/enregistrer-frai/enregistrer-frai.component';
 import { MatierecreationComponent } from './views/matieres/matierecreation/matierecreation.component';
 import { EnseignercreateComponent } from './views/matieresenseignees/enseignercreate/enseignercreate.component';
+import { ProfComponent } from './views/emploidutemps/prof/prof.component';
 
 export const routes: Routes = [
   {
@@ -22,6 +23,7 @@ export const routes: Routes = [
       { path: 'enregistrer-frai', component: EnregistrerFraiComponent },
       { path: 'matierecreation', component: MatierecreationComponent },
       { path: 'enseignercreate', component: EnseignercreateComponent },
+      { path: 'prof', component: ProfComponent },
 
       {
         path: 'dashboard',

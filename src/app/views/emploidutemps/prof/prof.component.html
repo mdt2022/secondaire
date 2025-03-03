@@ -1,0 +1,88 @@
+<div class="page-header">
+    <h1>Gestion des émargements des professeurs</h1>
+</div>
+
+<form [formGroup]="emargementForm" class="form-horizontal">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-3">
+                    <select formControlName="enseignant" class="form-control">
+                      <option value="">-- Professeur --</option>
+                      <option *ngFor="let prof of listeProf" [value]="prof.id">
+                          {{ prof.prenom }} {{ prof.nom }}
+                      </option>
+                  </select>
+                </div>
+                <div class="col-sm-2">
+                    <select formControlName="jour" class="form-control">
+                      <option value="">-- Jour --</option>
+                      <option value="Lundi">Lundi</option>
+                      <option value="Mardi">Mardi</option>
+                      <option value="Mercredi">Mercredi</option>
+                      <option value="Jeudi">Jeudi</option>
+                      <option value="Vendredi">Vendredi</option>
+                      <option value="Samedi">Samedi</option>
+                  </select>
+                </div>
+                <div class="col-sm-3">
+                    <select formControlName="annee" class="form-control">
+                      <option value="">-- Choisir une année --</option>
+                      <option *ngFor="let annee of annees" [value]="annee.id">
+                          {{ annee.nom }}
+                      </option>
+                  </select>
+                </div>
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-success" (click)="afficherEmploiProf()">Afficher</button>
+                </div>
+                <div class="col-sm-2">
+                    <a routerLink="/pointage" class="btn btn-warning">Pointage</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-body">
+            <div *ngIf="loading" id="loading">
+                <h1>Chargement de la page .....</h1>
+            </div>
+
+            <div class="col-sm-12">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th>Jour</th>
+                            <th>Classe</th>
+                            <th>Matière</th>
+                            <th>Arrivé</th>
+                            <th>Départ</th>
+                            <th>Nombre d'heures</th>
+                            <th>Présent</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let emploi of emploisDuTemps; let i = index">
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ emploi.jour }}</td>
+                            <td>{{ emploi.classe.nom }}</td>
+                            <td>{{ emploi.matiere.nom }}</td>
+                            <td>{{ emploi.heureArrivee }}</td>
+                            <td>{{ emploi.heureDepart }}</td>
+                            <td>{{ emploi.nmbHeure }}</td>
+                            <td>{{ emploi.present ? 'Oui' : 'Non' }}</td>
+                            <td>{{ emploi.date }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-10">
+                    <button type="submit" class="btn btn-info">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
