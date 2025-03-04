@@ -1,3 +1,5 @@
-export class Matiere{
+export interface Matiere{
+    id: number;
+    nom: string;
     
 }

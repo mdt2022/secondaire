@@ -4,14 +4,16 @@ import { Classe } from "./classe.model";
 import { Ecole } from "./ecole.model";
 import { Anneeuv } from "./anneeuv.model";
 
-export class Emploidutemp{
-    id!: number;
-    jour!: string;
-    matiere!: Matiere;
-    professeur!: Enseignant;
-    heuredebut!: string;
-    heurefin!: string;
-    classe!: Classe;
-    ecole!: Ecole;
-    anneeuv!: Anneeuv;
+export interface Emploidutemp{
+    id: number;
+    jour: string;
+    matiere: Matiere;
+    professeur: Enseignant;
+    heuredebut: string;
+    heurefin: string;
+    classe: Classe;
+    ecole: Ecole;
+    anneeuv: Anneeuv;
+    coefficient: number;
+    duree: number;
 }

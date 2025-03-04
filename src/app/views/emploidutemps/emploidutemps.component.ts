@@ -3,10 +3,15 @@ import { Emploidutemp } from './../../model/emploidutemp.model';
 import { EmploidutempService } from './../../service/emploidutemp.service';
 import { Component, OnInit } from '@angular/core';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-emploidutemps',
   standalone:true,
-  imports :[NgxPaginationModule, RouterModule],
+  imports :[
+    NgxPaginationModule, 
+    RouterModule,
+    CommonModule
+  ],
   templateUrl: './emploidutemps.component.html',
   styleUrls: ['./emploidutemps.component.scss']
 })

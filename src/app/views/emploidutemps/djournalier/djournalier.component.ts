@@ -1,12 +1,16 @@
-import { AnneeuvService } from 'src/app/service/anneeuv.service';
-import { Component, OnInit } from '@angular/core';
-import { EmploidutempService } from 'src/app/service/emploidutemp.service';
+import { AnneeuvService } from '../../../service/anneeuv.service';
+import { Component, OnInit, } from '@angular/core';
+import { EmploidutempService } from '../../../service/emploidutemp.service';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-Djournalier',
   standalone:true,
-  imports:[FormsModule],
+  imports:[
+    FormsModule,
+    CommonModule
+  ],
   templateUrl: './Djournalier.component.html',
   styleUrls: ['./Djournalier.component.scss']
 })
@@ -31,12 +35,14 @@ export class DjournalierComponent implements OnInit {
 
   afficherEmploi(): void {
     if (this.selectedAnnee && this.selectedJour) {
-      this.emploiService.getEmploiDuTempsParJour(this.selectedAnnee, this.selectedJour)
-        .subscribe((data: any[]) => {
+      this.emploiService.getEmploiDuTempsParJour(this.selectedAnnee, this.selectedJour).subscribe({
+        next:  (data) => {
           this.emploiDuTemps = data;
-        }, (error) => {
+        }, 
+        error: (error) => {
           console.error('Erreur lors du chargement des emplois du temps', error);
-        });
+        }
+      });
     }
   }
   

@@ -34,7 +34,7 @@ export class ProfesseursComponent implements OnInit {
     ecole: { idEcole: 0, nomEcole: '', descriptionEcole: '', categorie: '' },
     tarif: 0
   };
- 
+  page: number = 1; // Page actuelle
 
   constructor(private enseignantService: EnseignantService) {}
 
