@@ -5,6 +5,10 @@ import { EnregistrerFraiComponent } from './views/fraisecondaire/enregistrer-fra
 import { MatierecreationComponent } from './views/matieres/matierecreation/matierecreation.component';
 import { EnseignercreateComponent } from './views/matieresenseignees/enseignercreate/enseignercreate.component';
 import { ProfComponent } from './views/emploidutemps/prof/prof.component';
+import { ClasseemploiComponent } from './views/emploidutemps/classeemploi/classeemploi.component';
+import { CreationemploidutempsComponent } from './views/emploidutemps/creationemploidutemps/creationemploidutemps.component';
+import { DjournalierComponent } from './views/emploidutemps/djournalier/djournalier.component';
+import { SemaineprofComponent } from './views/emploidutemps/semaineprof/semaineprof.component';
 
 export const routes: Routes = [
   {
@@ -24,6 +28,13 @@ export const routes: Routes = [
       { path: 'matierecreation', component: MatierecreationComponent },
       { path: 'enseignercreate', component: EnseignercreateComponent },
       { path: 'prof', component: ProfComponent },
+      { path: 'classeemploi', component: ClasseemploiComponent },
+
+      { path: 'creationemploidutemps', component: CreationemploidutempsComponent },
+
+      { path: 'djournalier', component: DjournalierComponent },
+
+      { path: 'semaineprof', component: SemaineprofComponent },
 
       {
         path: 'dashboard',

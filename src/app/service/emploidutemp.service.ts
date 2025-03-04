@@ -9,6 +9,10 @@ import { environment } from '../../environments/environment';
     providedIn: 'root'
 })
 export class EmploidutempService{
+  getEmploiDuTempsParJour(anneeId: string, jour: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}?annee=${anneeId}&jour=${jour}`);
+  }
+  
     private apiUrl = environment.apiURL;
 
     constructor(private http: HttpClient, private router: Router) {}
@@ -17,7 +21,7 @@ export class EmploidutempService{
         return this.http.get<Emploidutemp[]>(this.apiUrl+"/emploidutemps");
     }
 
-    getEmploiByProf(prof:string): Observable<Emploidutemp[]>{
+    getEmploiByProf(prof: string): Observable<Emploidutemp[]>{
       return this.http.get<Emploidutemp[]>(this.apiUrl+"/emploidutemps/${prof}");
   }
 }

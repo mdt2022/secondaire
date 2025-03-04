@@ -2,10 +2,10 @@
 <div class="d-flex justify-content-between mb-2">
     <!-- Boutons de filtrage alignés à gauche -->
     <button class="btn btn-primary" [routerLink]="['/prof']">Par professeurs</button>
-    <button class=" btn btn-primary ">Par semaines</button>
-    <button class="btn btn-primary ">Journalier</button>
-    <button class="btn btn-primary ">Par classe</button>
-    <button class="btn btn-primary ">Ajouter un programme</button>
+    <button class=" btn btn-primary " [routerLink]="['/semaineprof']">Par semaines</button>
+    <button class=" btn btn-primary " [routerLink]="['/djournalier']">Journalier</button>
+    <button class=" btn btn-primary " [routerLink]="['/classeemploi']">Par classe</button>
+    <button class=" btn btn-primary " [routerLink]="['/creationemploidutemps']">Ajouter un programme</button>
 </div>
 
 <div class="container mt-4 ">
@@ -56,7 +56,7 @@
             </div>
             <!-- Pagination -->
             <div class="d-flex justify-content-center ">
-                <pagination-controls (pageChange)="currentPage=$ event "></pagination-controls>
+                <!-- <pagination-controls (pageChange)="currentPage=$ event "></pagination-controls> -->
             </div>
         </div>
     </div>
