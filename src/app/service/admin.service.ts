@@ -11,7 +11,6 @@ import { Administrateur } from '../model/admin.model';
 export class AdminService {
 
   private apiUrl = environment.apiURL;
-  private tokenKey = 'auth-token';
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -24,11 +23,11 @@ export class AdminService {
     return this.http.post<Administrateur>(this.apiUrl+"/administrateurs", admin);
   }
 
-  update(id: string, admin: Administrateur): Observable<Administrateur> {
+  update(id: number, admin: Administrateur): Observable<Administrateur> {
     return this.http.put<Administrateur>(this.apiUrl+"/administrateurs/"+id, admin);
   }
 
-  delete(id: string): Observable<void> {
+  delete(id: number): Observable<void> {
     return this.http.delete<void>(this.apiUrl+"/administrateurs"+id);
   }
 }

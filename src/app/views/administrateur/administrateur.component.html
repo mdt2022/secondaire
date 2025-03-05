@@ -1,0 +1,67 @@
+<c-row>
+    <c-col xs="12">
+      <c-card class="mb-4">
+        <c-card-header>
+          <div class="row">
+            <form (ngSubmit)="saveOrUpdate()" class="d-flex flex-wrap">
+              <div class="col-md-2">
+                <input type="text" [(ngModel)]="adminForm.nom" name="nom" placeholder="Nom" required class="form-control">
+              </div>
+              <div class="col-md-2">
+                <input type="text" [(ngModel)]="adminForm.prenom" name="prenom" placeholder="Prénom" required class="form-control">
+              </div>
+              <div class="col-md-2">
+                <input type="text" [(ngModel)]="adminForm.email" name="email" placeholder="Email" class="form-control">
+              </div>
+              <div class="col-md-2">
+                <select [(ngModel)]="adminForm.ecole" name="ecole" class="form-control">
+                  <option *ngFor="let ecole of ecoles" [ngValue]="ecole">{{ ecole.nomEcole }}</option>
+                </select>
+              </div>
+              
+              <div class="col-md-2">
+                <select [(ngModel)]="adminForm.role" name="role" class="form-control">
+                  <option *ngFor="let role of roles" [ngValue]="role">{{ role.description }}</option>
+                </select>
+              </div>
+              <div class="col-md-2 mt-2">
+                <button type="submit" class="btn btn-primary w-100">{{ isEditing ? 'Modifier' : 'Ajouter' }}</button>
+              </div>
+            </form>
+          </div>
+          
+        </c-card-header>
+        <c-card-body>
+          <c-row>
+            <c-col md="12">
+              <table class="table table-bordered">
+                <tr>
+                  <th>N</th>
+                  <th>Nom</th>
+                  <th>Prenom</th>
+                  <th>Téléphone</th>
+                  <th>Ecole</th>
+                  <th>Role</th>
+                  <th colspan="2">Action</th>
+                </tr>
+                <tr *ngFor="let admin of admins; let i = index">     
+                    <td>{{ i+1 }}</td>             
+                  <td>{{ admin.nom }}</td>
+                  <td>{{ admin.prenom }}</td>
+                  <td>{{ admin.telephone }}</td>
+                  <td>{{ admin.ecole?.nomEcole }}</td>
+                  <td>{{ admin.role?.nom }}</td>
+                  <td>
+                    <button class="btn btn-warning" (click)="edit(admin)">Modifier</button>
+                  </td>
+                  <td>
+                    <button class="btn btn-danger" (click)="deleteAdmin(admin.id)">Supprimer</button>
+                  </td>
+                </tr>
+              </table>
+            </c-col>
+          </c-row>
+        </c-card-body>
+      </c-card>
+    </c-col>
+</c-row>

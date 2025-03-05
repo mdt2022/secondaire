@@ -14,8 +14,9 @@ export class EnseignantService{
     getAllEnseignants(): Observable<Enseignant[]>{
         return this.http.get<Enseignant[]>(this.apiUrl);
     }
+    //enseignants par ecole
     getEnseignantsByEcole(ecoleId: number): Observable<Enseignant[]> {
-      return this.http.get<Enseignant[]>(this.apiUrl+"/ecole/${ecoleId}");
+      return this.http.get<Enseignant[]>(this.apiUrl+"/ecole/"+ecoleId);
     }
 
     getEnseignantById(id: number): Observable<Enseignant> {

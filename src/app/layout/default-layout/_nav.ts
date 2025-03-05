@@ -88,4 +88,9 @@ export const navItems: INavData[] = [
     url: '/gestionsdesclasses/gestionsdesclasses',
     iconComponent: { name: 'cil-chalkboard' }
   }, 
+  {
+    name: 'Administrateurs',
+    url: '/administrateur/administrateur',
+    iconComponent: { name: 'cil-chalkboard' }
+  }
 ];
