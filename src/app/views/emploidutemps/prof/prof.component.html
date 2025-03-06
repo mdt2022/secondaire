@@ -8,30 +8,30 @@
             <div class="row">
                 <div class="col-sm-3">
                     <select formControlName="enseignant" class="form-control">
-                      <option value="">-- Professeur --</option>
-                      <option *ngFor="let prof of listeProf" [value]="prof.id">
-                          {{ prof.prenom }} {{ prof.nom }}
-                      </option>
-                  </select>
+                    <option value="">-- Professeur --</option>
+                    <option *ngFor="let prof of listeProf" [value]="prof.id">
+                        {{ prof.prenom }} {{ prof.nom }}
+                    </option>
+                </select>
                 </div>
                 <div class="col-sm-2">
                     <select formControlName="jour" class="form-control">
-                      <option value="">-- Jour --</option>
-                      <option value="Lundi">Lundi</option>
-                      <option value="Mardi">Mardi</option>
-                      <option value="Mercredi">Mercredi</option>
-                      <option value="Jeudi">Jeudi</option>
-                      <option value="Vendredi">Vendredi</option>
-                      <option value="Samedi">Samedi</option>
-                  </select>
+                    <option value="">-- Jour --</option>
+                    <option value="Lundi">Lundi</option>
+                    <option value="Mardi">Mardi</option>
+                    <option value="Mercredi">Mercredi</option>
+                    <option value="Jeudi">Jeudi</option>
+                    <option value="Vendredi">Vendredi</option>
+                    <option value="Samedi">Samedi</option>
+                </select>
                 </div>
                 <div class="col-sm-3">
                     <select formControlName="annee" class="form-control">
-                      <option value="">-- Choisir une année --</option>
-                      <option *ngFor="let annee of annees" [value]="annee.id">
-                          {{ annee.nom }}
-                      </option>
-                  </select>
+                    <option value="">-- Choisir une année --</option>
+                    <option *ngFor="let annee of annees" [value]="annee.id">
+                        {{ annee.nom }}
+                    </option>
+                </select>
                 </div>
                 <div class="col-sm-2">
                     <button type="button" class="btn btn-success" (click)="afficherEmploiProf()">Afficher</button>
@@ -58,7 +58,7 @@
                             <th>Arrivé</th>
                             <th>Départ</th>
                             <th>Nombre d'heures</th>
-                            <th>Présent</th>
+
                             <th>Date</th>
                         </tr>
                     </thead>
@@ -68,11 +68,11 @@
                             <td>{{ emploi.jour }}</td>
                             <td>{{ emploi.classe.nom }}</td>
                             <td>{{ emploi.matiere.libelle }}</td>
-                            <td>{{ emploi.heureArrivee }}</td>
-                            <td>{{ emploi.heureDepart }}</td>
-                            <td>{{ emploi.nmbHeure }}</td>
-                            <td>{{ emploi.present ? 'Oui' : 'Non' }}</td>
-                            <td>{{ emploi.date }}</td>
+                            <td>{{ emploi.heuredebut }}</td>
+                            <td>{{ emploi.heurefin }}</td>
+                            <td>{{ emploi.matiere.horaire }}</td>
+
+                            <td>{{ emploi.anneeuv }}</td>
                         </tr>
                     </tbody>
                 </table>

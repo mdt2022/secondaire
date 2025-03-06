@@ -31,10 +31,31 @@ export class ClasseComponent implements OnInit {
   ) {}
 
     ngOnInit(): void {
-            this.getAllEcole();
-      this.getAllClasse();
       this.getClasseEcole();
+            this.getAllEcole()
+            
 
+    }
+
+    
+    
+    getClasseEcole() {
+      const user = this.authService.getUserFromLocalStorage(); 
+      const ecoleId = user?.ecole?.idEcole; 
+
+      if (ecoleId) {
+        this.classeService.getClasseEcole(ecoleId).subscribe(
+          (data) => {
+            this.classes = data; 
+            console.log("Classes après mise à jour :", this.classes);
+          },
+          (error) => {
+            console.error('Erreur lors de la récupération des classes', error);
+          }
+        );
+      } else {
+        console.error("Impossible de récupérer l'ID de l'école.");
+      }
     }
 
     getAllEcole() {
@@ -47,40 +68,6 @@ export class ClasseComponent implements OnInit {
         }
       );
     }
-
-    getAllClasse() {
-     this.classeService.getAllClasse().subscribe(
-      (data)=>{
-        this.classes = data;
-      },
-      (error) => {
-        console.error('Erreur lors de la récupération des classes', error);
-      }
-    );
-    }
-
-    getClasseEcole() {
-      const user = this.authService.getUserFromLocalStorage(); // ✅ Récupérer l'utilisateur connecté
-      const ecoleId = user?.ecole?.idEcole; // ✅ Extraire l'ID de l'école
-
-      if (ecoleId) {
-        this.classeService.getClasseEcole(ecoleId).subscribe(
-          (data) => {
-            this.classes = data; // ✅ Stocker les classes récupérées
-            console.log("Classes après mise à jour :", this.classes);
-            this.classes.forEach((classe, index) => {
-              console.log(`Classe ${index + 1}:`, classe);
-            });
-          },
-          (error) => {
-            console.error('Erreur lors de la récupération des classes', error);
-          }
-        );
-      } else {
-        console.error("Impossible de récupérer l'ID de l'école.");
-      }
-    }
-
 
 
     deleteClasse(id: number): void {

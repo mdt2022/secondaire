@@ -16,7 +16,7 @@ import { RoleService } from '../../service/role.service';
   imports: [
     CardBodyComponent,
     CardComponent,
-    CardHeaderComponent, 
+    CardHeaderComponent,
     ColComponent,
     RowComponent,
     CommonModule,
@@ -36,19 +36,17 @@ export class AdministrateurComponent implements OnInit {
     nom: '',
     prenom: '',
     email: '',
-    adresse: '', 
-    telephone: '', 
-    lieun: '', 
+    adresse: '',
+    telephone: '',
+    lieun: '',
     datedn: '',
     photo: '', username: '', password:'',
     ecole: { idEcole: 0, nomEcole: '', descriptionEcole: '', categorie: '' },
-    site: { id: 0, nom: '', adresse: '', signature:'', titre:'', responsable:'' },
     role: { id: 0, nom:'', description: '' }
   };
   isEditing = false;
  // Définir un rôle par défaut
   private readonly DEFAULT_ROLE: Role = {id: 1, nom: '', description: ''};
-  private readonly DEFAULT_SITE: Site = { id: 1, nom: '', adresse: '', signature:'', titre:'', responsable:'' };
   private readonly DEFAULT_ECOLE: Ecole = { idEcole: 1, nomEcole: '', descriptionEcole: '', categorie: '' };
   constructor(
     private adminService: AdminService,
@@ -86,7 +84,7 @@ export class AdministrateurComponent implements OnInit {
 
       this.adminService.update(1,this.adminForm).subscribe(() => {
 
-        console.log(this.adminForm.site.id+" +++++");
+        // console.log(this.adminForm.site.id+" +++++");
         this.loadAdmins();
         this.resetForm();
       });
@@ -103,10 +101,6 @@ export class AdministrateurComponent implements OnInit {
   if (!admin.role) {
     console.warn('Le rôle de l\'administrateur est null ou undefined. Utilisation du rôle par défaut.');
     admin.role = this.DEFAULT_ROLE; // Utiliser un rôle par défaut
-  }
-  if (!admin.site) {
-    console.warn('Le site de l\'administrateur est null ou undefined. Utilisation du rôle par défaut.');
-    admin.site = this.DEFAULT_SITE; // Utiliser un rôle par défaut
   }
   if (!admin.ecole) {
     console.warn('Le ecole de l\'administrateur est null ou undefined. Utilisation du rôle par défaut.');
@@ -141,13 +135,12 @@ export class AdministrateurComponent implements OnInit {
       nom: '',
       prenom: '',
       email: '',
-      adresse: '', 
-      telephone: '', 
-      lieun: '', 
+      adresse: '',
+      telephone: '',
+      lieun: '',
       datedn: '',
       photo: '', username: '', password:'',
       ecole: { idEcole: 0, nomEcole: '', descriptionEcole: '', categorie: '' },
-      site: { id: 0, nom: '', adresse: '', signature:'', titre:'', responsable:'' },
       role: { id: 0, nom:'', description: '' }
     };
     this.isEditing = false;
