@@ -7,7 +7,7 @@ import { Router, RouterModule } from '@angular/router';
   standalone: true,
   imports: [RouterModule],
   templateUrl: './matierecreation.component.html',
-  styleUrl: './matierecreation.component.scss'
+  styleUrls: ['./matierecreation.component.scss']
 })
 export class MatierecreationComponent implements OnInit {
   matiereForm!: FormGroup;
@@ -19,7 +19,6 @@ export class MatierecreationComponent implements OnInit {
       libelle: ['', Validators.required],
       coefficient: ['', [Validators.required, Validators.min(0)]],
       horaire: ['', [Validators.required, Validators.min(0)]],
-      etat: ['1', Validators.required]
     });
   }
 
@@ -30,6 +29,6 @@ export class MatierecreationComponent implements OnInit {
     }
   }
 
- 
+
 }
 

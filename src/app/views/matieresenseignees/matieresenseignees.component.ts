@@ -1,28 +1,42 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { MatiereService } from '../../service/matiere.service';
+import { Matiere } from '../../model/matiere.model';
+import { Enseigner } from '../../model/enseigner.model';
+import { EnseignerService } from '../../service/enseigner.service';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
   selector: 'app-matieresenseignees',
   standalone: true,
   imports: [
     RouterModule,
-    CommonModule
+    CommonModule,
+    NgxPaginationModule
   ],
   templateUrl: './matieresenseignees.component.html',
   styleUrl: './matieresenseignees.component.scss'
 })
 export class MatieresenseigneesComponent implements OnInit {
-  matieres: any[] = [];
+  enseigner: Enseigner[] = [];
+  ecole: any;
+  search: any;
+  currentPage: number = 1;
 
-  constructor() {}
+  constructor(private enseignerService: EnseignerService) {}
 
   ngOnInit(): void {
-    this.getMatieres();
+    this.getAllEnseigner();
+      const user = localStorage.getItem('user');
+      this.ecole = user ? JSON.parse(user).ecole : null;
   }
 
-  getMatieres(): void {
-     
+  getAllEnseigner(): void {
+    this.enseignerService.getAllEnseigner(this.search).subscribe((data) => {
+      this.enseigner = data;
+    });
+
   }
 
 
@@ -34,7 +48,7 @@ export class MatieresenseigneesComponent implements OnInit {
 
   supprimerMatiere(id: number): void {
     if (confirm('Voulez-vous vraiment supprimer cette matière ?')) {
-      
+
     }
   }
 }

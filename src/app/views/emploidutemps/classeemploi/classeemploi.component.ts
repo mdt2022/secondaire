@@ -1,11 +1,12 @@
-// import { MatiereService } from 'src/app/services/matiere.service';
+import { MatiereService } from '../../../service/matiere.service';
 import { Component, OnInit } from '@angular/core';
-import { ClasseService } from 'src/app/service/classe.service';
-import { Classe } from 'src/app/model/classe.model';
-import { Anneeuv } from 'src/app/model/anneeuv.model';
-import { Emploidutemp } from 'src/app/model/emploidutemp.model';
-import { EmploidutempService } from 'src/app/service/emploidutemp.service';
-import { AnneeuvService } from 'src/app/service/anneeuv.service';
+import { ClasseService } from '../../../service/classe.service';
+import { Classe } from '../../../model/classe.model';
+import { Anneeuv } from '../../../model/anneeuv.model';
+import { Emploidutemp } from '../../../model/emploidutemp.model';
+import { EmploidutempService } from '../../../service/emploidutemp.service';
+import { AnneeuvService } from '../../../service/anneeuv.service';
+import { Matiere } from '../../../model/matiere.model';
 
 @Component({
   selector: 'app-classe',
@@ -18,17 +19,19 @@ export class ClasseemploiComponent implements OnInit {
   emploiDuTemps: Emploidutemp[] = [];
   selectedClasse: string = '';
   selectedAnnee: string = '';
+  emploi: any;
 
   constructor(
     private emploiService: EmploidutempService,
     private classeService: ClasseService,
     private anneeService: AnneeuvService,
-    // private matiereService: MatiereService
+    private matiereService: MatiereService
   ) {}
 
   ngOnInit(): void {
     this.loadClasses();
     this.loadAnnees();
+
   }
 
   loadClasses(): void {
@@ -51,8 +54,13 @@ export class ClasseemploiComponent implements OnInit {
     }
   }
 
-  // getMatiere(matiereId: string): string {
-  //   let matiere = this.matiereService.getMatiereById(matiereId);
-  //   return matiere ? matiere.libelle : '';
-  // }
+
+  getAllMatieres(): string {
+    let matieres: Matiere[] = [];
+    this.matiereService.getAllMatieres().subscribe((data: Matiere[]) => {
+      matieres = data;
+    });
+    return matieres.length > 0 ? matieres[0].libelle : '';
+  }
+
 }

@@ -65,6 +65,10 @@ export const routes: Routes = [
         loadChildren: () => import('./views/gestionsdesclasses/routes').then((m) => m.routes)
       },
       {
+        path: 'administrateur',
+        loadChildren: () => import('./views/administrateur/routes').then((m) => m.routes)
+      },
+      {
         path: 'matieres',
         loadChildren: () => import('./views/matieres/routes').then((m) => m.routes)
       },

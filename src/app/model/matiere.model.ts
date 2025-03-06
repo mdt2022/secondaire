@@ -1,5 +1,7 @@
 export interface Matiere{
-    id: number;
-    nom: string;
-    
+  id: number;
+  libelle: string;
+  coefficient: number;
+  horaire: number;
+
 }

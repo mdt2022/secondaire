@@ -64,15 +64,15 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let emploi of emploisDuTemps; let i = index">
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ emploi.jour }}</td>
+                            <td>{{ emploi.classe.nom }}</td>
+                            <td>{{ emploi.matiere.libelle }}</td>
+                            <td>{{ emploi.heureArrivee }}</td>
+                            <td>{{ emploi.heureDepart }}</td>
+                            <td>{{ emploi.nmbHeure }}</td>
+                            <td>{{ emploi.present ? 'Oui' : 'Non' }}</td>
+                            <td>{{ emploi.date }}</td>
                         </tr>
                     </tbody>
                 </table>

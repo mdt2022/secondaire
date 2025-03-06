@@ -53,13 +53,13 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let emploi of emploiDuTemps">
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>{{ emploi.heureDebut }} -|- {{ emploi.heureFin }}</td>
+                            <td>{{ emploi.jour === 'Lundi' ? getAllMatieres(emploi.matiere) : '' }}</td>
+                            <td>{{ emploi.jour === 'Mardi' ? getAllMatieres(emploi.matiere) : '' }}</td>
+                            <td>{{ emploi.jour === 'Mercredi' ? getAllMatieres(emploi.matiere) : '' }}</td>
+                            <td>{{ emploi.jour === 'Jeudi' ? getAllMatieres(emploi.matiere) : '' }}</td>
+                            <td>{{ emploi.jour === 'Vendredi' ? getAllMatieres(emploi.matiere) : '' }}</td>
+                            <td>{{ emploi.jour === 'Samedi' ? getAllMatieres(emploi.matiere) : '' }}</td>
                         </tr>
                     </tbody>
                 </table>

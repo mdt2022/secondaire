@@ -3,7 +3,7 @@ import { Site } from '../model/site.model';
 import { Role } from '../model/role.model';
 
 export class Administrateur{
-    id!:string;
+    id!:number;
     nom!:string;
     prenom!:string;
     adresse!:string;
@@ -11,7 +11,7 @@ export class Administrateur{
     email!:string;
     lieun!:string;
     datedn!:string;
-    photo!:string;    
+    photo!:string;
     username!:string;
     password!:string;
     ecole!:Ecole;
