@@ -5,6 +5,7 @@ import { Classe } from "./classe.model";
 import { Enseignant } from "./enseignant.model";
 
 export class Enseigner{
+  id!:number;
   matiere!:Matiere;
   classe!: Classe;
   enseignant!: Enseignant;

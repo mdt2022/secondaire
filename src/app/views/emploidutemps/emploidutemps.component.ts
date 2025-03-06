@@ -10,7 +10,8 @@ import { CommonModule } from '@angular/common';
   imports :[
     NgxPaginationModule,
     RouterModule,
-    CommonModule
+    CommonModule,
+    NgxPaginationModule
   ],
   templateUrl: './emploidutemps.component.html',
   styleUrls: ['./emploidutemps.component.scss']
@@ -24,7 +25,7 @@ export class EmploidutempsComponent implements OnInit {
   constructor(private emploiDuTempsService: EmploidutempService) {}
 
   ngOnInit(): void {
-
+    this.getEmploisDuTemps()
 
   }
 

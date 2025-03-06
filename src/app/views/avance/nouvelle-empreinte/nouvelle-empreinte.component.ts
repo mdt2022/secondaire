@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
-import { EnseignantService } from 'src/app/service/enseignant.service';
-import { AnneeuvService } from 'src/app/service/anneeuv.service'; 
-import { Enseignant } from 'src/app/model/enseignant.model'; 
-import { Anneeuv } from 'src/app/model/anneeuv.model'; 
+import { EnseignantService } from '../../../service/enseignant.service';
+import { AnneeuvService } from '../../../service/anneeuv.service';
+import { Enseignant } from '../../../model/enseignant.model';
+import { Anneeuv } from '../../../model/anneeuv.model';
+import { AuthService } from '../../../service/auth.service';
 
 @Component({
   selector: 'app-nouvelle-empreinte',
@@ -23,18 +24,23 @@ import { Anneeuv } from 'src/app/model/anneeuv.model';
 })
 export class NouvelleEmpreinteComponent implements OnInit {
   empreinteForm!: FormGroup;
+  empreintes: any[] = [];
+  empreintesEnregistrees: any[] = [];
   enseignants: Enseignant[] = [];
   anneesScolaires: Anneeuv[] = [];
   mois = [
     'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
     'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
   ];
-  authService: any;
+
+
 
   constructor(
     private fb: FormBuilder,
     private enseignantService: EnseignantService,
-    private anneeService: AnneeuvService
+    private anneeService: AnneeuvService,
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -48,12 +54,13 @@ export class NouvelleEmpreinteComponent implements OnInit {
 
     this.getAllEnseignantsByEcole();
     this.getAllAnnee();
+    this.empreintesEnregistrees = JSON.parse(localStorage.getItem('empreintes') || '[]');
   }
 
   getAllEnseignantsByEcole() {
-    const user = this.authService.getUserLocalForm(); // ✅ Récupérer l'utilisateur connecté
+    const user = this.authService.getUserFromLocalStorage(); // ✅ Récupérer l'utilisateur connecté
     const ecoleId = user?.ecole?.idEcole; // ✅ Extraire l'ID de l'école
-  
+
     if (ecoleId) {
       this.enseignantService.getEnseignantsByEcole(ecoleId).subscribe(
         (data) => {
@@ -83,11 +90,25 @@ export class NouvelleEmpreinteComponent implements OnInit {
     const today = new Date();
     return today.toISOString().split('T')[0]; // Format YYYY-MM-DD
   }
+  
 
   onSubmit() {
     if (this.empreinteForm.valid) {
-      console.log('Formulaire soumis :', this.empreinteForm.value);
-      this.empreinteForm.reset();
+      const formData = this.empreinteForm.value;
+      console.log('Formulaire soumis :', formData);
+
+      // Simuler l'enregistrement, par exemple en sauvegardant dans localStorage
+      let empreintes = JSON.parse(localStorage.getItem('empreintes') || '[]');
+      empreintes.push(formData);
+      localStorage.setItem('empreintes', JSON.stringify(empreintes));
+
+      // Rediriger vers la page de recherche après création réussie
+      this.router.navigate(['/avance/avance']);
+    } else {
+      alert('Veuillez remplir tous les champs.');
     }
   }
+
+
 }
+

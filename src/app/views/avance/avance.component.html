@@ -1,49 +1,44 @@
-<!-- Formulaire caché par défaut -->
-<div class="card p-4">
+<div class="container mt-4">
     <h3>Recherche d'empreinte pour les professeurs</h3>
     <div>
         <a [routerLink]="['/nouvelle-empreinte']">Nouvelle empreinte</a>
     </div>
-    <div class="container mt-4">
-        <form (ngSubmit)="onSubmit()">
-            <div class="row g-3 align-items-end">
-                <div class="col-md-3">
-                    <option value="" disabled selected>Choisissez un professeur</option>
-                    <select id="enseignant" formControlName="enseignant" class="form-select">
-                      <option value="" disabled selected>Choisissez un professeur</option>
-              <option *ngFor="let enseignant of enseignants" [value]="enseignant.id">
-                {{ enseignant.nom }} {{ enseignant.prenom }}
-              </option>
-                          </select>
-                </div>
 
-                <div class="col-md-3">
-                    <option value="" disabled selected>Choisissez un mois</option>
-
-                    <select id="mois" formControlName="mois" class="form-select">
-              <option value="" disabled selected>Choisissez un mois</option>
-              <option *ngFor="let m of mois" [value]="m">{{ m }}</option>
-            </select>
-                </div>
-
-                <div class="col-md-3">
-                    <option value="" disabled selected>Choisissez une année scolaire</option>
-
-                    <select id="anneeScolaire" formControlName="anneeScolaire" class="form-select">
-              <option value="" disabled selected>Choisissez une année scolaire</option>
-              <option *ngFor="let annee of anneesScolaires" [value]="annee">{{ annee.nom }}</option>
-            </select>
-                </div>
-
-                <div class="col-md-3">
-                    <button type="submit" class="btn btn-primary w-100">
-              Enregistrer
-            </button>
-                </div>
-
-            </div>
-        </form>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" class="form-control" placeholder="Rechercher une empreinte...">
+        </div>
     </div>
 
-
+    <div *ngIf="filteredEmpreintes.length > 0">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Professeur</th>
+                    <th>Mois</th>
+                    <th>Année Scolaire</th>
+                    <th>Montant</th>
+                    <th>Date d'empreinte</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let emp of filteredEmpreintes;  let i = index">
+                    <td>{{i + 1}}</td>
+                    <td>{{ emp.enseignant }}</td>
+                    <td>{{ emp.mois }}</td>
+                    <td>{{ emp.anneeScolaire }}</td>
+                    <td>{{ emp.montant }}</td>
+                    <td>{{ emp.dateEmpreinte }}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm">Supprimer</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="filteredEmpreintes.length === 0">
+        <p>Aucune empreinte trouvée.</p>
+    </div>
 </div>

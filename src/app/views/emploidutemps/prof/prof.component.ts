@@ -49,6 +49,7 @@ export class ProfComponent implements OnInit {
 
     this.loadProfesseurs();
     this.loadAnnees();
+    
   }
 
   loadProfesseurs() {

@@ -34,16 +34,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Boucle pour afficher les emplois du temps 
+
                         <tr *ngFor="let emploi of filteredEmploisDuTemps() | paginate: { itemsPerPage: 5, currentPage: currentPage }; let i=index " class="table-row ">
                             <td>{{ (currentPage - 1) * 5 + i + 1 }}</td>
                             <td>{{ emploi.jour }}</td>
-                            <td>{{ emploi.matiere.nom }}</td>
-                            <td>{{ emploi.professeur.nom }}</td>
+                            <td>{{ emploi.matiere.libelle }}</td>
+                            <td>{{ emploi.professeur.prenom}} {{ emploi.professeur.nom}}</td>
                             <td>{{ emploi.heuredebut }}</td>
                             <td>{{ emploi.heurefin }}</td>
-                            <td>{{ emploi.duree }}</td>
-                            <td>{{ emploi.coefficient }}</td>
+                            <td>{{ emploi.matiere.horaire }}</td>
+                            <td>{{ emploi.matiere.coefficient }}</td>
                             <td>{{ emploi.classe.nom }}</td>
                             <td>
                                 <button class="btn btn-danger btn-sm " (click)="deleteEmploi(emploi.id); $event.stopPropagation(); ">
@@ -51,13 +51,13 @@
                                 </button>
                             </td>
                         </tr>
-                        -->
+
                     </tbody>
                 </table>
             </div>
             <!-- Pagination -->
             <div class="d-flex justify-content-center ">
-                <!-- <pagination-controls (pageChange)="currentPage=$ event "></pagination-controls> -->
+                <pagination-controls (pageChange)="currentPage= $event "></pagination-controls>
             </div>
         </div>
     </div>
