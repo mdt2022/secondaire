@@ -24,9 +24,7 @@ export class EmploidutempsComponent implements OnInit {
   constructor(private emploiDuTempsService: EmploidutempService) {}
 
   ngOnInit(): void {
-    this.getEmploisDuTemps();
-    const user = localStorage.getItem('user');
-      this.ecole = user ? JSON.parse(user).ecole : null;
+
 
   }
 

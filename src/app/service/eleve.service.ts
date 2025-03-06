@@ -10,7 +10,7 @@ import { Eleve } from '../model/eleve.model';
 })
 export class EleveService {
   
-  private apiUrl = environment.apiURL;
+  private apiUrl = environment.apiURL+"/eleves";
   
   constructor(private http: HttpClient, private router: Router) {}
   //la liste des classes du secondaires

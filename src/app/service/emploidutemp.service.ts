@@ -9,18 +9,18 @@ import { environment } from '../../environments/environment';
     providedIn: 'root'
 })
 export class EmploidutempService{
-    private apiUrl = environment.apiURL;
+    private apiUrl = environment.apiURL+"/emploidutemps";
     constructor(private http: HttpClient, private router: Router) {}
-
+    //par jour
     getEmploiDuTempsParJour(anneeId: string, jour: string): Observable<Emploidutemp[]> {
       return this.http.get<Emploidutemp[]>(`${this.apiUrl}?annee=${anneeId}&jour=${jour}`);
     }
-
+    //
     getAllemploidutemps(): Observable<Emploidutemp[]>{
-        return this.http.get<Emploidutemp[]>(this.apiUrl+"/emploidutemps");
+        return this.http.get<Emploidutemp[]>(this.apiUrl);
     }
-
+    //par prof
     getEmploiByProf(prof: string): Observable<Emploidutemp[]>{
-      return this.http.get<Emploidutemp[]>(this.apiUrl+"/emploidutemps/${prof}");
+      return this.http.get<Emploidutemp[]>(this.apiUrl+"/${prof}");
   }
 }

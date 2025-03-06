@@ -11,7 +11,6 @@ import { Observable } from 'rxjs';
 export class AdminService {
 
   private apiUrl = environment.apiURL;
-  private tokenKey = 'auth-token';
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -24,8 +23,9 @@ export class AdminService {
     return this.http.post<Administrateur>(this.apiUrl+"/administrateurs", admin);
   }
 
-  update(admin: Administrateur): Observable<Administrateur> {
-    return this.http.put<Administrateur>(this.apiUrl+"/administrateurs/"+admin.id, admin);
+  update(id: number, admin: Administrateur): Observable<Administrateur> {
+    return this.http.put<Administrateur>(this.apiUrl+"/administrateurs/"+id, admin);
+
   }
 
   delete(id: number): Observable<void> {

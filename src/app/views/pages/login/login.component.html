@@ -10,27 +10,27 @@
                                 <p class="text-body-secondary">Espace Secondaire INTEC</p>
                                 <c-input-group class="mb-3">
                                     <span cInputGroupText>
-                    <svg cIcon name="cilUser"></svg>
-                  </span>
+                                    <svg cIcon name="cilUser"></svg>
+                                </span>
                                     <input autoComplete="username" cFormControl placeholder="Nom d'utilisateur" [(ngModel)]="credentials.username" name="username" />
                                 </c-input-group>
                                 <c-input-group class="mb-4">
                                     <span cInputGroupText>
-                    <svg cIcon name="cilLockLocked"></svg>
-                  </span>
+                                    <svg cIcon name="cilLockLocked"></svg>
+                                    </span>
                                     <input autoComplete="current-password" cFormControl placeholder="Mot de passe" type="password" [(ngModel)]="credentials.password" name="password" />
                                 </c-input-group>
                                 <c-row>
                                     <c-col xs="6">
                                         <button cButton [disabled]="isLoading" class="px-4" color="primary" type="submit">
-                      <span *ngIf="isLoading" class="spinner-border spinner-border-sm"></span>
-                      <span *ngIf="!isLoading">Connexion</span>                       
-                    </button>
+                                            <span *ngIf="isLoading" class="spinner-border spinner-border-sm"></span>
+                                            <span *ngIf="!isLoading">Connexion</span>                       
+                                        </button>
                                     </c-col>
                                     <c-col class="text-right" xs="6">
                                         <button cButton class="px-0" color="link">
-                      mot de passe oublié ?
-                    </button>
+                                        mot de passe oublié ?
+                                        </button>
                                     </c-col>
                                 </c-row>
                             </form>

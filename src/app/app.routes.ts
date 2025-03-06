@@ -35,10 +35,12 @@ export const routes: Routes = [
       { path: 'djournalier', component: DjournalierComponent },
 
       { path: 'semaineprof', component: SemaineprofComponent },
-
       {
         path: 'dashboard',
         loadChildren: () => import('./views/dashboard/routes').then((m) => m.routes)
+      },{
+        path: 'administrateur',
+        loadChildren: () => import('./views/administrateur/routes').then((m) => m.routes)
       },
       {
         path: 'avance',

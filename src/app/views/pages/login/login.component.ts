@@ -42,12 +42,20 @@ export class LoginComponent {
   ) { }
 
   onLogin(): void {
+    if(this.credentials.username == ''){
+      alert("Nom utilsateur obligatoire")
+      return
+    }
+    if(this.credentials.password == ''){
+      alert("Mot de passe obligatoire")
+      return
+    }
     this.isLoading = true; // Active le loader
     this.authService.login(this.credentials).subscribe({
       next: (response) => {
         this.isLoading = false; // Désactive le loader après la réponse
         this.authService.saveUserToLocalStorage(response);
-        console.log(response);
+        console.log(response+" mdt ++");
         this.router.navigate(['/dashboard']); // Redirige vers le tableau de bord
       },
       error: () => {

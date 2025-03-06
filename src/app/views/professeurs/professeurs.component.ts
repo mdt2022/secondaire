@@ -5,6 +5,8 @@ import { Enseignant } from '../../model/enseignant.model';
 import { EnseignantService } from '../../service/enseignant.service';
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { AuthService } from '../../service/auth.service';
+import { User } from '../../model/user.model';
 
 @Component({
   selector: 'app-professeurs',
@@ -35,15 +37,19 @@ export class ProfesseursComponent implements OnInit {
     tarif: 0
   };
   page: number = 1; // Page actuelle
-
-  constructor(private enseignantService: EnseignantService) {}
+  user!: User
+  constructor(
+    private enseignantService: EnseignantService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.loadEnseignants();
+    this.user = this.authService.getUserFromLocalStorage()
   }
 
-  loadEnseignants(): void {
-    this.enseignantService.getAllEnseignants().subscribe(data => {
+  loadEnseignants(): void {   
+    this.enseignantService.getEnseignantsByEcole(this.user.administrateur.ecole.idEcole).subscribe(data => {
       this.enseignants = data;
     });
   }

@@ -9,7 +9,6 @@ import { Ecole } from '../../model/ecole.model';
 import { Site } from '../../model/site.model';
 import { Role } from '../../model/role.model';
 import { EcoleService } from '../../service/ecole.service';
-import { SiteService } from '../../service/site.service';
 import { RoleService } from '../../service/role.service';
 @Component({
   selector: 'app-administrateur',
@@ -31,7 +30,6 @@ import { RoleService } from '../../service/role.service';
 export class AdministrateurComponent implements OnInit {
   admins: Administrateur[] = [];
   ecoles: Ecole[] = [];
-  sites: Site[] = [];
   roles: Role[] = [];
   adminForm: Administrateur = {
     id:0,
@@ -55,14 +53,13 @@ export class AdministrateurComponent implements OnInit {
   constructor(
     private adminService: AdminService,
     private ecoleService: EcoleService,
-    private siteService: SiteService,
     private roleService: RoleService
   ) {}
 
   ngOnInit(): void {
     this.loadAdmins();
     this.loadEcoles();
-    this.loadSites();
+
     this.loadRoles();
   }
 
@@ -78,12 +75,6 @@ export class AdministrateurComponent implements OnInit {
     });
   }
 
-  loadSites(): void {
-    this.siteService.getAllSite().subscribe(data => {
-      this.sites = data;
-    });
-  }
-
   loadRoles(): void {
     this.roleService.getRoles().subscribe(data => {
       this.roles = data;
@@ -92,7 +83,9 @@ export class AdministrateurComponent implements OnInit {
 
   saveOrUpdate(): void {
     if (this.isEditing) {
-      this.adminService.update(this.adminForm).subscribe(() => {
+
+      this.adminService.update(1,this.adminForm).subscribe(() => {
+
         console.log(this.adminForm.site.id+" +++++");
         this.loadAdmins();
         this.resetForm();
@@ -120,22 +113,19 @@ export class AdministrateurComponent implements OnInit {
     admin.ecole = this.DEFAULT_ECOLE; // Utiliser un rôle par défaut
   }
   const selectedRole = this.roles.find((role) => role.id === admin.role.id) || this.DEFAULT_ROLE;
-  const setectedSite = this.sites.find((site) => site.id === admin.site.id) || this.DEFAULT_SITE;
   const setectedEcole = this.ecoles.find((ecole) => ecole.idEcole === admin.ecole.idEcole) || this.DEFAULT_ECOLE;
     // Vérifier si selectedRole est défini
   if (!selectedRole) {
     console.error("Rôle non trouvé pour l'administrateur :", admin);
     return;
   }
-  if (!setectedSite) {
-    console.error("Site non trouvé pour l'administrateur :", admin);
-    return;
-  }
+
   if (!setectedEcole) {
     console.error("Ecole non trouvé pour l'administrateur :", admin);
     return;
   }
-    this.adminForm = { ...admin, role: selectedRole, site: setectedSite, ecole: setectedEcole };
+    this.adminForm = { ...admin, role: selectedRole, ecole: setectedEcole };
+
     this.isEditing = true;
   }
 

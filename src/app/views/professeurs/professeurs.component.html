@@ -70,7 +70,7 @@
         <tr>
           <th>Nom</th>
           <th>Prénom</th>
-          <th>Matricule</th>
+          <th>Téléphone</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -78,7 +78,7 @@
         <tr *ngFor="let enseignant of enseignants | paginate: { itemsPerPage: 10, currentPage: page }" (click)="selectEnseignant(enseignant)">
           <td>{{ enseignant.nom }}</td>
           <td>{{ enseignant.prenom }}</td>
-          <td>{{ enseignant.matricule }}</td>
+          <td>{{ enseignant.telephone }}</td>
           <td>
             <button (click)="deleteEnseignant(enseignant.id)" class="btn btn-danger btn-sm">Supprimer</button>
           </td>
