@@ -4,7 +4,9 @@ export const routes: Routes = [
   {
     path: '',
     data: {
+
       title: 'Administrateurs'
+
     },
     children: [
       {
@@ -16,6 +18,7 @@ export const routes: Routes = [
         path: 'administrateur',
         loadComponent: () => import('./administrateur.component').then(m => m.AdministrateurComponent),
         data: {
+
           title: 'Administrateur'
         }
       }

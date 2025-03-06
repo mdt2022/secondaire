@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { EmploidutempService } from 'src/app/service/emploidutemp.service';
+import { EmploidutempService } from '../../../service/emploidutemp.service';
 import { Ecole } from '../../../model/ecole.model';
-import { Enseignant } from 'src/app/model/enseignant.model';
-import { Anneeuv } from 'src/app/model/anneeuv.model';
-import { Emploidutemp } from 'src/app/model/emploidutemp.model';
-import { EnseignantService } from 'src/app/service/enseignant.service';
-import { AnneeuvService } from 'src/app/service/anneeuv.service';
+import { Enseignant } from '../../../model/enseignant.model';
+import { Anneeuv } from '../../../model/anneeuv.model';
+import { Emploidutemp } from '../../../model/emploidutemp.model';
+import { EnseignantService } from '../../../service/enseignant.service';
+import { AnneeuvService } from '../../../service/anneeuv.service';
 import { EcoleService } from '../../../service/ecole.service';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';

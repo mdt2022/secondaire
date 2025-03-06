@@ -1,11 +1,11 @@
 import { EmploidutempService } from './../../../service/emploidutemp.service';
 import { AnneeuvService } from './../../../service/anneeuv.service';
-import { EnseignantService } from 'src/app/service/enseignant.service';
+import { EnseignantService } from './../../../service/enseignant.service';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Anneeuv } from 'src/app/model/anneeuv.model';
-import { Enseignant } from 'src/app/model/enseignant.model';
-import { Emploidutemp } from 'src/app/model/emploidutemp.model';
+import { Anneeuv } from './../../../model/anneeuv.model';
+import { Enseignant } from './../../../model/enseignant.model';
+import { Emploidutemp } from './../../../model/emploidutemp.model';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
@@ -18,7 +18,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
     CommonModule, // ✅ Ajouter ici
     ReactiveFormsModule, // ✅ Assurer que le form fonctionne
     RouterModule,
-    HttpClientModule
+    HttpClientModule,
+    NgxPaginationModule
   ],
   templateUrl: './prof.component.html',
   styleUrl: './prof.component.scss'

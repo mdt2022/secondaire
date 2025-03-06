@@ -6,7 +6,7 @@ import { Classe } from '../../model/classe.model';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { Ecole } from 'src/app/model/ecole.model';
+import { Ecole } from '../../model/ecole.model';
 import { EcoleService } from '../../service/ecole.service';
 
 @Component({

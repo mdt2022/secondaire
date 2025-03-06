@@ -1,6 +1,6 @@
 import { Ecole } from '../model/ecole.model';
-import { Site } from '../model/site.model';
 import { Role } from '../model/role.model';
+
 
 export interface Administrateur{
     id:number;
@@ -15,6 +15,6 @@ export interface Administrateur{
     username:string;
     password:string;
     ecole:Ecole;
-    site:Site;
     role:Role;
 }
+

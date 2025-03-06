@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-emploidutemps',
   standalone:true,
   imports :[
-    NgxPaginationModule, 
+    NgxPaginationModule,
     RouterModule,
     CommonModule
   ],
@@ -19,11 +19,12 @@ export class EmploidutempsComponent implements OnInit {
   emploisDuTemps: Emploidutemp[] = [];  // Liste des emplois du temps
   searchText: string = '';
   currentPage: number = 1;
+  ecole: any;
 
   constructor(private emploiDuTempsService: EmploidutempService) {}
 
   ngOnInit(): void {
-    //this.getEmploisDuTemps();
+
 
   }
 

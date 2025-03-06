@@ -1,5 +1,5 @@
 <div class="page-header mb-3">
-    <h3>Liste des matières enseignées</h3>
+    <h3>Liste des matières enseignées à {{ecole.nomEcole}}</h3>
     <button class="btn btn-info" [routerLink]="['/enseignercreate']">Affecter des matières à un enseignant</button>
 </div>
 
@@ -21,22 +21,29 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let matiere of matieres; let i=index ">
-                        <td>{{ i + 1 }}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                    <tr *ngFor="let enseigner of enseigner; let i=index ">
+                        <td>{{ (currentPage - 1) * 5 + i + 1 }}</td>
+                        <td>{{ enseigner.classe.nom }}</td>
+                        <td>{{ enseigner.enseignant.prenom }} {{ enseigner.enseignant.nom }}</td>
                         <td>
-                            <button class="btn btn-info me-2 " (click)="modifierMatiere(matiere.id) ">
-                            <i class="material-icons ">edit</i>
-                        </button>
-                            <button class="btn btn-danger " (click)="supprimerMatiere(matiere.id) ">
-                            <i class="material-icons ">delete</i>
-                        </button>
+                            {{ enseigner.matiere.libelle }}
+                            <em> Coefficient {{enseigner.matiere.coefficient }} Horaire {{enseigner.matiere.horaire }}</em>
+                        </td>
+                        <td>
+                            <button class="btn btn-info me-2 " (click)="modifierMatiere(enseigner.id) ">
+                        <i class="material-icons ">edit</i>
+                    </button>
+                            <button class="btn btn-danger " (click)="supprimerMatiere(enseigner.id) ">
+                        <i class="material-icons ">delete</i>
+                    </button>
                         </td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center">
+            <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
         </div>
     </div>
 </div>

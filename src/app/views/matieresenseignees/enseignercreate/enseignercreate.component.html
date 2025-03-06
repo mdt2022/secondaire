@@ -6,22 +6,21 @@
 
 <div class="page-header m-4">
     <h3>
-        Enregistre une matière enseignée à {{ etablissement }}
+        Enregistre une matière enseignée à {{ ecole.nomEcole }}
     </h3>
 </div>
 
-<form (ngSubmit)="onSubmit()" class="form-horizontal">
-
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-horizontal">
     <!-- Sélection du professeur et Nombre de classes en charge sur la même ligne -->
     <div class="form-group row">
         <div class="col-sm-4">
             <label class="form-label">Professeur</label>
             <select class="form-control" formControlName="professeur" required>
-              <option value="">Selectionnez un prof</option>
-              <option *ngFor="let enseignant of enseignants" [value]="enseignant.id">
-                  {{ enseignant.prenom }} {{ enseignant.nom }}
-              </option>
-          </select>
+    <option value="">Sélectionnez un professeur</option>
+    <option *ngFor="let enseignant of enseignants" [value]="enseignant.id">
+      {{ enseignant.prenom }} {{ enseignant.nom }}
+    </option>
+  </select>
         </div>
 
         <div class="col-sm-4">
@@ -37,8 +36,84 @@
     <!-- Affichage du retour de l'affectation -->
     <div id="retourjquery">{{ retourAffectation }}</div>
 
+    <!-- Dynamique des matières et classes -->
+    <div formArrayName="matieresClasses">
+        <div *ngFor="let matiereClass of matieresClasses.controls; let i = index" [formGroupName]="i">
+            <fieldset>
+                <legend>Choisi la {{ i + 1 }}ère classe et les matières affectées au professeur</legend>
+
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        <select class="form-control" formControlName="classe" required>
+          <option value="">Classe</option>
+          <option *ngFor="let classe of classes" [value]="classe.id">{{ classe.nom }}</option>
+        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        <select class="form-control" formControlName="matiere1" required>
+          <option value="0">1ère Matière</option>
+          <option *ngFor="let matiere of matiere" [value]="matiere.id">
+            {{ matiere.libelle }} <em>Coefficient {{ matiere.coefficient }} Horaire {{ matiere.horaire }}</em>
+          </option>
+        </select>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <select class="form-control" formControlName="matiere2" required>
+          <option value="0">2ème Matière</option>
+          <option *ngFor="let matiere of matiere" [value]="matiere.id">
+            {{ matiere.libelle }} <em>Coefficient {{ matiere.coefficient }} Horaire {{ matiere.horaire }}</em>
+          </option>
+        </select>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <select class="form-control" formControlName="matiere3" required>
+          <option value="0">3ème Matière</option>
+          <option *ngFor="let matiere of matiere" [value]="matiere.id">
+            {{ matiere.libelle }} <em>Coefficient {{ matiere.coefficient }} Horaire {{ matiere.horaire }}</em>
+          </option>
+        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        <select class="form-control" formControlName="matiere4" required>
+          <option value="0">4ème Matière</option>
+          <option *ngFor="let matiere of matiere" [value]="matiere.id">
+            {{ matiere.libelle }} <em>Coefficient {{ matiere.coefficient }} Horaire {{ matiere.horaire }}</em>
+          </option>
+        </select>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <select class="form-control" formControlName="matiere5" required>
+          <option value="0">5ème Matière</option>
+          <option *ngFor="let matiere of matiere" [value]="matiere.id">
+            {{ matiere.libelle }} <em>Coefficient {{ matiere.coefficient }} Horaire {{ matiere.horaire }}</em>
+          </option>
+        </select>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <select class="form-control" formControlName="matiere6" required>
+          <option value="0">6ème Matière</option>
+          <option *ngFor="let matiere of matiere" [value]="matiere.id">
+            {{ matiere.libelle }} <em>Coefficient {{ matiere.coefficient }} Horaire {{ matiere.horaire }}</em>
+          </option>
+        </select>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
     <!-- Champ caché pour l'école -->
-    <input type="hidden" [value]="idetablissement" formControlName="ecole">
+    <input type="hidden" [value]="ecole" formControlName="ecole">
 
     <!-- Bouton d'enregistrement -->
     <div class="form-group m-3">
@@ -46,5 +121,4 @@
             <button type="submit" class="btn btn-info">Enregistrer</button>
         </div>
     </div>
-
 </form>

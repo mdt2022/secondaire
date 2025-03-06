@@ -59,6 +59,7 @@ export class AdministrateurComponent implements OnInit {
   ngOnInit(): void {
     this.loadAdmins();
     this.loadEcoles();
+
     this.loadRoles();
   }
 
@@ -74,7 +75,6 @@ export class AdministrateurComponent implements OnInit {
     });
   }
 
-
   loadRoles(): void {
     this.roleService.getRoles().subscribe(data => {
       this.roles = data;
@@ -83,7 +83,9 @@ export class AdministrateurComponent implements OnInit {
 
   saveOrUpdate(): void {
     if (this.isEditing) {
+
       this.adminService.update(1,this.adminForm).subscribe(() => {
+
         console.log(this.adminForm.site.id+" +++++");
         this.loadAdmins();
         this.resetForm();
@@ -117,12 +119,13 @@ export class AdministrateurComponent implements OnInit {
     console.error("Rôle non trouvé pour l'administrateur :", admin);
     return;
   }
-  
+
   if (!setectedEcole) {
     console.error("Ecole non trouvé pour l'administrateur :", admin);
     return;
   }
     this.adminForm = { ...admin, role: selectedRole, ecole: setectedEcole };
+
     this.isEditing = true;
   }
 
