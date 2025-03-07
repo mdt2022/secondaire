@@ -31,15 +31,15 @@ export class EmploidutempsComponent implements OnInit {
 
   // Récupérer les emplois du temps du service
   getEmploisDuTemps(): void {
-    this.emploiDuTempsService.getAllemploidutemps().subscribe(
-      (data) => {
+    this.emploiDuTempsService.getAllemploidutemps().subscribe({
+      next: (data) => {
         this.emploisDuTemps = data;
         console.log('Emplois du temps:', this.emploisDuTemps);
       },
-      (error) => {
+      error: (error) => {
         console.error('Erreur lors de la récupération des emplois du temps', error);
       }
-    );
+    });
   }
 
   // Méthode de filtrage

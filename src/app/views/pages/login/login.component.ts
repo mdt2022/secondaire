@@ -55,7 +55,7 @@ export class LoginComponent {
       next: (response) => {
         this.isLoading = false; // Désactive le loader après la réponse
         this.authService.saveUserToLocalStorage(response);
-        console.log(response+" mdt ++");
+        console.log(response.administrateur.ecole.nomEcole+" mdt ++");
         this.router.navigate(['/dashboard']); // Redirige vers le tableau de bord
       },
       error: () => {

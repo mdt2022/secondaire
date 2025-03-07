@@ -14,7 +14,7 @@ export class EmploidutempService{
     //par jour
     getEmploiDuTempsParJour(anneeId: string, jour: string): Observable<Emploidutemp[]> {
       return this.http.get<Emploidutemp[]>(`${this.apiUrl}?annee=${anneeId}&jour=${jour}`);
-    }
+    } 
     //
     getAllemploidutemps(): Observable<Emploidutemp[]>{
         return this.http.get<Emploidutemp[]>(this.apiUrl);

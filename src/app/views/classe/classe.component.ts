@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Ecole } from '../../model/ecole.model';
 import { EcoleService } from '../../service/ecole.service';
+import { User } from '../../model/user.model';
 
 @Component({
   selector: 'app-classe',
@@ -22,7 +23,7 @@ export class ClasseComponent implements OnInit {
   isFormVisible: boolean = false;
   searchText: string = '';
   currentPage: number = 1;
-
+  user!: User
   constructor(
     private classeService: ClasseService,
     private ecoleService: EcoleService,
@@ -31,28 +32,24 @@ export class ClasseComponent implements OnInit {
   ) {}
 
     ngOnInit(): void {
-      this.getClasseEcole();
-            this.getAllEcole()
-            
-
-    }
-
-    
+      this.getClasseEcole()
+      this.getAllEcole()
+    }   
     
     getClasseEcole() {
-      const user = this.authService.getUserFromLocalStorage(); 
-      const ecoleId = user?.ecole?.idEcole; 
+      this.user = this.authService.getUserFromLocalStorage(); 
+      const ecoleId = this.user.administrateur.ecole.idEcole; 
 
       if (ecoleId) {
-        this.classeService.getClasseEcole(ecoleId).subscribe(
-          (data) => {
+        this.classeService.getClasseEcole(ecoleId).subscribe({
+          next: (data) => {
             this.classes = data; 
             console.log("Classes après mise à jour :", this.classes);
           },
-          (error) => {
+          error: (error) => {
             console.error('Erreur lors de la récupération des classes', error);
           }
-        );
+        });
       } else {
         console.error("Impossible de récupérer l'ID de l'école.");
       }

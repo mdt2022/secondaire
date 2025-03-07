@@ -18,8 +18,8 @@ export class ClasseService {
     return this.http.get<Classe[]>(this.apiUrl+"/classes");
   }
   //la liste des classes de l'ecole
-  getClasseEcole(ecoleId: number): Observable<any>{
-    return this.http.get<any>(this.apiUrl+"/classeecoles/"+ecoleId);
+  getClasseEcole(ecoleId: number): Observable<Classe[]>{
+    return this.http.get<Classe[]>(this.apiUrl+"/classeecoles/"+ecoleId);
   }
 
 }

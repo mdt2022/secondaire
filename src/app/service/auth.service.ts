@@ -1,8 +1,7 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { environment } from '../../environments/environment';
-
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
+import { environment } from "../../environments/environment";
 @Injectable({
   providedIn: 'root'
 })
@@ -13,8 +12,8 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
 
   login(credentials: { username: string; password: string }) {
-    const body = [credentials.username, credentials.password]; // Convertir en tableau
-    return this.http.post<any>(`${this.apiUrl}/administrateurs/login`, body);
+    const donnees = [credentials.username, credentials.password]
+    return this.http.post<any>(this.apiUrl+"/administrateurs/loginsecond", donnees);
   }
     saveUserToLocalStorage(user: any): void {
     localStorage.setItem('user', JSON.stringify(user));
