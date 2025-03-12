@@ -70,13 +70,11 @@ export const navItems: INavData[] = [
   {
     name: 'Pointages',
     url: '/pointages/pointages',
-
     iconComponent: { name: 'cil-check-circle' }
   },
   {
     name: 'Professeurs',
     url: '/professeurs/professeurs',
-
     iconComponent: { name: 'cil-teacher' }
   },
   {
@@ -84,15 +82,18 @@ export const navItems: INavData[] = [
     name: 'Configurations'
   },
   {
+    name: 'Role',
+    url: '/roles/roles',
+    iconComponent: { name: 'cil-chalkboard' }
+  },
+  {
     name: 'Gestion des classes',
     url: '/gestionsdesclasses/gestionsdesclasses',
     iconComponent: { name: 'cil-chalkboard' }
-
   }, 
   {
     name: 'Administrateurs',
     url: '/administrateur/administrateur',
     iconComponent: { name: 'cil-chalkboard' }
-
   }
 ];

@@ -63,6 +63,10 @@ export const routes: Routes = [
         loadChildren: () => import('./views/fraisecondaire/routes').then((m) => m.routes)
       },
       {
+        path: 'roles',
+        loadChildren: () => import('./views/role/routes').then((m) => m.routes)
+      },
+      {
         path: 'gestionsdesclasses',
         loadChildren: () => import('./views/gestionsdesclasses/routes').then((m) => m.routes)
       },
@@ -126,6 +130,7 @@ export const routes: Routes = [
         path: 'pages',
         loadChildren: () => import('./views/pages/routes').then((m) => m.routes)
       }
+      
     ]
   },
   {
