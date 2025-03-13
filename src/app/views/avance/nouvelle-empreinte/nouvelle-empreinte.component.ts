@@ -58,8 +58,8 @@ export class NouvelleEmpreinteComponent implements OnInit {
   }
 
   getAllEnseignantsByEcole() {
-    const user = this.authService.getUserFromLocalStorage(); // ✅ Récupérer l'utilisateur connecté
-    const ecoleId = user?.ecole?.idEcole; // ✅ Extraire l'ID de l'école
+    const user = this.authService.getUserFromLocalStorage(); 
+    const ecoleId = user?.administrateur?.ecole?.idEcole;
 
     if (ecoleId) {
       this.enseignantService.getEnseignantsByEcole(ecoleId).subscribe(
@@ -90,7 +90,7 @@ export class NouvelleEmpreinteComponent implements OnInit {
     const today = new Date();
     return today.toISOString().split('T')[0]; // Format YYYY-MM-DD
   }
-  
+
 
   onSubmit() {
     if (this.empreinteForm.valid) {

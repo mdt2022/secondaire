@@ -9,6 +9,7 @@ import { ClasseemploiComponent } from './views/emploidutemps/classeemploi/classe
 import { CreationemploidutempsComponent } from './views/emploidutemps/creationemploidutemps/creationemploidutemps.component';
 import { DjournalierComponent } from './views/emploidutemps/djournalier/djournalier.component';
 import { SemaineprofComponent } from './views/emploidutemps/semaineprof/semaineprof.component';
+import { ElevecreationComponent } from './views/eleves/elevecreation/elevecreation.component';
 
 export const routes: Routes = [
   {
@@ -29,12 +30,10 @@ export const routes: Routes = [
       { path: 'enseignercreate', component: EnseignercreateComponent },
       { path: 'prof', component: ProfComponent },
       { path: 'classeemploi', component: ClasseemploiComponent },
-
       { path: 'creationemploidutemps', component: CreationemploidutempsComponent },
-
       { path: 'djournalier', component: DjournalierComponent },
-
       { path: 'semaineprof', component: SemaineprofComponent },
+      { path: 'elevecreation', component: ElevecreationComponent},
       {
         path: 'dashboard',
         loadChildren: () => import('./views/dashboard/routes').then((m) => m.routes)
@@ -130,7 +129,7 @@ export const routes: Routes = [
         path: 'pages',
         loadChildren: () => import('./views/pages/routes').then((m) => m.routes)
       }
-      
+
     ]
   },
   {
