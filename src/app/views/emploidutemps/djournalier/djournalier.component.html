@@ -1,5 +1,8 @@
-<div class="page-header">
-    <h1>Emploi du temps par jour</h1>
+<div>
+    <a [routerLink]="['/emploidutemps/emploidutemps']" class="btn btn-primary mb-4">Retour</a>
+</div>
+<div class="page-header m-4">
+    <h3>Emploi du temps par jour</h3>
 </div>
 
 <div class="row">
@@ -19,29 +22,5 @@
 
     <div class="col-sm-2">
         <button (click)="afficherEmploi()" class="btn btn-primary">Afficher</button>
-    </div>
-</div>
-
-<div *ngIf="emploiDuTemps.length > 0" class="panel panel-default mt-3">
-    <div class="panel-heading">
-        <h3>Emploi du temps pour {{ selectedJour }}</h3>
-    </div>
-    <div class="panel-body">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Heure Début</th>
-                    <th>Heure Fin</th>
-                    <th>Matière</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let emploi of emploiDuTemps">
-                    <td>{{ emploi.heureDebut }}</td>
-                    <td>{{ emploi.heureFin }}</td>
-                    <td>{{ emploi.matiere }}</td>
-                </tr>
-            </tbody>
-        </table>
     </div>
 </div>

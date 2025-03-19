@@ -1,0 +1,54 @@
+<div class="page-header m-5">
+    <h2>Pointage des enseignants</h2>
+</div>
+
+<form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="form-horizontal">
+    <div class="row">
+        <div class="col-sm-4">
+            <input type="date" formControlName="datedebut" class="form-control" />
+        </div>
+        <div class="col-sm-4">
+            <input type="date" formControlName="datefin" class="form-control" />
+        </div>
+        <div class="col-sm-4">
+            <button type="submit" class="btn btn-primary">Simuler le paiement</button>
+        </div>
+    </div>
+</form>
+
+<div *ngIf="tableData.length > 0" class="panel panel-default mt-4">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Total Heure</th>
+                <th>Taux/Heure</th>
+                <th>Montant Brut</th>
+                <th>Avance</th>
+                <th>Montant Net</th>
+                <th>Emargement</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let row of tableData">
+                <td>{{ row.dateValider }}</td>
+                <td>{{ row.prenom }}</td>
+                <td>{{ row.nom }}</td>
+                <td>{{ row.totalHeure }}</td>
+                <td>{{ row.tarif | number }}</td>
+                <td>{{ row.montantBrut | number }}</td>
+                <td>{{ row.avance | number }}</td>
+                <td>{{ row.montantNet | number }}</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p class="alert alert-danger">
+        Montant total de l'établissement : <u>{{ totalNet | number }} CFA</u><br /> Montant des avances : <u>{{ totalAvances | number }} CFA</u><br /> Montant Net : <u>{{ totalNet - totalAvances | number }} CFA</u>
+    </p>
+
+    <button class="btn btn-success" (click)="imprimer()">Imprimer l'état des honoraires</button>
+</div>

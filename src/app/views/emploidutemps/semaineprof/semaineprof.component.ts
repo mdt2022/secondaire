@@ -10,6 +10,7 @@ import { EcoleService } from '../../../service/ecole.service';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from '../../../service/auth.service';
 
 @Component({
   selector: 'app-semaineprof',
@@ -34,11 +35,12 @@ export class SemaineprofComponent implements OnInit {
                 private enseignantService:EnseignantService,
                 private anneeuvService: AnneeuvService,
                 private ecoleService: EcoleService,
+                private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.getAllEcole();
-    this.getEnseignantsByEcole();
+    this.getAllEnseignantsByEcole();
     this.getAllAnnee();
   }
 
@@ -48,10 +50,22 @@ export class SemaineprofComponent implements OnInit {
     });
   }
 
-  getEnseignantsByEcole() {
-    this.enseignantService.getEnseignantsByEcole(this.ecoleId).subscribe(data => {
-      this.listeprof = data;
-    });
+  getAllEnseignantsByEcole() {
+    const user = this.authService.getUserFromLocalStorage();
+    const ecoleId = user?.administrateur?.ecole?.idEcole;
+
+    if (ecoleId) {
+      this.enseignantService.getEnseignantsByEcole(ecoleId).subscribe(
+        (data) => {
+          this.listeprof = data;
+        },
+        (error) => {
+          console.error('Erreur lors de la récupération des enseignants', error);
+        }
+      );
+    } else {
+      console.error("Impossible de récupérer l'ID de l'école.");
+    }
   }
 
   getAllAnnee() {

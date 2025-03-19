@@ -32,29 +32,21 @@ export class ClasseComponent implements OnInit {
   ) {}
 
     ngOnInit(): void {
-      this.getClasseEcole()
+      this. getAllClasse()
       this.getAllEcole()
     }   
     
-    getClasseEcole() {
-      this.user = this.authService.getUserFromLocalStorage(); 
-      const ecoleId = this.user.administrateur.ecole.idEcole; 
-
-      if (ecoleId) {
-        this.classeService.getClasseEcole(ecoleId).subscribe({
-          next: (data) => {
-            this.classes = data; 
-            console.log("Classes après mise à jour :", this.classes);
-          },
-          error: (error) => {
-            console.error('Erreur lors de la récupération des classes', error);
-          }
-        });
-      } else {
-        console.error("Impossible de récupérer l'ID de l'école.");
-      }
+    getAllClasse() {
+      this.classeService.getAllClasse().subscribe(
+        (data) => {
+          this.classes = data; // ✅ Correction pour correspondre au template
+        },
+        (error) => {
+          console.error('Erreur lors de la récupération des ecoles', error);
+        }
+      );
     }
-
+    
     getAllEcole() {
       this.ecoleService.getAllEcole().subscribe(
         (data) => {

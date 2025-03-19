@@ -1,10 +1,13 @@
-<div class="page-header">
-    <h1>Gestion des émargements des professeurs</h1>
+<div>
+    <a [routerLink]="['/emploidutemps/emploidutemps']" class="btn btn-primary mb-4">Retour</a>
+</div>
+<div class="page-header m-5">
+    <h2>Gestion des émargements des professeurs</h2>
 </div>
 
 <form [formGroup]="emargementForm" class="form-horizontal">
     <div class="panel panel-default">
-        <div class="panel-heading">
+        <div class="panel-heading m-3">
             <div class="row">
                 <div class="col-sm-3">
                     <select formControlName="enseignant" class="form-control">
@@ -37,14 +40,14 @@
                     <button type="button" class="btn btn-success" (click)="afficherEmploiProf()">Afficher</button>
                 </div>
                 <div class="col-sm-2">
-                    <a routerLink="/pointage" class="btn btn-warning">Pointage</a>
+                    <a routerLink="/pointages/pointages" class="btn btn-warning">Pointage</a>
                 </div>
             </div>
         </div>
 
         <div class="panel-body">
             <div *ngIf="loading" id="loading">
-                <h1>Chargement de la page .....</h1>
+                <h4>Chargement de la page .....</h4>
             </div>
 
             <div class="col-sm-12">

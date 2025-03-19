@@ -1,1 +1,30 @@
-<p>redoubleeleve works!</p>
+<div class="page-header mb-3">
+    <h2>Afficher la liste des élèves par classe et par année pour les redoublements</h2>
+</div>
+
+<form [formGroup]="studentForm" (ngSubmit)="rechercher()">
+    <div class="form-group row">
+        <label class="col-sm-2 control-label">Selectionner</label>
+        <div class="col-sm-3">
+            <select formControlName="classe" class="form-control" required>
+                <option value="">-- Classe --</option>
+                <option *ngFor="let classe of classes" [value]="classe.id">{{ classe.nom }}</option>
+            </select>
+        </div>
+
+        <div class="col-sm-3">
+            <select formControlName="anneeScolaire" class="form-control" required>
+                <option value="">Année Scolaire</option>
+                <option *ngFor="let annee of anneesScolaires" [value]="annee.id">{{ annee.nom }}</option>
+            </select>
+        </div>
+
+        <div class="col-sm-2">
+            <button type="submit" class="btn btn-info">Recherche</button>
+        </div>
+    </div>
+</form>
+
+<div class="form-group">
+    <div id="retourjquery"></div>
+</div>

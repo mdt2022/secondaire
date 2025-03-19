@@ -1,4 +1,4 @@
-import { Administrateur } from "./admin.model"; 
+import { Administrateur } from "./admin.model";
 import { Parametre } from "./parametre.model";
 
 export class User{

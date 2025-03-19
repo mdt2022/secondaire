@@ -10,6 +10,15 @@ import { CreationemploidutempsComponent } from './views/emploidutemps/creationem
 import { DjournalierComponent } from './views/emploidutemps/djournalier/djournalier.component';
 import { SemaineprofComponent } from './views/emploidutemps/semaineprof/semaineprof.component';
 import { ElevecreationComponent } from './views/eleves/elevecreation/elevecreation.component';
+import { ListeelevesComponent } from './views/eleves/listeeleves/listeeleves.component';
+import { RechercheComponent } from './views/eleves/listeeleves/recherche/recherche.component';
+import { PassageeleveComponent } from './views/eleves/passageeleve/passageeleve.component';
+import { ListepassageComponent } from './views/eleves/passageeleve/listepassage/listepassage.component';
+import { RedoubleeleveComponent } from './views/eleves/redoubleeleve/redoubleeleve.component';
+import { ListeredoubleComponent } from './views/eleves/redoubleeleve/listeredouble/listeredouble.component';
+import { PointageRechercheComponent } from './views/pointages/pointage-recherche/pointage-recherche.component';
+import { PointageEnseignantComponent } from './views/pointages/pointage-enseignant/pointage-enseignant.component';
+import { JournalierComponent } from './views/emploidutemps/djournalier/journalier/journalier.component';
 
 export const routes: Routes = [
   {
@@ -34,6 +43,18 @@ export const routes: Routes = [
       { path: 'djournalier', component: DjournalierComponent },
       { path: 'semaineprof', component: SemaineprofComponent },
       { path: 'elevecreation', component: ElevecreationComponent},
+      { path: 'listeeleves', component: ListeelevesComponent},
+      { path: 'recherche', component: RechercheComponent},
+      { path: 'passageeleve', component: PassageeleveComponent},
+      { path: 'listepassage', component: ListepassageComponent},
+      { path: 'redoubleeleve', component: RedoubleeleveComponent},
+      { path: 'listeredouble', component: ListeredoubleComponent},
+      { path: 'pointage-recherche', component:PointageRechercheComponent},
+      { path: 'pointage-enseignant', component:PointageEnseignantComponent},
+      { path: 'journalier', component:JournalierComponent},
+
+
+
       {
         path: 'dashboard',
         loadChildren: () => import('./views/dashboard/routes').then((m) => m.routes)
