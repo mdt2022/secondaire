@@ -7,6 +7,7 @@ import { IconSetService } from '@coreui/icons-angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // ✅ Ajouté ici
 import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,6 +26,6 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(SidebarModule, DropdownModule, ReactiveFormsModule, RouterModule, FormsModule),
     IconSetService,
     provideAnimations(),
-    provideHttpClient()
+    provideHttpClient(), provideAnimationsAsync()
   ]
 };

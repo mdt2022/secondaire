@@ -1,80 +1,82 @@
+<div>
+    <a [routerLink]="['/emploidutemps/emploidutemps']" class="btn btn-primary mb-4">Retour</a>
+</div>
 <div class="container">
-    <h1>Enregistre un emploi du temps</h1>
+    <h3 class="mb-4 text-center">Enregistrer un emploi du temps</h3>
 
     <form [formGroup]="emploiForm" (ngSubmit)="onSubmit()">
         <div class="row">
             <div class="col-sm-6">
-                <!-- Année scolaire -->
-                <div class="form-group">
-                    <label>Année scolaire</label>
-                    <select formControlName="annee" class="form-control">
-          <option value="">-- Année --</option>
-          <option *ngFor="let annee of annees" [value]="annee.id">{{ annee.nom }}</option>
-        </select>
-                </div>
-
-                <!-- Jour -->
-                <div class="form-group">
-                    <label>Jour</label>
-                    <select formControlName="jour" class="form-control">
-          <option value="">-- Jour --</option>
-          <option *ngFor="let jour of jours" [value]="jour">{{ jour }}</option>
-        </select>
-                </div>
-
-                <!-- Matière -->
-                <div class="form-group">
-                    <label>Matière</label>
-                    <select formControlName="matiere" class="form-control">
-          <option value="">-- Matière --</option>
-          <option *ngFor="let matiere of matieres" [value]="matiere.id">
-            {{ matiere.nom }} (Coef: {{ matiere.coefficient }}, Horaire: {{ matiere.horaire }})
-          </option>
-        </select>
-                </div>
-
-                <!-- Professeur -->
-                <div class="form-group">
-                    <label>Professeur</label>
-                    <select formControlName="professeur" class="form-control">
-          <option value="">-- Professeur --</option>
-          <option *ngFor="let prof of professeurs" [value]="prof.id">
-            {{ prof.matricule }} - {{ prof.nom }}
-          </option>
-        </select>
-                </div>
-
-                <!-- Classe -->
-                <div class="form-group">
-                    <label>Classe</label>
-                    <select formControlName="classe" class="form-control">
-          <option value="">-- Classe --</option>
-          <option *ngFor="let classe of classes" [value]="classe.id">{{ classe.nom }}</option>
-        </select>
+                <div class="form-group mb-3">
+                    <select id="annee" formControlName="annee" class="form-control">
+                      <option value="">-- Année --</option>
+                      <option *ngFor="let annee of annees" [value]="annee.id">{{ annee.nom }}</option>
+                  </select>
                 </div>
             </div>
 
-            <div class="col-sm-4"></div>
-
-            <div class="col-sm-2">
-                <!-- Heure début et fin -->
-                <div class="form-group">
-                    <label>Heure de début</label>
-                    <input type="time" formControlName="heuredebut" class="form-control" required>
+            <div class="col-sm-6">
+                <div class="form-group mb-3">
+                    <select id="jour" formControlName="jour" class="form-control">
+                      <option value="">-- Jour --</option>
+                      <option *ngFor="let jour of jours" [value]="jour">{{ jour }}</option>
+                  </select>
                 </div>
+            </div>
+        </div>
 
-                <div class="form-group">
-                    <label>Heure de fin</label>
-                    <input type="time" formControlName="heurefin" class="form-control" required>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group mb-3">
+                    <select id="matiere" formControlName="matiere" class="form-control">
+                      <option value="">-- Matière --</option>
+                      <option *ngFor="let matiere of matieres" [value]="matiere.id">
+                          {{ matiere.libelle }} (Coef: {{ matiere.coefficient }}, Horaire: {{ matiere.horaire }})
+                      </option>
+                  </select>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="form-group mb-3">
+                    <select id="professeur" formControlName="professeur" class="form-control">
+                      <option value="">-- Professeur --</option>
+                      <option *ngFor="let prof of professeurs" [value]="prof.id">
+                          {{ prof.matricule }} - {{ prof.nom }}
+                      </option>
+                  </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group mb-3">
+                    <select id="classe" formControlName="classe" class="form-control">
+                      <option value="">-- Classe --</option>
+                      <option *ngFor="let classe of classes" [value]="classe.id">{{ classe.nom }}</option>
+                  </select>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group mb-3">
+                    <label for="heuredebut">Heure de début</label>
+                    <input id="heuredebut" type="time" formControlName="heuredebut" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group mb-3">
+                    <label for="heurefin">Heure de fin</label>
+                    <input id="heurefin" type="time" formControlName="heurefin" class="form-control" required>
                 </div>
             </div>
         </div>
 
         <!-- Bouton d'enregistrement -->
-        <div class="form-group">
-            <div class="col-sm-10">
-                <button type="submit" class="btn btn-info" [disabled]="!emploiForm.valid">Enregistrer</button>
-            </div>
+        <div class="form-group text-center mt-4">
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
         </div>
     </form>
 </div>

@@ -1,1 +1,57 @@
-<p>pointages works!</p>
+<div class="page-header m-3 ">
+    <h1>Pointage</h1>
+</div>
+
+<form [formGroup]="pointageForm" (ngSubmit)="onSubmit()" autocomplete="off" class="form-horizontal">
+    <div class="panel panel-default m-3">
+        <div class="panel-heading m-3">
+            <div class="row">
+
+                <!-- Sélectionner l'école -->
+                <div class="col-sm-2">
+                    <select formControlName="ecole" class="form-control">
+                      <option value="">-- Ecoles --</option>
+                      <option *ngFor="let ecole of ecoles" [value]="ecole.idEcole">
+                          {{ ecole.nomEcole }}
+                      </option>
+                  </select>
+                </div>
+
+                <!-- Sélectionner l'enseignant -->
+                <div class="col-sm-2">
+                    <select formControlName="enseignant" class="form-control">
+                      <option value="">-- Enseignants --</option>
+                      <option *ngFor="let enseignant of enseignants" [value]="enseignant.id">
+                          {{ enseignant.prenom }} {{ enseignant.nom }}
+                      </option>
+                  </select>
+                </div>
+
+                <!-- Sélectionner la période -->
+                <div class="col-sm-2">
+                    <input type="date" formControlName="dateDebut" class="form-control">
+                </div>
+                <div class="col-sm-2">
+                    <input type="date" formControlName="dateFin" class="form-control">
+                </div>
+
+                <!-- Boutons de soumission -->
+                <div class="col-sm-2">
+                    <button type="submit" class="btn btn-primary">Simuler</button>
+                </div>
+
+                <div class="col-sm-2">
+                    <a routerLink="/pointage/professeurs" class="btn btn-primary">Paiement</a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="panel-body">
+            <p class="alert alert-info">
+                <strong>Pour la simulation de l'état de paiement d'un enseignant avant d'imprimer sa fiche, choisissez l'enseignant et cliquez sur simulation du paiement.</strong>
+            </p>
+        </div>
+
+    </div>
+</form>

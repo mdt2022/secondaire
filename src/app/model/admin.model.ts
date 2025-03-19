@@ -3,6 +3,7 @@ import { Role } from '../model/role.model';
 
 
 export interface Administrateur{
+  
     id:number;
     nom:string;
     prenom:string;

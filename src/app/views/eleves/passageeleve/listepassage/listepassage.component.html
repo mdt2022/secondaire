@@ -1,1 +1,55 @@
-<p>listepassage works!</p>
+<div>
+
+
+
+    <a routerLink="/eleveecole/index" class="btn btn-primary mb-3">Retour</a>
+
+</div>
+
+<div class="page-header">
+    <h1>
+        Liste des élèves </h1>
+</div>
+
+<form [formGroup]="reinscriptionForm" (ngSubmit)="onSubmit()">
+    <div class="form-group row">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Matricule</th>
+                    <th>Prénom</th>
+                    <th>Nom</th>
+                    <th>
+                        <input type="checkbox" (change)="toggleSelectAll($event)" />
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let eleve of eleves; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ eleve.matricule }}</td>
+                    <td>{{ eleve.prenom }}</td>
+                    <td>{{ eleve.nom }}</td>
+                    <td>
+                        <input type="checkbox" [formControlName]="'reinscrire' + i" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="form-group">
+        <p class="alert alert-success h3">
+            Sélectionner ou choisir l'ensemble des élèves pour leur admission au compte de l'année
+            <select class="form-control d-inline w-auto" formControlName="anneeScolaire" required>
+                <option value="" disabled selected>Année</option>
+                <option *ngFor="let annee of anneeScolaires" [value]="annee.id">{{ annee.nom }}</option>
+            </select> en classe de
+            <select class="form-control d-inline w-auto" formControlName="classe" required>
+                <option value="" disabled selected>-- Classe --</option>
+                <option *ngFor="let classe of classes" [value]="classe.id">{{ classe.nom }}</option>
+            </select> et valider avec le bouton Admission
+        </p>
+    </div>
+    <button type="submit" class="btn btn-success">Admission</button>
+</form>

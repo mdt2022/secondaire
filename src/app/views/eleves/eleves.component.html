@@ -1,4 +1,4 @@
-<h2>Gestion des élèves de {{ etablissement.nom }}</h2>
+<h2>Gestion des élèves de </h2>
 
 <div class="row">
     <div class="col-md-6">
@@ -16,25 +16,26 @@
                     <table class="table">
                         <tbody>
                             <tr>
-                                <td><button class="btn btn-primary" [routerLink]="['eleves/elevecreation']">Inscription d'un élève</button></td>
+                                <td><button class="btn btn-primary" [routerLink]="['/elevecreation']">Inscription d'un élève</button></td>
                             </tr>
                             <tr>
-                                <td><button class="btn btn-info" (click)="navigateTo('eleve/classe')">Liste des élèves par classe</button></td>
+                                <td>
+                                    <button class="btn btn-info" [routerLink]="['/listeeleves']">Liste des élèves par classe</button></td>
                             </tr>
                             <tr>
-                                <td><button class="btn btn-success" (click)="navigateTo('eleve/passage')">Passage des élèves</button></td>
+                                <td><button class="btn btn-success " [routerLink]="['/passageeleve']">Passage des élèves</button></td>
                             </tr>
                             <tr>
-                                <td><button class="btn btn-warning" (click)="navigateTo('eleve/redoublement')">Redoublement</button></td>
+                                <td><button class="btn btn-warning " [routerLink]="['/redoubleeleve']">Redoublement</button></td>
                             </tr>
                             <tr>
-                                <td><button class="btn btn-success" (click)="navigateTo('eleve/admission')">Validation d'examen</button></td>
+                                <td><button class="btn btn-success " (click)="navigateTo( 'eleve/admission') ">Validation d'examen</button></td>
                             </tr>
                             <tr>
-                                <td><button class="btn btn-danger" (click)="navigateTo('eleve/exclusion')">Exclusion d'un élève</button></td>
+                                <td><button class="btn btn-danger " (click)="navigateTo( 'eleve/exclusion') ">Exclusion d'un élève</button></td>
                             </tr>
                             <tr>
-                                <td><button class="btn btn-info" (click)="navigateTo('adminexamen/index')">Gestion des admis aux examens</button></td>
+                                <td><button class="btn btn-info " (click)="navigateTo( 'adminexamen/index') ">Gestion des admis aux examens</button></td>
                             </tr>
                         </tbody>
                     </table>
@@ -43,19 +44,19 @@
         </div>
     </div>
 
-    <div class="col-md-6">
-        <div class="card card-topline-yellow">
-            <div class="card-head">
+    <div class="col-md-6 ">
+        <div class="card card-topline-yellow ">
+            <div class="card-head ">
                 <header>
                     <h4>Nombre d'élèves par classe</h4>
                 </header>
-                <div class="tools">
-                    <button class="btn btn-light btn-sm"><i class="fa fa-repeat"></i></button>
+                <div class="tools ">
+                    <button class="btn btn-light btn-sm "><i class="fa fa-repeat "></i></button>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="table-scrollable">
-                    <table class="table table-bordered">
+            <div class="card-body ">
+                <div class="table-scrollable ">
+                    <table class="table table-bordered ">
                         <thead>
                             <tr>
                                 <th>Classe</th>
@@ -63,13 +64,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let classe of classes">
+                            <tr *ngFor="let classe of classes ">
                                 <td><b>{{ classe.nom }}</b></td>
                                 <td>{{ classe.nombreEleves }} Élève(s)</td>
                             </tr>
                         </tbody>
                     </table>
-                    <div class="alert alert-danger"><b>Total : {{ totalEleves }}</b></div>
+                    <div class="alert alert-danger "><b>Total : {{ totalEleves }}</b></div>
                 </div>
             </div>
         </div>

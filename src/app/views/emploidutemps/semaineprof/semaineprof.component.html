@@ -13,13 +13,16 @@
         }
     }
 </style>
+<div>
+    <a [routerLink]="['/emploidutemps/emploidutemps']" class="btn btn-primary mb-4">Retour</a>
+</div>
 
 <div class="page-header">
-    <h1 id="ecole">{{ecole.description }} ({{ ecole.nomEcole }})</h1>
+    <!-- <h1 id="ecole">{{ecole.description }} ({{ ecole.nomEcole }})</h1> -->
 </div>
 
 <div class="panel panel-default">
-    <div class="panel-heading">
+    <div class="panel-heading m-4">
         <div class="row">
             <div class="col-sm-3">
                 <select id="idprof" class="form-control">
@@ -44,7 +47,7 @@
 
     <div class="panel-body">
         <div *ngIf="loading">
-            <h1>Chargement de la page ...</h1>
+            <h4>Chargement de la page ...</h4>
         </div>
 
         <div class="col-sm-12">
@@ -76,7 +79,7 @@
 
         <div class="form-group">
             <div class="col-sm-10">
-                <button id="imprimer" class="btn btn-primary" (click)="imprimerPage()">IMPRIMER CETTE PAGE</button>
+                <button id="imprimer" class="btn btn-primary" (click)="imprimerPage()">Imprimer cette page</button>
             </div>
         </div>
     </div>

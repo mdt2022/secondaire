@@ -1,17 +1,15 @@
-<div class="row">
-    <nav>
-        <a>Retour</a>
-    </nav>
+<div>
+    <a [routerLink]="['/emploidutemps/emploidutemps']" class="btn btn-primary mb-4">Retour</a>
 </div>
 
-<div class="page-header">
-    <h1>Liste des emplois du temps par classe</h1>
+<div class="page-header m-4">
+    <h3>Emplois du temps par classe</h3>
 </div>
 
 <div class="row">
     <div class="col-sm-12">
         <div class="panel panel-default">
-            <div class="panel-heading">
+            <div class="panel-heading m-3">
                 <div class="row">
                     <div class="col-sm-3">
                         <select class="form-control">
@@ -52,15 +50,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- <tr *ngFor="let emploi of emploiDuTemps">
-                            <td>{{ emploi.heureDebut }} -|- {{ emploi.heureFin }}</td>
-                            <td>{{ emploi.jour === 'Lundi' ? getAllMatieres(emploi.matiere) : '' }}</td>
-                            <td>{{ emploi.jour === 'Mardi' ? getAllMatieres(emploi.matiere) : '' }}</td>
-                            <td>{{ emploi.jour === 'Mercredi' ? getAllMatieres(emploi.matiere) : '' }}</td>
-                            <td>{{ emploi.jour === 'Jeudi' ? getAllMatieres(emploi.matiere) : '' }}</td>
-                            <td>{{ emploi.jour === 'Vendredi' ? getAllMatieres(emploi.matiere) : '' }}</td>
-                            <td>{{ emploi.jour === 'Samedi' ? getAllMatieres(emploi.matiere) : '' }}</td>
-                        </tr> -->
+                        <tr *ngFor="let emploi of emploiDuTemps">
+                            <td>{{ emploi.heuredebut }} -|- {{ emploi.heurefin }}</td>
+                            <td>{{ emploi.jour === 'Lundi' ? getAllMatieres : '' }}</td>
+                            <td>{{ emploi.jour === 'Mardi' ? getAllMatieres : '' }}</td>
+                            <td>{{ emploi.jour === 'Mercredi' ? getAllMatieres : '' }}</td>
+                            <td>{{ emploi.jour === 'Jeudi' ? getAllMatieres : '' }}</td>
+                            <td>{{ emploi.jour === 'Vendredi' ? getAllMatieres : '' }}</td>
+                            <td>{{ emploi.jour === 'Samedi' ? getAllMatieres : '' }}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

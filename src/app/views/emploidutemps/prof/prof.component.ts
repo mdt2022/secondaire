@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { AuthService } from '../../../service/auth.service';
 
 @Component({
   selector: 'app-prof',
@@ -33,11 +34,14 @@ export class ProfComponent implements OnInit {
 
   ecoleId!: number; // ID de l'école (à récupérer dynamiquement si nécessaire)
 
+
   constructor(
     private fb: FormBuilder,
     private enseignantService: EnseignantService,
     private anneeService: AnneeuvService,
-    private emploiService: EmploidutempService
+    private emploiService: EmploidutempService,
+    private authService: AuthService,
+
   ) {}
 
   ngOnInit(): void {
@@ -47,15 +51,27 @@ export class ProfComponent implements OnInit {
       annee: ['']
     });
 
-    this.loadProfesseurs();
+    this.getAllEnseignantsByEcole();
     this.loadAnnees();
-    
+
   }
 
-  loadProfesseurs() {
-    this.enseignantService.getEnseignantsByEcole(this.ecoleId).subscribe((data) => {
-      this.listeProf = data;
-    });
+  getAllEnseignantsByEcole() {
+    const user = this.authService.getUserFromLocalStorage();
+    const ecoleId = user?.administrateur?.ecole?.idEcole;
+
+    if (ecoleId) {
+      this.enseignantService.getEnseignantsByEcole(ecoleId).subscribe(
+        (data) => {
+          this.listeProf = data;
+        },
+        (error) => {
+          console.error('Erreur lors de la récupération des enseignants', error);
+        }
+      );
+    } else {
+      console.error("Impossible de récupérer l'ID de l'école.");
+    }
   }
 
   loadAnnees() {
