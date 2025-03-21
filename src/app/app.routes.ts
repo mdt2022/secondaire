@@ -18,7 +18,6 @@ import { RedoubleeleveComponent } from './views/eleves/redoubleeleve/redoubleele
 import { ListeredoubleComponent } from './views/eleves/redoubleeleve/listeredouble/listeredouble.component';
 import { PointageRechercheComponent } from './views/pointages/pointage-recherche/pointage-recherche.component';
 import { PointageEnseignantComponent } from './views/pointages/pointage-enseignant/pointage-enseignant.component';
-import { JournalierComponent } from './views/emploidutemps/djournalier/journalier/journalier.component';
 
 export const routes: Routes = [
   {
@@ -51,7 +50,6 @@ export const routes: Routes = [
       { path: 'listeredouble', component: ListeredoubleComponent},
       { path: 'pointage-recherche', component:PointageRechercheComponent},
       { path: 'pointage-enseignant', component:PointageEnseignantComponent},
-      { path: 'journalier', component:JournalierComponent},
 
 
 

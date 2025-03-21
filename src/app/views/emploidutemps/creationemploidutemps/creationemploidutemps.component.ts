@@ -1,18 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Anneeuv } from '../../../model/anneeuv.model';
 import { Matiere } from '../../../model/matiere.model';
 import { Enseignant } from '../../../model/enseignant.model';
 import { Classe } from '../../../model/classe.model';
 import { EmploidutempService } from '../../../service/emploidutemp.service';
 import { AnneeuvService } from '../../../service/anneeuv.service';
-import {EnseignantService} from '../../../service/enseignant.service';
-import {ClasseService} from '../../../service/classe.service';
+import { EnseignantService } from '../../../service/enseignant.service';
+import { ClasseService } from '../../../service/classe.service';
 import { MatiereService } from '../../../service/matiere.service';
-import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../service/auth.service';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-
 
 @Component({
   selector: 'app-creationemploidutemps',
@@ -30,7 +31,7 @@ export class CreationemploidutempsComponent implements OnInit {
   classes: Classe[] = [];
   jours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
-  idEcole!: number; // Remplace par l'ID réel de l'école
+  isLoading = false; 
 
   constructor(
     private fb: FormBuilder,
@@ -39,7 +40,8 @@ export class CreationemploidutempsComponent implements OnInit {
     private matiereService: MatiereService,
     private classeService: ClasseService,
     private enseignantService: EnseignantService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -53,49 +55,72 @@ export class CreationemploidutempsComponent implements OnInit {
       heurefin: ['', Validators.required]
     });
 
-    // Charger les données depuis l'API
     this.loadData();
   }
 
   loadData() {
     this.anneeuvService.getAllAnnee().subscribe(data => this.annees = data);
     this.matiereService.getAllMatieres().subscribe(data => this.matieres = data);
+
     const user = this.authService.getUserFromLocalStorage();
-    const ecoleId = user?.administrateur?.ecole?.idEcole;
+    const ecoleId = user.administrateur.ecole.idEcole;
 
     if (ecoleId) {
-      this.enseignantService.getEnseignantsByEcole(ecoleId).subscribe(
-        (data) => {
-          this.professeurs = data;
-        },
-        (error) => {
-          console.error('Erreur lors de la récupération des enseignants', error);
-        }
-      );
-    } else {
-      console.error("Impossible de récupérer l'ID de l'école.");
-    }
-    if (ecoleId) {
+      this.enseignantService.getEnseignantsByEcole(ecoleId).subscribe({
+        next: (data) => { this.professeurs = data; },
+        error: (err) => { console.error("Erreur enseignants", err); }
+      });
+
       this.classeService.getClasseEcole(ecoleId).subscribe({
-        next: (data) => {
-          this.classes = data;
-          console.log("Classes après mise à jour :", this.classes);
-        },
-        error: (error) => {
-          console.error('Erreur lors de la récupération des classes', error);
-        }
+        next: (data) => { this.classes = data; },
+        error: (err) => { console.error("Erreur classes", err); }
       });
     } else {
-      console.error("Impossible de récupérer l'ID de l'école.");
-    }  }
+      console.error("ID école introuvable !");
+    }
+  }
 
   onSubmit() {
     if (this.emploiForm.valid) {
-      console.log("Données envoyées :", this.emploiForm.value);
-      alert("Emploi du temps enregistré !");
+      this.isLoading = true;
+
+      const formValues = this.emploiForm.value;
+
+      const selectedAnnee = this.annees.find(a => a.id === +formValues.annee);
+    const selectedMatiere = this.matieres.find(m => m.id === +formValues.matiere);
+    const selectedProfesseur = this.professeurs.find(p => p.id === +formValues.professeur);
+    const selectedClasse = this.classes.find(c => c.id === +formValues.classe);
+    const user = this.authService.getUserFromLocalStorage();
+    const ecoleId = user?.administrateur?.ecole?.idEcole;
+
+      const emploi: any = {
+        anneeuv: selectedAnnee,
+      matiere: selectedMatiere,
+      professeur: selectedProfesseur,
+      classe: selectedClasse,
+      jour: formValues.jour,
+      heuredebut: formValues.heuredebut,
+      heurefin: formValues.heurefin,
+      ecole: { idEcole: ecoleId }
+      };
+
+      this.emploiService.createEmploi(emploi).subscribe({
+        next: (data) => {
+          console.log("Enregistré avec succès", data);
+          alert("Emploi du temps enregistré !");
+          this.router.navigate(['/emploidutemps/emploidutemps']);
+        },
+        error: (err) => {
+          console.error("Erreur:", err);
+          alert("Erreur lors de l'enregistrement !");
+        },
+        complete: () => {
+          this.isLoading = false;
+        }
+      });
+
     } else {
-      alert("Veuillez remplir tous les champs.");
+      alert("Veuillez remplir tous les champs !");
     }
   }
 }
-

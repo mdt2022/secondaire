@@ -11,12 +11,12 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../service/auth.service';
+import { User } from '../../../model/user.model';
 
 @Component({
   selector: 'app-semaineprof',
   standalone: true,
-  imports: [ RouterModule,
-      CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [RouterModule, CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './semaineprof.component.html',
   styleUrl: './semaineprof.component.scss'
 })
@@ -26,16 +26,17 @@ export class SemaineprofComponent implements OnInit {
   listeprof: Enseignant[] = [];
   annees: Anneeuv[] = [];
   emploiDuTemps: Emploidutemp[] = [];
-  selectedProf: string = '';
-  selectedAnnee: string = '';
+  selectedProf!: number ;
+  selectedAnnee!: number ;
   loading: boolean = false;
-  ecoleId!: number;
+  user!: User;
 
-  constructor(private emploiService: EmploidutempService,
-                private enseignantService:EnseignantService,
-                private anneeuvService: AnneeuvService,
-                private ecoleService: EcoleService,
-                private authService: AuthService
+  constructor(
+    private emploiService: EmploidutempService,
+    private enseignantService: EnseignantService,
+    private anneeuvService: AnneeuvService,
+    private ecoleService: EcoleService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -75,19 +76,24 @@ export class SemaineprofComponent implements OnInit {
   }
 
   getEmploiDuTemps() {
-    if (!this.selectedProf || !this.selectedAnnee) {
-      alert("Veuillez sélectionner un professeur et une année.");
-      return;
-    }
+    const user = this.authService.getUserFromLocalStorage();
+    const ecoleId = user.administrateur.ecole.idEcole;
 
-    this.loading = true;
-    this.emploiService.getEmploiByProf(this.selectedProf).subscribe(data => {
-      this.emploiDuTemps = data;
-      this.loading = false;
-    }, error => {
-      this.loading = false;
-      console.error("Erreur lors du chargement de l'emploi du temps", error);
-    });
+    if (this.selectedProf && this.selectedAnnee) {
+      this.loading = true;
+      this.emploiService.getByProfesseurAnneeEcoleSemaine(this.selectedProf, this.selectedAnnee, ecoleId).subscribe(
+        (data) => {
+          this.emploiDuTemps = data;
+          this.loading = false;
+        },
+        (error) => {
+          this.loading = false;
+          console.error("Erreur lors du chargement de l'emploi du temps", error);
+        }
+      );
+    } else {
+      alert("Veuillez sélectionner un professeur et une année.");
+    }
   }
 
   imprimerPage() {
