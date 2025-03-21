@@ -42,7 +42,7 @@
                     <select id="professeur" formControlName="professeur" class="form-control">
                       <option value="">-- Professeur --</option>
                       <option *ngFor="let prof of professeurs" [value]="prof.id">
-                          {{ prof.matricule }} - {{ prof.nom }}
+                          {{ prof.matricule }} - {{ prof.prenom }} - {{ prof.nom }}
                       </option>
                   </select>
                 </div>
@@ -74,9 +74,12 @@
             </div>
         </div>
 
-        <!-- Bouton d'enregistrement -->
         <div class="form-group text-center mt-4">
-            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              {{ isLoading ? 'Enregistrement...' : 'Enregistrer' }}
+          </button>
         </div>
+
     </form>
 </div>

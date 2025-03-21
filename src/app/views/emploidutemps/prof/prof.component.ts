@@ -2,7 +2,7 @@ import { EmploidutempService } from './../../../service/emploidutemp.service';
 import { AnneeuvService } from './../../../service/anneeuv.service';
 import { EnseignantService } from './../../../service/enseignant.service';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Anneeuv } from './../../../model/anneeuv.model';
 import { Enseignant } from './../../../model/enseignant.model';
 import { Emploidutemp } from './../../../model/emploidutemp.model';
@@ -11,16 +11,18 @@ import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { AuthService } from '../../../service/auth.service';
+import { User } from '../../../model/user.model';
 
 @Component({
   selector: 'app-prof',
   standalone: true,
   imports: [
-    CommonModule, // ✅ Ajouter ici
-    ReactiveFormsModule, // ✅ Assurer que le form fonctionne
+    CommonModule,
+    ReactiveFormsModule,
     RouterModule,
     HttpClientModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    FormsModule
   ],
   templateUrl: './prof.component.html',
   styleUrl: './prof.component.scss'
@@ -31,8 +33,12 @@ export class ProfComponent implements OnInit {
   annees: Anneeuv[] = [];
   emploisDuTemps: Emploidutemp[] = [];
   loading: boolean = false;
-
-  ecoleId!: number; // ID de l'école (à récupérer dynamiquement si nécessaire)
+  emploisFiltres: Emploidutemp[] = [];
+  ecoleId!: number;
+  user!: User;
+  selectedProf: any;
+  selectedAnnee: any;
+  today: string = '';
 
 
   constructor(
@@ -45,10 +51,11 @@ export class ProfComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.today = new Date().toISOString().split('T')[0];
     this.emargementForm = this.fb.group({
       enseignant: [''],
-      jour: [''],
-      annee: ['']
+    jour: [''],
+    annee: ['']
     });
 
     this.getAllEnseignantsByEcole();
@@ -79,13 +86,47 @@ export class ProfComponent implements OnInit {
       this.annees = data;
     });
   }
+  getEmploiDuTemps() {
+    this.user = this.authService.getUserFromLocalStorage();
 
-  afficherEmploiProf() {
+    const ecoleId = this.user.administrateur.ecole.idEcole;
+    const anneeuvId = this.user.parametre.anneepardefaut.id;
+    const professeurId = this.user.parametre.anneepardefaut.id;
     this.loading = true;
-    const formData = this.emargementForm.value;
-    this.emploiService.getEmploiByProf(formData.enseignant).subscribe((data) => {
+    this.emploiService.getByProfesseurAnneeEcole(professeurId, anneeuvId, ecoleId ).subscribe(data => {
       this.emploisDuTemps = data;
       this.loading = false;
+    }, error => {
+      this.loading = false;
+      console.error("Erreur lors du chargement de l'emploi du temps", error);
     });
   }
+
+  afficherEmploiProf() {
+    const formData = this.emargementForm.value;
+    const user = this.authService.getUserFromLocalStorage();
+    const ecoleId = user?.administrateur?.ecole?.idEcole;
+
+    if (!formData.enseignant || !formData.jour || !formData.annee || !ecoleId) {
+      console.error('Champs requis manquants');
+      return;
+    }
+
+    this.loading = true;
+    this.emploiService.getByProfesseurAnneeEcole(formData.enseignant, formData.annee, ecoleId).subscribe({
+      next: (data) => {
+        this.emploisDuTemps = data;
+
+        this.emploisFiltres = this.emploisDuTemps.filter(emploi => emploi.jour === formData.jour);
+
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error("Erreur lors du chargement de l'emploi du temps", error);
+        this.loading = false;
+      }
+    });
+  }
+
+
 }

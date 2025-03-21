@@ -12,15 +12,15 @@
             <div class="panel-heading m-3">
                 <div class="row">
                     <div class="col-sm-3">
-                        <select class="form-control">
-                          <option value="">-- Choisir une classe --</option>
-                          <option *ngFor="let classe of classes" [value]="classe.id">{{ classe.nom }}</option>
+                        <select class="form-control" [(ngModel)]="selectedClasse">
+                        <option value="">-- Choisir une classe --</option>
+                        <option *ngFor="let classe of classes" [value]="classe.id">{{ classe.nom }}</option>
                       </select>
                     </div>
                     <div class="col-sm-3">
-                        <select class="form-control">
-                          <option value="">-- Choisir une année --</option>
-                          <option *ngFor="let annee of annees" [value]="annee.id">{{ annee.nom }}</option>
+                        <select class="form-control" [(ngModel)]="selectedAnnee">
+                        <option value="">-- Choisir une année --</option>
+                        <option *ngFor="let annee of annees" [value]="annee.id">{{ annee.nom }}</option>
                       </select>
                     </div>
                     <div class="col-sm-3">
@@ -50,17 +50,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let emploi of emploiDuTemps">
-                            <td>{{ emploi.heuredebut }} -|- {{ emploi.heurefin }}</td>
-                            <td>{{ emploi.jour === 'Lundi' ? getAllMatieres : '' }}</td>
-                            <td>{{ emploi.jour === 'Mardi' ? getAllMatieres : '' }}</td>
-                            <td>{{ emploi.jour === 'Mercredi' ? getAllMatieres : '' }}</td>
-                            <td>{{ emploi.jour === 'Jeudi' ? getAllMatieres : '' }}</td>
-                            <td>{{ emploi.jour === 'Vendredi' ? getAllMatieres : '' }}</td>
-                            <td>{{ emploi.jour === 'Samedi' ? getAllMatieres : '' }}</td>
+                        <tr *ngFor="let horaire of getUniqueHoraires()">
+                            <td>{{ horaire.debut }} -|- {{ horaire.fin }}</td>
+                            <td>{{ getMatiereForDay(horaire, 'Lundi') }}</td>
+                            <td>{{ getMatiereForDay(horaire, 'Mardi') }}</td>
+                            <td>{{ getMatiereForDay(horaire, 'Mercredi') }}</td>
+                            <td>{{ getMatiereForDay(horaire, 'Jeudi') }}</td>
+                            <td>{{ getMatiereForDay(horaire, 'Vendredi') }}</td>
+                            <td>{{ getMatiereForDay(horaire, 'Samedi') }}</td>
                         </tr>
                     </tbody>
                 </table>
+
             </div>
         </div>
     </div>

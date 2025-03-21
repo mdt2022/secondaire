@@ -13,19 +13,19 @@
         }
     }
 </style>
+
 <div>
     <a [routerLink]="['/emploidutemps/emploidutemps']" class="btn btn-primary mb-4">Retour</a>
 </div>
 
 <div class="page-header">
-    <!-- <h1 id="ecole">{{ecole.description }} ({{ ecole.nomEcole }})</h1> -->
 </div>
 
 <div class="panel panel-default">
     <div class="panel-heading m-4">
         <div class="row">
             <div class="col-sm-3">
-                <select id="idprof" class="form-control">
+                <select class="form-control" [(ngModel)]="selectedProf">
           <option value="">-- Professeur --</option>
           <option *ngFor="let prof of listeprof" [value]="prof.id">
             {{ prof.prenom }} {{ prof.nom }}
@@ -33,11 +33,10 @@
         </select>
             </div>
             <div class="col-sm-3">
-                <select id="annee" class="form-control">
-                <option value="">-- Choisir une année --</option>
-                <option *ngFor="let annee of annees" [value]="annee.id">{{ annee.nom }}</option>
-              </select>
-
+                <select class="form-control" [(ngModel)]="selectedAnnee">
+          <option value="">-- Choisir une année --</option>
+          <option *ngFor="let annee of annees" [value]="annee.id">{{ annee.nom }}</option>
+        </select>
             </div>
             <div class="col-sm-2">
                 <button class="btn btn-primary" id="emploisemaineprof" (click)="getEmploiDuTemps()">Afficher</button>
@@ -50,7 +49,7 @@
             <h4>Chargement de la page ...</h4>
         </div>
 
-        <div class="col-sm-12">
+        <div class="col-sm-12" *ngIf="emploiDuTemps.length > 0">
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -65,13 +64,13 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let emploi of emploiDuTemps; let i = index">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{{ i + 1 }}</td>
+                        <td>{{ emploi.jour }}</td>
+                        <td>{{ emploi.classe.nom }}</td>
+                        <td>{{ emploi.matiere.libelle }}</td>
+                        <td>{{ emploi.heuredebut }}</td>
+                        <td>{{ emploi.heurefin }}</td>
+                        <td>{{ emploi.matiere.horaire }}</td>
                     </tr>
                 </tbody>
             </table>
