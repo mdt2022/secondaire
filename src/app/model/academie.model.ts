@@ -1,5 +1,5 @@
-export class Academie{
-  id!:number;
-  libelle!:string;
+export interface Academie{
+  id:number;
+  libelle:string;
   
 }

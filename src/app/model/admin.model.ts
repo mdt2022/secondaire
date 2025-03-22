@@ -2,8 +2,7 @@ import { Ecole } from '../model/ecole.model';
 import { Role } from '../model/role.model';
 
 
-export interface Administrateur{
-  
+export interface Administrateur{  
     id:number;
     nom:string;
     prenom:string;

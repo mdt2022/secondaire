@@ -81,13 +81,13 @@ export class SemaineprofComponent implements OnInit {
     }
 
     this.loading = true;
-    this.emploiService.getEmploiByProf(this.selectedProf).subscribe(data => {
+    /*this.emploiService.getEmploiByProf(this.selectedProf).subscribe(data => {
       this.emploiDuTemps = data;
       this.loading = false;
     }, error => {
       this.loading = false;
       console.error("Erreur lors du chargement de l'emploi du temps", error);
-    });
+    });*/
   }
 
   imprimerPage() {

@@ -26,6 +26,6 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(SidebarModule, DropdownModule, ReactiveFormsModule, RouterModule, FormsModule),
     IconSetService,
     provideAnimations(),
-    provideHttpClient(), provideAnimationsAsync()
+    provideHttpClient(), provideAnimationsAsync(), provideAnimationsAsync()
   ]
 };

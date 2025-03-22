@@ -25,7 +25,7 @@ export class EmploidutempsComponent implements OnInit {
   constructor(private emploiDuTempsService: EmploidutempService) {}
 
   ngOnInit(): void {
-    this.getEmploisDuTemps()
+    //this.getEmploisDuTemps()
 
   }
 

@@ -60,7 +60,7 @@ export class ProfComponent implements OnInit {
     const user = this.authService.getUserFromLocalStorage();
     const ecoleId = user?.administrateur?.ecole?.idEcole;
 
-    if (ecoleId) {
+    /*if (ecoleId) {
       this.enseignantService.getEnseignantsByEcole(ecoleId).subscribe(
         (data) => {
           this.listeProf = data;
@@ -71,7 +71,7 @@ export class ProfComponent implements OnInit {
       );
     } else {
       console.error("Impossible de récupérer l'ID de l'école.");
-    }
+    }*/
   }
 
   loadAnnees() {
@@ -83,9 +83,9 @@ export class ProfComponent implements OnInit {
   afficherEmploiProf() {
     this.loading = true;
     const formData = this.emargementForm.value;
-    this.emploiService.getEmploiByProf(formData.enseignant).subscribe((data) => {
+    /*this.emploiService.getEmploiByProf(formData.enseignant).subscribe((data) => {
       this.emploisDuTemps = data;
       this.loading = false;
-    });
+    });*/
   }
 }

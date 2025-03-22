@@ -1,11 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Eleve } from 'src/app/model/eleve.model';
+import { Eleve } from '../../../../model/eleve.model';
 
 @Component({
   selector: 'app-recherche',
   standalone: true,
-  imports: [RouterLink],
+  imports: [
+    RouterLink,
+    CommonModule
+  ],
   templateUrl: './recherche.component.html',
   styleUrl: './recherche.component.scss'
 })
