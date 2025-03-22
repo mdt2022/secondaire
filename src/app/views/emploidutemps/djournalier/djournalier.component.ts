@@ -16,12 +16,9 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     FormsModule,
     RouterLink
-
-
-
   ],
-  templateUrl: './Djournalier.component.html',
-  styleUrls: ['./Djournalier.component.scss']
+  templateUrl: './djournalier.component.html',
+  styleUrls: ['./djournalier.component.scss']
 })
 export class DjournalierComponent implements OnInit {
   annees: any[] = [];
