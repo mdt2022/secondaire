@@ -23,4 +23,16 @@ export class EmploidutempService{
     getEmploiByProf(ecole:number, prof: string, jour: string, an: string): Observable<Emploidutemp[]>{
       return this.http.get<Emploidutemp[]>(this.apiUrl+"/"+ecole+"/"+prof+"/"+jour+"/"+an);
     }
+    getByClasseAnneeEcole(classe: any, annee:any,ecole:any): Observable<any>{
+      return this.http.get(this.apiUrl);
+    }
+    getByJourAnneeEcole(jour: string, annnee: number, ecole: number):Observable<any>{
+      return this.http.get(this.apiUrl);
+    }
+    createEmploi(emploi: Emploidutemp): Observable<any>{
+      return this.http.get(this.apiUrl);
+    }
+    getByAnneeEcole(annee: any, ecole: any): Observable<any>{
+      return this.http.get(this.apiUrl);
+    }
 }

@@ -2,7 +2,7 @@ import { EmploidutempService } from './../../../service/emploidutemp.service';
 import { AnneeuvService } from './../../../service/anneeuv.service';
 import { EnseignantService } from './../../../service/enseignant.service';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Anneeuv } from './../../../model/anneeuv.model';
 import { Enseignant } from './../../../model/enseignant.model';
 import { Emploidutemp } from './../../../model/emploidutemp.model';
@@ -20,7 +20,8 @@ import { AuthService } from '../../../service/auth.service';
     ReactiveFormsModule, // ✅ Assurer que le form fonctionne
     RouterModule,
     HttpClientModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    FormsModule
   ],
   templateUrl: './prof.component.html',
   styleUrl: './prof.component.scss'
@@ -31,7 +32,8 @@ export class ProfComponent implements OnInit {
   annees: Anneeuv[] = [];
   emploisDuTemps: Emploidutemp[] = [];
   loading: boolean = false;
-
+  emploisFiltres: Emploidutemp[] = [];
+  today: Date = new Date(); 
   ecoleId!: number; // ID de l'école (à récupérer dynamiquement si nécessaire)
 
 
