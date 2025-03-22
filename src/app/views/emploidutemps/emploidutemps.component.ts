@@ -33,7 +33,7 @@ export class EmploidutempsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getEmploisDuTemps()
+    //this.getEmploisDuTemps()
 
   }
 
