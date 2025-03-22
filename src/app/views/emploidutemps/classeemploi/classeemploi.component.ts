@@ -10,7 +10,7 @@ import { Matiere } from '../../../model/matiere.model';
 import { AuthService } from '../../../service/auth.service';
 import { User } from '../../../model/user.model';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -19,8 +19,8 @@ import { RouterLink } from '@angular/router';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink
-
+    RouterLink,
+    FormsModule
   ],
   templateUrl: './classeemploi.component.html',
   styleUrls: ['./classeemploi.component.scss']
@@ -29,7 +29,7 @@ export class ClasseemploiComponent implements OnInit {
   classes: Classe[] = [];
   annees: Anneeuv[] = [];
   emploiDuTemps: Emploidutemp[] = [];
-  selectedClasse: string = '';
+  selectedClasse!: Classe;
   selectedAnnee: string = '';
   emploi: any;
     user!: User;
@@ -84,11 +84,32 @@ export class ClasseemploiComponent implements OnInit {
   }
   afficherEmploi(): void {
     if (this.selectedClasse && this.selectedAnnee) {
-      this.emploiService.getAllemploidutemps().subscribe((data: Emploidutemp[]) => {
-        this.emploiDuTemps = data;
+      const ecoleId = this.user.administrateur.ecole.idEcole;
 
+      this.emploiService.getByClasseAnneeEcole(+this.selectedClasse, +this.selectedAnnee, ecoleId).subscribe((data: Emploidutemp[]) => {
+        this.emploiDuTemps = data;
+        console.log('Emploi du temps récupéré :', this.emploiDuTemps);
+      }, (error) => {
+        console.error('Erreur lors du chargement des emplois du temps', error);
       });
     }
+  }
+  getUniqueHoraires(): { debut: string, fin: string }[] {
+    const horaires = this.emploiDuTemps.map(e => ({ debut: e.heuredebut, fin: e.heurefin }));
+    const uniqueHoraires = horaires.filter((value, index, self) =>
+      index === self.findIndex((t) => (
+        t.debut === value.debut && t.fin === value.fin
+      ))
+    );
+    return uniqueHoraires;
+  }
+  getMatiereForDay(horaire: { debut: string, fin: string }, jour: string): string {
+    const emploi = this.emploiDuTemps.find(e =>
+      e.heuredebut === horaire.debut &&
+      e.heurefin === horaire.fin &&
+      e.jour === jour
+    );
+    return emploi ? emploi.matiere.libelle : '';
   }
 
 }

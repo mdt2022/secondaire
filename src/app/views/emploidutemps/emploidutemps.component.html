@@ -1,5 +1,4 @@
-<div class="d-flex justify-content-between mb-2">
-    <!-- Boutons de filtrage alignés à gauche -->
+<div class="d-flex justify-content-between mb-3">
     <button class="btn btn-primary" [routerLink]="['/prof']">Par professeurs</button>
     <button class=" btn btn-primary " [routerLink]="['/semaineprof']">Par semaines</button>
     <button class=" btn btn-primary " [routerLink]="['/djournalier']">Journalier</button>
@@ -7,57 +6,54 @@
     <button class=" btn btn-primary " [routerLink]="['/creationemploidutemps']">Ajouter un programme</button>
 </div>
 
-<div class="container mt-4 ">
-    <!-- Filtre de recherche sur la même ligne -->
-    <div class="d-flex justify-content-between mb-2 ">
-        <input id="filter " class="form-control w-auto ms-3 " placeholder="Rechercher un emploi du temps... ">
+<div class="d-flex justify-content-between mb-2">
+    <div>
+        <label>Afficher</label>
+        <select [(ngModel)]="itemsPerPage" class="form-select d-inline w-auto mx-2">
+          <option [value]="5">5</option>
+          <option [value]="10">10</option>
+          <option [value]="25">25</option>
+      </select>
+        <label>entrées</label>
     </div>
-
-    <!-- Table -->
-    <div class="container mt-4 ">
-        <div class="card shadow-lg p-4 ">
-            <div class="table-responsive ">
-                <table class="table table-bordered table-striped ">
-                    <thead class="table-blue ">
-                        <tr>
-                            <th>N°</th>
-                            <th>Jour</th>
-                            <th>Matière</th>
-                            <th>Professeur</th>
-                            <th>Heure-debut</th>
-                            <th>Heure-fin</th>
-                            <th>Durée</th>
-                            <th>Coefficient</th>
-                            <th>Classe</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        <tr *ngFor="let emploi of filteredEmploisDuTemps() | paginate: { itemsPerPage: 5, currentPage: currentPage }; let i=index " class="table-row ">
-                            <td>{{ (currentPage - 1) * 5 + i + 1 }}</td>
-                            <td>{{ emploi.jour }}</td>
-                            <td>{{ emploi.matiere.libelle }}</td>
-                            <td>{{ emploi.professeur.prenom}} {{ emploi.professeur.nom}}</td>
-                            <td>{{ emploi.heuredebut }}</td>
-                            <td>{{ emploi.heurefin }}</td>
-                            <td>{{ emploi.matiere.horaire }}</td>
-                            <td>{{ emploi.matiere.coefficient }}</td>
-                            <td>{{ emploi.classe.nom }}</td>
-                            <td>
-                                <button class="btn btn-danger btn-sm " (click)="deleteEmploi(emploi.id); $event.stopPropagation(); ">
-                                    <i class="bi bi-trash "></i> Supprimer
-                                </button>
-                            </td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </div>
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center ">
-                <pagination-controls (pageChange)="currentPage= $event "></pagination-controls>
-            </div>
-        </div>
-    </div>
+    <input [(ngModel)]="searchText" class="form-control w-auto" placeholder="Rechercher...">
 </div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th (click)="sortData('id')">N°</th>
+                <th (click)="sortData('jour')">Jour</th>
+                <th (click)="sortData('matiere.libelle')">Matière</th>
+                <th (click)="sortData('professeur.nom')">Professeur</th>
+                <th (click)="sortData('heuredebut')">Heure début</th>
+                <th (click)="sortData('heurefin')">Heure fin</th>
+                <th (click)="sortData('matiere.horaire')">Durée</th>
+                <th (click)="sortData('matiere.coefficient')">Coefficient</th>
+                <th (click)="sortData('classe.nom')">Classe</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let emploi of filteredEmploisDuTemps() | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; let i=index">
+                <td>{{ (currentPage - 1) * 5 + i + 1 }}</td>
+                <td>{{ emploi.jour }}</td>
+                <td>{{ emploi.matiere.libelle }}</td>
+                <td>{{ emploi.professeur.prenom}} {{ emploi.professeur.nom}}</td>
+                <td>{{ emploi.heuredebut }}</td>
+                <td>{{ emploi.heurefin }}</td>
+                <td>{{ emploi.matiere.horaire }}</td>
+                <td>{{ emploi.matiere.coefficient }}</td>
+                <td>{{ emploi.classe.nom }}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm " (click)="deleteEmploi(emploi.id); $event.stopPropagation(); ">
+                      <i class="bi bi-trash "></i> Supprimer
+                  </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
