@@ -11,7 +11,8 @@ import { Observable } from 'rxjs';
 export class ClasseService {
 
   private apiUrl = environment.apiURL;
-  
+
+
   constructor(private http: HttpClient) {}
   //la liste des classes du secondaires
   getAllClasse(): Observable<Classe[]>{
@@ -21,5 +22,6 @@ export class ClasseService {
   getClasseEcole(ecoleId: number): Observable<Classe[]>{
     return this.http.get<Classe[]>(this.apiUrl+"/classeecoles/"+ecoleId);
   }
+
 
 }

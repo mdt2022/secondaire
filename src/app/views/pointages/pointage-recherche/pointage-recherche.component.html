@@ -22,33 +22,31 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let p of pointages">
-                    <td>{{ p.id }}</td>
-                    <td>{{ p.emploidutemp.jour }}</td>
-                    <td>{{ p.emploidutemp.matiere }}</td>
-                    <td>{{ p.emploidutemp.classe }}</td>
-                    <td>{{ p.emploidutemp.heuredebut }} - {{ p.emploidutemp.heurefin }}</td>
-                    <td>{{ p.emploidutemp.matiere.horaire }}</td>
-                    <td>{{ p.enseignant.prenom }} {{ p.enseignant.nom }}</td>
-                    <td>{{ p.enseignant.tarif | number }}</td>
-                    <td>{{ calculateMontant(p) | number }}</td>
-                    <td>{{ p.datevalider }}</td>
+                <tr *ngFor="let pointage of pointages">
+                    <td>{{ pointage.id }}</td>
+                    <td>{{ pointage.emploidutemp?.jour }}</td>
+                    <td>{{ pointage.emploidutemp?.matiere?.libelle }}</td>
+                    <td>{{ pointage.emploidutemp?.classe?.nom }}</td>
+                    <td>{{ pointage.emploidutemp?.heuredebut }} - {{ pointage.emploidutemp?.heurefin }}</td>
+                    <td>{{ pointage.emploidutemp?.matiere?.horaire }}</td>
+                    <td>{{ pointage.enseignant?.prenom }} {{ pointage.enseignant?.nom }}</td>
+                    <td>{{ pointage.enseignant?.tarif | number:'1.0-0' }}</td>
+                    <td>{{ calculateMontant(pointage) | number:'1.0-0' }}</td>
+                    <td>{{ pointage.datevalider }}</td>
                     <td>
-                        <button class="btn btn-danger btn-sm" (click)="deletePointage(p.id)">
-              <i class="glyphicon glyphicon-trash"></i>
-            </button>
+                        <button class="btn btn-danger">Supprimer</button>
                     </td>
                 </tr>
             </tbody>
         </table>
 
-        <p class="alert alert-success">
+        <p class="alert alert-success ">
             Montant total : <u>{{ montantTotal | number }} CFA</u> Avance sur salaire : <u>{{ avance | number }} CFA</u> Montant Net : <u>{{ montantTotal - avance | number }} CFA</u>
         </p>
 
-        <div class="row">
-            <div class="col-sm-6">
-                <a class="btn btn-info" target="_blank">
+        <div class="row ">
+            <div class="col-sm-6 ">
+                <a class="btn btn-info " target="_blank ">
           Imprimer sa fiche de paiement
         </a>
             </div>

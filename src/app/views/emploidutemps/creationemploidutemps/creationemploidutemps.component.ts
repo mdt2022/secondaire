@@ -14,6 +14,7 @@ import { AuthService } from '../../../service/auth.service';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { ClasseEcoleService } from '../../../service/classeecole.service';
 
 @Component({
   selector: 'app-creationemploidutemps',
@@ -31,14 +32,14 @@ export class CreationemploidutempsComponent implements OnInit {
   classes: Classe[] = [];
   jours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
-  isLoading = false; 
+  isLoading = false;
 
   constructor(
     private fb: FormBuilder,
     private emploiService: EmploidutempService,
     private anneeuvService: AnneeuvService,
     private matiereService: MatiereService,
-    private classeService: ClasseService,
+    private classeEcoleService: ClasseEcoleService,
     private enseignantService: EnseignantService,
     private authService: AuthService,
     private router: Router
@@ -71,7 +72,7 @@ export class CreationemploidutempsComponent implements OnInit {
         error: (err) => { console.error("Erreur enseignants", err); }
       });
 
-      this.classeService.getClasseEcole(ecoleId).subscribe({
+      this.classeEcoleService.getClassesByEcole(ecoleId).subscribe({
         next: (data) => { this.classes = data; },
         error: (err) => { console.error("Erreur classes", err); }
       });
@@ -94,7 +95,7 @@ export class CreationemploidutempsComponent implements OnInit {
     const ecoleId = user?.administrateur?.ecole?.idEcole;
 
       const emploi: any = {
-        anneeuv: selectedAnnee,
+      anneeuv: selectedAnnee,
       matiere: selectedMatiere,
       professeur: selectedProfesseur,
       classe: selectedClasse,

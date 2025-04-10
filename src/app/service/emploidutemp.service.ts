@@ -11,28 +11,59 @@ import { environment } from '../../environments/environment';
 export class EmploidutempService{
     private apiUrl = environment.apiURL+"/emploidutemps";
     constructor(private http: HttpClient, private router: Router) {}
-    //par jour
-    getEmploiDuTempsParJour(anneeId: string, jour: string): Observable<Emploidutemp[]> {
-      return this.http.get<Emploidutemp[]>(this.apiUrl+"/"+anneeId+"/"+jour);
-    } 
-    //total
-    getAllemploidutemps(): Observable<Emploidutemp[]>{
-        return this.http.get<Emploidutemp[]>(this.apiUrl);
+
+    // Obtenir tous les emplois du temps
+    getAllemploidutemps(): Observable<Emploidutemp[]> {
+      return this.http.get<Emploidutemp[]>(`${this.apiUrl}`);
     }
-    //par prof
-    getEmploiByProf(ecole:number, prof: string, jour: string, an: string): Observable<Emploidutemp[]>{
-      return this.http.get<Emploidutemp[]>(this.apiUrl+"/"+ecole+"/"+prof+"/"+jour+"/"+an);
+
+    // Obtenir un emploi du temps par ID
+    getEmploiById(id: number): Observable<Emploidutemp> {
+      return this.http.get<Emploidutemp>(`${this.apiUrl}/${id}`);
     }
-    getByClasseAnneeEcole(classe: any, annee:any,ecole:any): Observable<any>{
-      return this.http.get(this.apiUrl);
+
+    // Créer un emploi du temps
+    createEmploi(emploi: Emploidutemp): Observable<Emploidutemp> {
+      return this.http.post<Emploidutemp>(`${this.apiUrl}`, emploi);
     }
-    getByJourAnneeEcole(jour: string, annnee: number, ecole: number):Observable<any>{
-      return this.http.get(this.apiUrl);
+
+    // Mettre à jour un emploi du temps
+    updateEmploi(id: number, emploi: Emploidutemp): Observable<Emploidutemp> {
+      return this.http.put<Emploidutemp>(`${this.apiUrl}/${id}`, emploi);
     }
-    createEmploi(emploi: Emploidutemp): Observable<any>{
-      return this.http.get(this.apiUrl);
+
+    // Supprimer un emploi du temps
+    deleteEmploi(id: number): Observable<void> {
+      return this.http.delete<void>(`${this.apiUrl}/${id}`);
     }
-    getByAnneeEcole(annee: any, ecole: any): Observable<any>{
-      return this.http.get(this.apiUrl);
+
+    // Obtenir par classe, année, école
+    getByClasseAnneeEcole(classeId: number, anneeuvId: number, ecoleId: number): Observable<Emploidutemp[]> {
+      return this.http.get<Emploidutemp[]>(`${this.apiUrl}/classe/${classeId}/annee/${anneeuvId}/ecole/${ecoleId}`);
     }
-}
+
+    // Obtenir par professeur, année, école
+    getByProfesseurAnneeEcole(professeurId: number, anneeuvId: number, ecoleId: number): Observable<Emploidutemp[]> {
+      return this.http.get<Emploidutemp[]>(`${this.apiUrl}/professeur/${professeurId}/annee/${anneeuvId}/ecole/${ecoleId}`);
+    }
+
+    // Obtenir par année, école
+    getByAnneeEcole(anneeuvId: number, ecoleId: number): Observable<Emploidutemp[]> {
+      return this.http.get<Emploidutemp[]>(`${this.apiUrl}/annee/${anneeuvId}/ecole/${ecoleId}`);
+    }
+
+    // Obtenir par jour, professeur, année, école
+    getByJourProfesseurAnneeEcole(jour: string, professeurId: number, anneeuvId: number, ecoleId: number): Observable<Emploidutemp[]> {
+      return this.http.get<Emploidutemp[]>(`${this.apiUrl}/jour/${jour}/professeur/${professeurId}/annee/${anneeuvId}/ecole/${ecoleId}`);
+    }
+
+    // Obtenir par jour, année, école
+    getByJourAnneeEcole(jour: string, anneeuvId: number, ecoleId: number): Observable<Emploidutemp[]> {
+      return this.http.get<Emploidutemp[]>(`${this.apiUrl}/jour/${jour}/annee/${anneeuvId}/ecole/${ecoleId}`);
+    }
+
+    // Emploi par semaine d'un prof
+  getByProfesseurAnneeEcoleSemaine(professeurId: number, anneeuvId: number, ecoleId: number): Observable<Emploidutemp[]> {
+    return this.http.get<Emploidutemp[]>(`${this.apiUrl}/professeur/${professeurId}/annee/${anneeuvId}/ecole/${ecoleId}`);
+  }
+  }

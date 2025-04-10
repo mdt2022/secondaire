@@ -11,29 +11,28 @@
 
     <!-- Formulaire d'affectation (caché par défaut) -->
     <div *ngIf="isFormVisible" class="mb-4">
-        <form>
+        <form (ngSubmit)="affecterClasse()">
             <div class="row">
                 <!-- Sélection de la classe -->
                 <div class="col-md-4 mb-3">
                     <label for="classe">Classe</label>
-                    <select id="classe" class="form-control" name="classe" required>
-                        <option value="" disabled selected>Choisir une classe</option>
-                        <option *ngFor="let classe of classes" [value]="classe.id">{{ classe.nom }}</option>
+                    <select id="classe" class="form-control" name="classe" [(ngModel)]="selectedClasseId" required>
+                      <option value="" disabled selected>Choisir une classe</option>
+                      <option *ngFor="let classe of classes" [value]="classe.id">{{ classe.nom }}</option>
                     </select>
                 </div>
 
                 <!-- Sélection de l'école -->
                 <div class="col-md-4 mb-3">
                     <label for="ecole">Ecole</label>
-                    <select id="ecole" class="form-control" name="ecole" required>
-                        <option value="" disabled selected>Choisir une école</option>
-                        <option *ngFor="let ecole of ecoles" [value]="ecole.idEcole">{{ ecole.nomEcole }}</option>
+                    <select id="ecole" class="form-control" name="ecole" [(ngModel)]="selectedEcoleId" required>
+                      <option value="" disabled selected>Choisir une école</option>
+                      <option *ngFor="let ecole of ecoles" [value]="ecole.idEcole">{{ ecole.nomEcole }}</option>
                     </select>
                 </div>
             </div>
 
             <div class="d-flex justify-content-end">
-                <!-- Boutons Enregistrer et Annuler -->
                 <button type="submit" class="btn btn-success me-2">Enregistrer</button>
                 <button type="button" class="btn btn-secondary" (click)="toggleForm()">Annuler</button>
             </div>

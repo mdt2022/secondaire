@@ -1,0 +1,104 @@
+<div class="page-header">
+    <h1>Bulletin des notes d'une classe de {{ etablissement }}</h1>
+</div>
+
+<!-- Formulaire de sélection des critères -->
+<form [formGroup]="formBulletin" (ngSubmit)="chargerBulletins()" class="form-horizontal">
+    <div class="form-group row">
+        <div class="col-sm-2">
+            <select class="form-control" formControlName="periode" required>
+        <option value="">Période</option>
+        <option *ngFor="let periode of periodes" [value]="periode.id">{{ periode.libelle }}</option>
+      </select>
+        </div>
+        <div class="col-sm-3">
+            <select class="form-control" formControlName="annee" required>
+        <option value="">Année scolaire</option>
+        <option *ngFor="let annee of annees" [value]="annee.id">{{ annee.nom }}</option>
+      </select>
+        </div>
+        <div class="col-sm-3">
+            <select class="form-control" formControlName="classe" required>
+        <option value="">Classe</option>
+        <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+      </select>
+        </div>
+        <div class="col-sm-2">
+            <button type="submit" class="btn btn-info">Retourner la liste</button>
+        </div>
+    </div>
+</form>
+
+<hr>
+
+<!-- Affichage des bulletins -->
+<div *ngIf="listeBulletins.length > 0">
+    <div class="btn-group mb-3">
+        <a [href]="generateImprimerUrl(eleve)" target="_blank" class="btn btn-primary">
+            <i class="fa fa-building-o"></i> Imprimer le bulletin
+        </a>
+        <a [href]="generateListeNotesUrl(eleve)" class="btn btn-primary">
+            <i class="fa fa-building-o"></i> Liste des Notes par élève
+        </a>
+    </div>
+    <div *ngFor="let eleve of listeBulletins; index as i" class="card mt-3">
+        <div class="card-header">
+            <strong>Prénom Nom :</strong> {{ eleve.prenom }} {{ eleve.nom }}
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Matière</th>
+                        <th>Note Classe</th>
+                        <th>Note Compo</th>
+                        <th>Moyenne</th>
+                        <th>Coefficient</th>
+                        <th>Coefficiée</th>
+                        <th>Mention</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let note of eleve.notes">
+                        <td>{{ note.matiere }}</td>
+                        <td>{{ note.note_classe }}</td>
+                        <td>{{ note.note_compo }}</td>
+                        <td>{{ note.moy }}</td>
+                        <td>{{ note.coefficient }}</td>
+                        <td>{{ note.moycoef }}</td>
+                        <td>{{ note.mention }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"></td>
+                        <td>Total</td>
+                        <td>{{ eleve.total }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"></td>
+                        <td>Moyenne</td>
+                        <td>{{ eleve.moyg }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"></td>
+                        <td>Observation</td>
+                        <td>{{ eleve.appreciation }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"></td>
+                        <td>Rang</td>
+                        <td>{{ eleve.rang }} / {{ listeBulletins.length }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>

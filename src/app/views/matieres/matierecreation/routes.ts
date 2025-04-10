@@ -13,7 +13,7 @@ export const routes: Routes = [
         pathMatch: 'full'
       },
       {
-        path: 'matierecreation',
+        path: 'matierecreation/:id',
         loadComponent: () => import('./matierecreation.component').then(m => m.MatierecreationComponent),
         data: {
           title: 'Matierecreation'

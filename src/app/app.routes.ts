@@ -18,6 +18,12 @@ import { RedoubleeleveComponent } from './views/eleves/redoubleeleve/redoubleele
 import { ListeredoubleComponent } from './views/eleves/redoubleeleve/listeredouble/listeredouble.component';
 import { PointageRechercheComponent } from './views/pointages/pointage-recherche/pointage-recherche.component';
 import { PointageEnseignantComponent } from './views/pointages/pointage-enseignant/pointage-enseignant.component';
+import { BulletinClasseComponent } from './views/notes/bulletin-classe/bulletin-classe.component';
+import { BulletinEleveComponent } from './views/notes/bulletin-eleve/bulletin-eleve.component';
+import { NoteClasseComponent } from './views/notes/note-classe/note-classe.component';
+import { NoteEleveComponent } from './views/notes/note-eleve/note-eleve.component';
+import { NoteMatieresComponent } from './views/notes/note-matieres/note-matieres.component';
+import { ReleverComponent } from './views/notes/relever/relever.component';
 
 export const routes: Routes = [
   {
@@ -34,7 +40,7 @@ export const routes: Routes = [
     children: [
       { path: 'nouvelle-empreinte', component: NouvelleEmpreinteComponent },
       { path: 'enregistrer-frai', component: EnregistrerFraiComponent },
-      { path: 'matierecreation', component: MatierecreationComponent },
+      { path: 'matierecreation/:id', component: MatierecreationComponent },
       { path: 'enseignercreate', component: EnseignercreateComponent },
       { path: 'prof', component: ProfComponent },
       { path: 'classeemploi', component: ClasseemploiComponent },
@@ -49,7 +55,15 @@ export const routes: Routes = [
       { path: 'redoubleeleve', component: RedoubleeleveComponent},
       { path: 'listeredouble', component: ListeredoubleComponent},
       { path: 'pointage-recherche', component:PointageRechercheComponent},
+      { path: 'bulletin-classe', component:BulletinClasseComponent},
+      { path: 'bulletin-eleve', component:BulletinEleveComponent},
+      { path: 'note-classe', component:NoteClasseComponent},
+      { path: 'note-eleve', component:NoteEleveComponent},
+      { path: 'note-matieres', component:NoteMatieresComponent},
+      { path: 'relever', component:ReleverComponent},
       { path: 'pointage-enseignant', component:PointageEnseignantComponent},
+
+
 
 
 

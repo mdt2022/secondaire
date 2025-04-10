@@ -1,0 +1,66 @@
+<div class="page-header mb-3">
+    <h3>Enregistrement d'une note individuelle</h3>
+</div>
+
+<form [formGroup]="noteForm" (ngSubmit)="onSubmit()" class="form-horizontal">
+    <div class="row mb-3">
+        <div class="col-sm-2">
+            <select class="form-control" formControlName="periode" required>
+        <option value="">Période</option>
+        <option *ngFor="let p of periodes" [value]="p.id">{{ p.libelle }}</option>
+      </select>
+        </div>
+
+        <div class="col-sm-2">
+            <select class="form-control" formControlName="anneeuv" required>
+        <option value="">Année scolaire</option>
+        <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
+      </select>
+        </div>
+
+        <div class="col-sm-2">
+            <select class="form-control" formControlName="classe" (change)="chargerElevesEtMatieres()">
+        <option value="">Classe</option>
+        <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+      </select>
+        </div>
+
+        <div class="col-sm-3">
+            <select class="form-control" formControlName="eleve">
+        <option value="">-- Élève --</option>
+        <option *ngFor="let e of eleves" [value]="e.id">{{ e.nom }} {{ e.prenom }}</option>
+      </select>
+        </div>
+
+        <div class="col-sm-2">
+            <button type="button" class="btn btn-warning" (click)="afficherMatieres()">Afficher les matières</button>
+        </div>
+    </div>
+
+    <div class="row mb-3" *ngIf="matieres.length > 0">
+        <div class="col-sm-2">
+            <select class="form-control" formControlName="matiere">
+        <option value="">-- Matière --</option>
+        <option *ngFor="let m of matieres" [value]="m.id">
+          {{ m.libelle }} (Coef {{ m.coefficient }})
+        </option>
+      </select>
+        </div>
+
+        <label for="noteClasse" class="col-sm-2 col-form-label">Note de Classe</label>
+        <div class="col-sm-3">
+            <input type="number" formControlName="note_classe" class="form-control" id="noteClasse" />
+        </div>
+
+        <label for="noteCompo" class="col-sm-2 col-form-label">Note de Compo</label>
+        <div class="col-sm-3">
+            <input type="number" formControlName="note_compo" class="form-control" id="noteCompo" />
+        </div>
+    </div>
+
+    <div class="form-group mt-3">
+        <div class="col-sm-12">
+            <button type="submit" class="btn btn-info">Enregistrer</button>
+        </div>
+    </div>
+</form>

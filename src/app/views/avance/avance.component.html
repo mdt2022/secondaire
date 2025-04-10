@@ -4,13 +4,39 @@
         <a [routerLink]="['/nouvelle-empreinte']">Nouvelle empreinte</a>
     </div>
 
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" class="form-control" placeholder="Rechercher une empreinte...">
-        </div>
-    </div>
+    <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+        <div class="row mb-3">
+            <div class="col-sm-4">
+                <select class="form-control" formControlName="enseignant">
+                <option value="">-- Professeur --</option>
+                <option *ngFor="let prof of listeProf" [value]="prof.nom + ' ' + prof.prenom">
+                  {{ prof.prenom }} {{ prof.nom }}
+                </option>
+              </select>
+            </div>
 
-    <div *ngIf="filteredEmpreintes.length > 0">
+            <div class="col-sm-2">
+                <select class="form-control" formControlName="mois">
+                <option value="">Mois</option>
+                <option *ngFor="let mois of moisOptions" [value]="mois.nom">{{ mois.nom }}</option>
+            </select>
+            </div>
+
+            <div class="col-sm-2">
+                <select class="form-control" formControlName="anneeScolaire">
+                <option value="">Année scolaire</option>
+                <option *ngFor="let annee of anneesScolaires" [value]="annee.nom">{{ annee.nom }}</option>
+            </select>
+            </div>
+
+            <div class="col-sm-2">
+                <button type="submit" class="btn btn-info">Rechercher</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Afficher la table uniquement si une recherche a été effectuée -->
+    <div *ngIf="isSearched && filteredEmpreintes.length > 0">
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -24,7 +50,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let emp of filteredEmpreintes;  let i = index">
+                <tr *ngFor="let emp of filteredEmpreintes; let i = index">
                     <td>{{i + 1}}</td>
                     <td>{{ emp.enseignant }}</td>
                     <td>{{ emp.mois }}</td>
@@ -32,12 +58,14 @@
                     <td>{{ emp.montant }}</td>
                     <td>{{ emp.dateEmpreinte }}</td>
                     <td>
-                        <button class="btn btn-danger btn-sm" (click)="deleteEmpreinte(i)">Supprimer</button> </td>
+                        <button class="btn btn-danger btn-sm" (click)="deleteEmpreinte(i)">Supprimer</button>
+                    </td>
                 </tr>
             </tbody>
         </table>
     </div>
-    <div *ngIf="filteredEmpreintes.length === 0">
+
+    <div *ngIf="isSearched && filteredEmpreintes.length === 0">
         <p>Aucune empreinte trouvée.</p>
     </div>
 </div>

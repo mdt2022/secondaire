@@ -14,7 +14,7 @@ export class PointageService{
 
     constructor(private http: HttpClient, private router: Router) {}
 
-    getAllEnseigner(search: any): Observable<Pointage[]>{
+    getAllPointage(search: any): Observable<Pointage[]>{
         return this.http.get<Pointage[]>(this.apiUrl+"/pointages");
     }
 }

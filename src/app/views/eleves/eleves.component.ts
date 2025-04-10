@@ -7,6 +7,7 @@ import { ClasseService } from '../../service/classe.service';
 import { EleveService } from '../../service/eleve.service';
 import { User } from '../../model/user.model';
 import { AuthService } from '../../service/auth.service';
+import { ClasseEcoleService } from '../../service/classeecole.service';
 
 @Component({
   selector: 'app-eleves',
@@ -24,8 +25,8 @@ export class ElevesComponent implements OnInit {
   user!: User;
 
   constructor(
-    private classeService: ClasseService, 
-    private eleveService: EleveService, 
+    private classeEcoleService: ClasseEcoleService,
+    private eleveService: EleveService,
     private authService: AuthService,
     private router: Router  // Injection du Router ici
   ) {}
@@ -37,24 +38,24 @@ export class ElevesComponent implements OnInit {
   loadData(): void {
     this.user = this.authService.getUserFromLocalStorage();
     console.log(this.user);
-  
+
     const ecole = this.user.administrateur.ecole.idEcole;
     const ecoleId = this.user.administrateur.ecole.idEcole;
     const an = this.user.parametre.anneepardefaut.id;
-    this.classeService.getClasseEcole(ecoleId).subscribe(classes => {
+    this.classeEcoleService.getClassesByEcole(ecoleId).subscribe(classes => {
       let total = 0;
       const tempClasses: any[] = [];
-  
+
       let completedRequests = 0;
-  
+
       classes.forEach(classe => {
-        
+
         this.eleveService.getAllEleveecole(an.toString(), ecole.toString(), classe.id.toString()).subscribe(eleves => {
           console.log(eleves);
           tempClasses.push({ ...classe, nombreEleves: eleves.length });
           total += eleves.length;
           completedRequests++;
-  
+
           if (completedRequests === classes.length) {
             this.classes = tempClasses;
             this.totalEleves = total;
@@ -63,7 +64,7 @@ export class ElevesComponent implements OnInit {
       });
     });
   }
-  
+
 
   navigateTo(route: string) {
     this.router.navigate([route]);
