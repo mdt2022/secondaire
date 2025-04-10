@@ -9,14 +9,14 @@
 
                 <!-- Sélectionner l'école -->
                 <div class="col-sm-2">
-                    <select formControlName="ecole" class="form-control">
-                      <option value="">-- Ecoles --</option>
-                      <option *ngFor="let ecole of ecoles" [value]="ecole.idEcole">
-                          {{ ecole.nomEcole }}
-                      </option>
+                    <select formControlName="ecole" class="form-control" (change)="onEcoleChange($event)">
+                    <option value="">-- Ecoles --</option>
+                    <option *ngFor="let ecole of ecoles" [value]="ecole.idEcole">
+
+                      {{ ecole.nomEcole }}
+                    </option>
                   </select>
                 </div>
-
                 <!-- Sélectionner l'enseignant -->
                 <div class="col-sm-2">
                     <select formControlName="enseignant" class="form-control">

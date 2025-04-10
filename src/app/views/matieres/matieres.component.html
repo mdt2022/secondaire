@@ -1,42 +1,30 @@
-<div class="page-header mb-3">
-    <h3>Gestion des matières enseignées dans le groupe INTEC</h3>
-    <button class="btn btn-info" [routerLink]="['/matierecreation']">Ajouter une matière</button>
-</div>
-
-<div class="panel panel-default">
-    <div class="panel-body">
-        <div class="col-sm-12">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>N°</th>
-                        <th>Libellé</th>
-                        <th>Coefficient</th>
-                        <th>Horaire</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let matiere of matieres| paginate: { itemsPerPage: 5, currentPage: currentPage }; let i = index">
-                        <td>{{ (currentPage - 1) * 5 + i + 1 }}</td>
-                        <td>{{ matiere.libelle }}</td>
-                        <td>{{ matiere.coefficient }}</td>
-                        <td>{{ matiere.horaire }}</td>
-                        <td>
-                            <button class="btn btn-info me-2" (click)="modifierMatiere(matiere.id)">
-                          <i class="material-icons">Modifier</i>
-                      </button>
-                            <button class="btn btn-danger" (click)="supprimerMatiere(matiere.id)">
-                          <i class="material-icons">Supprimer</i>
-                      </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <!-- Pagination -->
-        <div class="d-flex justify-content-center">
-            <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
-        </div>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Liste des Matières</h2>
+        <button class="btn btn-success" [routerLink]="['/matierecreation']">Ajouter une matière</button>
     </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Libellé</th>
+                <th>Coefficient</th>
+                <th>Horaire</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let matiere of matieres | paginate: { itemsPerPage: 5, currentPage: currentPage }">
+                <td>{{ matiere.libelle }}</td>
+                <td>{{ matiere.coefficient }}</td>
+                <td>{{ matiere.horaire }}</td>
+                <td>
+                    <button class="btn btn-sm btn-warning me-2" (click)="modifierMatiere(matiere.id)">Modifier</button>
+                    <button class="btn btn-sm btn-danger" (click)="supprimerMatiere(matiere.id)">Supprimer</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
 </div>

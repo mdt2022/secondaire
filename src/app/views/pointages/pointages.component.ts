@@ -22,7 +22,7 @@ import { EcoleService } from '../../service/ecole.service';
 export class PointagesComponent implements OnInit {
   pointageForm: FormGroup;
   ecoles: Ecole[] = [];
-  enseignants: Enseignant[] = []; 
+  enseignants: Enseignant[] = [];
   classes: Classe[] = [];
   user!: User;
 
@@ -87,9 +87,41 @@ export class PointagesComponent implements OnInit {
 
   onSubmit() {
     if (this.pointageForm.valid) {
-      console.log(this.pointageForm.value);
+      const formValues = this.pointageForm.value;
+      this.router.navigate(['/pointage-recherche'], {
+        queryParams: {
+          ecole: formValues.ecole,
+          enseignant: formValues.enseignant,
+          dateDebut: formValues.dateDebut,
+          dateFin: formValues.dateFin
+        }
+      });
     } else {
       console.log('Formulaire invalide');
     }
   }
+
+
+  onEcoleChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+
+    if (target && target.value) {
+      const ecoleId = parseInt(target.value, 10);
+
+      if (ecoleId) {
+        this.enseignantService.getEnseignantsByEcole(ecoleId).subscribe(
+          (data) => {
+            this.enseignants = data;
+            // Vider la sélection enseignant précédente
+            this.pointageForm.patchValue({ enseignant: '' });
+          },
+          (error) => {
+            console.error('Erreur lors de la récupération des enseignants', error);
+          }
+        );
+      }
+    }
+  }
+
+
 }

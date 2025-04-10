@@ -1,0 +1,46 @@
+<div class="page-header">
+    <h1>Gestion des relevés de {{ etablissement }}</h1>
+</div>
+
+<form [formGroup]="releveForm" (ngSubmit)="imprimerReleve()" class="form-horizontal">
+    <div class="form-group row mb-3">
+        <div class="col-sm-2">
+            <select class="form-control" formControlName="classe">
+        <option value="">-- Classe --</option>
+        <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+      </select>
+        </div>
+
+        <div class="col-sm-2">
+            <select class="form-control" formControlName="periode">
+        <option value="">-- Période --</option>
+        <option *ngFor="let p of periodes" [value]="p.id">{{ p.libelle }}</option>
+      </select>
+        </div>
+
+        <div class="col-sm-2">
+            <select class="form-control" formControlName="anneeuv">
+        <option value="">-- Année --</option>
+        <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
+      </select>
+        </div>
+
+        <div class="col-sm-2">
+            <button type="button" class="btn btn-info w-100" (click)="produireReleve()">Produire</button>
+        </div>
+
+        <div class="col-sm-2">
+            <button type="submit" class="btn btn-success w-100">Imprimer</button>
+        </div>
+    </div>
+</form>
+
+<!-- Zone de résultat -->
+<div class="form-group">
+    <div id="retourjquery">
+        <ng-container *ngIf="resultats">
+            <!-- Affichage des relevés ici -->
+            {{ resultats | json }}
+        </ng-container>
+    </div>
+</div>

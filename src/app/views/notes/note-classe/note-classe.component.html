@@ -1,0 +1,72 @@
+<div class="page-header mb-3">
+    <h3>Enregistrement des notes d'une classe</h3>
+</div>
+
+<form [formGroup]="noteForm" (ngSubmit)="onSubmit()">
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <select class="form-control" formControlName="anneeuv">
+        <option value="">Année scolaire</option>
+        <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
+      </select>
+        </div>
+
+        <div class="col-md-3">
+            <select class="form-control" formControlName="classe">
+        <option value="">Classe</option>
+        <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+      </select>
+        </div>
+
+        <div class="col-md-3">
+            <button class="btn btn-info" type="button" (click)="chargerEleves()">Retourner la liste</button>
+        </div>
+    </div>
+
+    <div *ngIf="eleves.length > 0" class="mb-4">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <select class="form-control" formControlName="matiere">
+          <option value="">Matière</option>
+          <option *ngFor="let m of matieres" [value]="m.id">
+            {{ m.libelle }} - Coef: {{ m.coefficient }} - H: {{ m.horaire }}
+          </option>
+        </select>
+            </div>
+
+            <div class="col-md-4">
+                <select class="form-control" formControlName="periode">
+          <option value="">Période</option>
+          <option *ngFor="let p of periodes" [value]="p.id">{{ p.libelle }}</option>
+        </select>
+            </div>
+        </div>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Matricule</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Moy Classe</th>
+                    <th>Moy Compo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let eleve of eleves; let i = index">
+                    <td>{{ eleve.matricule }}</td>
+                    <td>{{ eleve.nom }}</td>
+                    <td>{{ eleve.prenom }}</td>
+                    <td>
+                        <input type="number" class="form-control" [formControlName]="'note_classe_' + i" step="any" min="0" max="20">
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" [formControlName]="'note_compo_' + i" step="any" min="0" max="20">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button class="btn btn-success mt-3" type="submit">Enregistrer</button>
+    </div>
+</form>

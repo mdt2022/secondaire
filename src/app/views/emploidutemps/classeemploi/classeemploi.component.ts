@@ -12,6 +12,7 @@ import { User } from '../../../model/user.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { ClasseEcoleService } from '../../../service/classeecole.service';
 
 @Component({
   selector: 'app-classeemploi',
@@ -36,7 +37,7 @@ export class ClasseemploiComponent implements OnInit {
 
   constructor(
     private emploiService: EmploidutempService,
-    private classeService: ClasseService,
+    private classeEcoleService: ClasseEcoleService,
     private anneeService: AnneeuvService,
     private matiereService: MatiereService,
     private authService: AuthService
@@ -54,7 +55,7 @@ export class ClasseemploiComponent implements OnInit {
     const ecoleId = this.user.administrateur.ecole.idEcole;
 
     if (ecoleId) {
-      this.classeService.getClasseEcole(ecoleId).subscribe({
+      this.classeEcoleService.getClassesByEcole(ecoleId).subscribe({
         next: (data) => {
           this.classes = data;
           console.log("Classes après mise à jour :", this.classes);

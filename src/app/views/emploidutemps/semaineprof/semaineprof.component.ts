@@ -80,15 +80,28 @@ export class SemaineprofComponent implements OnInit {
       return;
     }
 
+    const user = this.authService.getUserFromLocalStorage();
+    const ecoleId = user?.administrateur?.ecole?.idEcole;
+
+    if (!ecoleId) {
+      console.error("Impossible de récupérer l'ID de l'école.");
+      return;
+    }
+
     this.loading = true;
-    /*this.emploiService.getEmploiByProf(this.selectedProf).subscribe(data => {
+    this.emploiService.getByProfesseurAnneeEcoleSemaine(
+      +this.selectedProf,
+      +this.selectedAnnee,
+      ecoleId
+    ).subscribe(data => {
       this.emploiDuTemps = data;
       this.loading = false;
     }, error => {
       this.loading = false;
       console.error("Erreur lors du chargement de l'emploi du temps", error);
-    });*/
+    });
   }
+
 
   imprimerPage() {
     window.print();

@@ -36,7 +36,7 @@ export class ProfesseursComponent implements OnInit {
     ecole: { idEcole: 0, nomEcole: '', descriptionEcole: '', categorie: '' },
     tarif: 0
   };
-  page: number = 1; // Page actuelle
+  page: number = 1;
   user!: User
   constructor(
     private enseignantService: EnseignantService,
@@ -48,8 +48,10 @@ export class ProfesseursComponent implements OnInit {
     this.user = this.authService.getUserFromLocalStorage()
   }
 
-  loadEnseignants(): void {   
-    this.enseignantService.getEnseignantsByEcole(this.user.administrateur.ecole.idEcole).subscribe(data => {
+  loadEnseignants(): void {
+    this.user = this.authService.getUserFromLocalStorage();
+    const ecoleId = this.user.administrateur.ecole.idEcole;
+    this.enseignantService.getEnseignantsByEcole(ecoleId).subscribe(data => {
       this.enseignants = data;
     });
   }
@@ -61,6 +63,7 @@ export class ProfesseursComponent implements OnInit {
   saveEnseignant(): void {
     if (this.selectedEnseignant.id === 0) {
       this.enseignantService.createEnseignant(this.selectedEnseignant).subscribe(() => {
+        console.log('Données envoyées :', this.selectedEnseignant);
         this.loadEnseignants();
         this.selectedEnseignant = {
           id: 0,
@@ -73,7 +76,7 @@ export class ProfesseursComponent implements OnInit {
           lieun: '',
           datedn: '',
           photo: '',
-          ecole: {  idEcole: 0, nomEcole: '', descriptionEcole: '', categorie: ''},
+          ecole: {  idEcole: 0, nomEcole: '', descriptionEcole: '', categorie: 'Secondaire'},
           tarif: 0
         };
       });

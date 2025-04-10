@@ -1,29 +1,69 @@
-<h2>Formulaire de recherche de frais scolaires</h2>
 <p>
-    <button class="btn btn-success" (click)="navigateTo('enregistrer-frai')">Enregistrer le frais scolaire pour un élève</button>
+    <button class="btn btn-success" (click)="navigateTo('enregistrer-frai')" style="color: white;">
+        Enregistrer le frais scolaire pour un élève
+    </button>
 </p>
+<h2>Formulaire de recherche de frais scolaires</h2>
 
-<form class="form-horizontal">
+<!-- Formulaire de recherche -->
+<form [formGroup]="searchForm" (ngSubmit)="searchFraisScolaires()" class="form-horizontal m-3">
+
     <div class="form-group row">
-        <!-- Sélection de la classe -->
         <div class="col-sm-4">
             <select id="classe" class="form-control" formControlName="classe" required>
-                <option value="">-- Selectionnez la classe --</option>
+                <option value="">-- Sélectionnez la classe --</option>
                 <option *ngFor="let classe of classes" [value]="classe.id">{{ classe.nom }}</option>
             </select>
         </div>
 
-        <!-- Sélection de l'année scolaire -->
         <div class="col-sm-4">
             <select id="annee" class="form-control" formControlName="annee" required>
-                <option value="">-- Selectionnez l'année --</option>
+                <option value="">-- Sélectionnez l'année --</option>
                 <option *ngFor="let annee of annees" [value]="annee.id">{{ annee.nom }}</option>
             </select>
         </div>
 
-        <!-- Bouton de soumission -->
         <div class="col-sm-2">
             <button type="submit" class="btn btn-info">Rechercher</button>
         </div>
     </div>
 </form>
+
+<!-- Affichage des résultats -->
+<div *ngIf="fraisScolaires.length > 0">
+    <h2>Frais scolaires de la classe sélectionnée de l'ecole {{user.administrateur.ecole.nomEcole}}</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Elève</th>
+                <th>Montant</th>
+                <th>Réduction</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let frais of fraisScolaires; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ frais.eleve.matricule }} {{ frais.eleve.prenom }} {{ frais.eleve.nom }}</td>
+                <td>{{ frais.montant | number }} CFA</td>
+                <td>{{ frais.reduction | number }} CFA</td>
+                <td>
+                    <button class="btn btn-warning">
+                        <span class="glyphicon glyphicon-pencil">Modifier</span>
+                    </button>
+                    <button class="btn btn-danger">
+                        <span class="glyphicon glyphicon-trash">Supprimer</span>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="alert alert-info h3">
+        Chiffre d'affaire de la classe : {{ totalMontant | number }} CFA, Réduction : {{ totalReduction | number }} CFA
+    </div>
+</div>
+<div *ngIf="fraisScolaires.length === 0 && searchForm.touched" class="alert alert-warning">
+    Aucun frais scolaire trouvé pour cette recherche.
+</div>

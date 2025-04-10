@@ -1,39 +1,64 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { PointageService } from '../../../service/pointage.service'; // À adapter si besoin
+import { OnInit, Component } from '@angular/core';
 import { Pointage } from '../../../model/pointage.model';
+import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-pointage-recherche',
   standalone: true,
-  imports: [CommonModule,ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './pointage-recherche.component.html',
   styleUrl: './pointage-recherche.component.scss'
 })
 export class PointageRechercheComponent implements OnInit {
 
-  pointages: Pointage[] = []; // Contiendra les données
+  pointages: Pointage[] = [];
   montantTotal: number = 0;
-  avance: number = 5000; // Exemple d'avance, à récupérer depuis API si besoin
+  avance: number = 0;
+  enseignantId!: number;
+  dateDebut!: string;
+  dateFin!: string;
+  empreintes: any[] = [];
+  filteredEmpreintes: any[] = [...this.empreintes];
+  search: any;
+
+  constructor(private route: ActivatedRoute, private pointageService: PointageService) {}
 
   ngOnInit() {
-    // Simulation des données récupérées depuis une API
-    this.pointages = [];
+    this.route.queryParams.subscribe(params => {
+      this.enseignantId = params['enseignant'];
+      this.dateDebut = params['dateDebut'];
+      this.dateFin = params['dateFin'];
 
-    this.calculateMontantTotal();
+      // Appel au backend pour récupérer les pointages filtrés
+      this.loadPointages();
+    });
   }
 
-  calculateMontant(pointage: Pointage): number {
-    return pointage.enseignant.tarif * pointage.emploidutemp.matiere.horaire;
+  loadPointages() {
+    this.pointageService.getAllPointage(this.search)
+      .subscribe((data: Pointage[]) => {
+        console.log(data);
+        this.pointages = data;
+
+        this.calculateMontantTotal();
+      }, (error) => {
+        console.error('Erreur lors de la récupération des pointages', error);
+      });
+
+    this.empreintes = JSON.parse(localStorage.getItem('empreintes') || '[]');
+this.filteredEmpreintes = [...this.empreintes];
+  }
+
+  calculateMontant(pointages: Pointage): number {
+    return pointages.enseignant.tarif * pointages.emploidutemp.matiere.horaire;
   }
 
   calculateMontantTotal() {
     this.montantTotal = this.pointages.reduce((total, p) => total + this.calculateMontant(p), 0);
   }
 
-  deletePointage(id: number) {
-    // Implémenter la suppression (via service API)
-    this.pointages = this.pointages.filter(p => p.id !== id);
-    this.calculateMontantTotal();
-  }
+
 }

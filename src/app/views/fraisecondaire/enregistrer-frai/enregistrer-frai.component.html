@@ -10,7 +10,7 @@
     <h3>Enregistrer un frais scolaire</h3>
 </div>
 
-<form (ngSubmit)="onSubmit()" class="form-horizontal">
+<form [formGroup]="fraisForm" (ngSubmit)="onSubmit()" class="form-horizontal">
     <!-- Sélection de l'année, classe et élève sur la même ligne -->
     <div class="form-group d-flex align-items-center">
         <!-- Année scolaire -->
@@ -31,13 +31,20 @@
 
         <!-- Élève -->
         <div class="col-sm-8">
-            <select class="form-control" formControlName="eleve" required *ngIf="eleves.length > 0">
-              <option value="">-- Élève --</option>
-              <option *ngFor="let eleve of eleves" [value]="eleve.id">{{ eleve.nom }}</option>
-          </select>
-            <span class="alert alert-warning">
-              Sélectionnez l'année et la classe pour afficher la liste des élèves.
-          </span>
+            <ng-container *ngIf="eleves.length > 0; else pasDEleves">
+                <select class="form-control" formControlName="eleve" required>
+                  <option value="">-- Élève --</option>
+                  <option *ngFor="let e of eleves" [value]="e.id">
+                    {{e.matricule}} {{e.nom}} {{e.prenom}}
+                  </option>
+              </select>
+            </ng-container>
+
+            <ng-template #pasDEleves>
+                <span class="alert alert-warning">
+                  Sélectionnez l'année et la classe pour afficher la liste des élèves.
+              </span>
+            </ng-template>
         </div>
     </div>
 

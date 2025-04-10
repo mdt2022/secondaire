@@ -1,0 +1,108 @@
+<div class="page-header mb-3">
+    <h3>Les notes d'une classe de {{ etablissement }} par matière</h3>
+</div>
+
+<!-- Formulaire de recherche -->
+<form [formGroup]="noteForm" (ngSubmit)="afficherNotes()" class="form-horizontal">
+    <div class="row mb-3">
+        <div class="col-sm-2">
+            <select class="form-control" formControlName="periode">
+        <option value="0">Période</option>
+        <option *ngFor="let p of periodes" [value]="p.id">{{ p.libelle }}</option>
+      </select>
+        </div>
+
+        <div class="col-sm-2">
+            <select class="form-control" formControlName="anneeuv">
+        <option value="">Année scolaire</option>
+        <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
+      </select>
+        </div>
+
+        <div class="col-sm-2">
+            <select class="form-control" formControlName="classe" (change)="chargerMatieres()">
+        <option value="">Choisir la Classe</option>
+        <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+      </select>
+        </div>
+
+        <div class="col-sm-2">
+            <button type="button" class="btn btn-info w-100" (click)="chargerMatieres()">Afficher les matières</button>
+        </div>
+
+        <div class="col-sm-2">
+            <select class="form-control" formControlName="matiere">
+        <option value="">Choisir la Matière</option>
+        <!-- <option *ngFor="let m of matieres" [value]="m.id">{{ m.libelle }}</option> -->
+      </select>
+        </div>
+
+        <div class="col-sm-2">
+            <button type="submit" class="btn btn-info w-100">Afficher la liste des notes</button>
+        </div>
+    </div>
+</form>
+
+<!-- Résultat : tableau de notes -->
+<div *ngIf="notes.length > 0">
+    <div class="row mt-4">
+        <nav>
+            <ul class="pager">
+                <li class="previous"><a routerLink="/note">Retour</a></li>
+                <li class="next"><a routerLink="/note/new">Ajouter</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="page-header">
+        <h4>
+            Liste des notes de {{ etablissement }} de la {{ classe?.nom }} {{ periode?.libelle }} en {{ matiere?.libelle }}
+        </h4>
+    </div>
+
+    <form [formGroup]="formNotes" (ngSubmit)="onSubmit()" class="form-horizontal">
+        <!-- champs cachés -->
+        <input type="hidden" formControlName="periode" />
+        <input type="hidden" formControlName="matiere" />
+        <input type="hidden" formControlName="ecole" />
+        <input type="hidden" formControlName="classe" />
+        <input type="hidden" formControlName="anneeuv" />
+
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th>Matricule</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Note Classe</th>
+                            <th>Note Compo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let note of notes; index as i">
+                            <input type="hidden" [formControlName]="'eleve' + i" [value]="note.eleve" />
+                            <input type="hidden" [formControlName]="'id' + i" [value]="note.id" />
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ note.matricule }}</td>
+                            <td>{{ note.nom }}</td>
+                            <td>{{ note.prenom }}</td>
+                            <td>
+                                <input type="text" class="form-control" maxlength="7" pattern="(^[0-9]{0,2}$)|(^[0-9]{0,2}\\.[0-9]{0,5}$)" [formControlName]="'note_classe' + i" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" maxlength="7" pattern="(^[0-9]{0,2}$)|(^[0-9]{0,2}\\.[0-9]{0,5}$)" [formControlName]="'note_compo' + i" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-sm-2">
+                <button type="submit" class="btn btn-success">Enregistrer les modifications</button>
+            </div>
+        </div>
+    </form>
+</div>
