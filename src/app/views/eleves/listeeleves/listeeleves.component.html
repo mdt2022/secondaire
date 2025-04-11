@@ -13,7 +13,7 @@
         </div>
 
         <div class="col-sm-3">
-            <select formControlName="anneeScolaire" class="form-control" required>
+            <select formControlName="anneeuv" class="form-control" required>
                 <option value="">Année Scolaire</option>
                 <option *ngFor="let annee of anneesScolaires" [value]="annee.id">{{ annee.nom }}</option>
             </select>
@@ -25,6 +25,87 @@
     </div>
 </form>
 
-<div class="form-group">
-    <div id="retourjquery"></div>
+<div *ngIf=" eleves.length > 0" class="row">
+    <div class="d-flex justify-content-between mb-2">
+        <a [routerLink]="['/avance/avance']" class="btn btn-primary mb-3">Retour</a>
+        <!-- <a [routerLink]="['/avance/avance']" class="btn btn-primary mb-4">Inscription</a> -->
+    </div>
+    <h2>Liste des élèves</h2>
+    <div class="d-flex justify-content-between mb-2">
+        <div>
+            <label>Afficher</label>
+            <select [(ngModel)]="itemsPerPage" class="form-select d-inline w-auto mx-2">
+          <option [value]="5">5</option>
+          <option [value]="10">10</option>
+          <option [value]="25">25</option>
+        </select>
+            <label>entrées</label>
+        </div>
+
+        <input [(ngModel)]="searchText" class="form-control w-auto" placeholder="Rechercher...">
+    </div>
+
+
+    <div class="col-md-12 col-sm-12">
+        <div class="card card-box">
+            <div class="card-body" id="bar-parent">
+                <div class="form-group">
+                    <div class="col-sm-12 mb-3">
+                        <button (click)="imprimerListe()" class="btn btn-primary me-2">
+              <i class="fa fa-print"></i> Imprimer la liste
+            </button>
+                        <button (click)="exporterExcel()" class="btn btn-primary">
+              <i class="fa fa-download"></i> Export vers Excel
+            </button>
+                    </div>
+                </div>
+
+                <table class="table table-bordered" *ngIf="eleves.length > 0">
+                    <thead>
+                        <tr>
+                            <th (click)="sortBy('index')" class="sortable">N° <span [ngClass]="{'asc': sortColumn === 'N°' && sortDirection === 'asc', 'desc': sortColumn === 'N°' && sortDirection === 'desc'}"></span></th>
+                            <th (click)="sortBy('matricule')" class="sortable">Matricule <span [ngClass]="{'asc': sortColumn === 'Matricule' && sortDirection === 'asc', 'desc': sortColumn === 'Matricule' && sortDirection === 'desc'}"></span></th>
+                            <th (click)="sortBy('prenom')" class="sortable">Prénom <span [ngClass]="{'asc': sortColumn === 'Prénom' && sortDirection === 'asc', 'desc': sortColumn === 'Prénom' && sortDirection === 'desc'}"></span></th>
+                            <th (click)="sortBy('nom')" class="sortable">Nom <span [ngClass]="{'asc': sortColumn === 'Nom' && sortDirection === 'asc', 'desc': sortColumn === 'Nom' && sortDirection === 'desc'}"></span></th>
+                            <th (click)="sortBy('classe')" class="sortable">Classe</th>
+                            <th (click)="sortBy('annee')" class="sortable">Année scolaire</th>
+                            <th>Voir</th>
+                            <th>Modifier</th>
+                            <th>Supprimer</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr *ngFor="let eleve of filteredEleves() | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
+                            <td>{{ (page - 1) * itemsPerPage + i + 1 }}</td>
+                            <td>{{ eleve.eleve.matricule}}</td>
+                            <td>{{ eleve.eleve.prenom }}</td>
+                            <td>{{ eleve.eleve.nom }}</td>
+                            <td>{{ eleve.classe.nom }}</td>
+                            <td>{{ eleve.anneeuv.nom }}</td>
+                            <td>
+                                <button (click)="voirDetail(eleve.id)" class="btn btn-primary" title="Détails">
+                                <i class="bi bi-info-circle"></i>
+                              </button>
+                            </td>
+                            <td>
+                                <button (click)="modifierEleve(eleve.id)" class="btn btn-warning" title="Modifier">
+                                <i class="bi bi-pencil-square"></i>
+                              </button>
+                            </td>
+                            <td>
+                                <button (click)="supprimerEleve(eleve.id)" class="btn btn-danger" title="Supprimer">
+                                <i class="bi bi-trash"></i>
+                              </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p *ngIf="eleves.length === 0" class="text-muted">Aucun élève trouvé pour cette recherche.</p>
+            </div>
+            <pagination-controls (pageChange)="page = $event"></pagination-controls>
+
+        </div>
+    </div>
 </div>

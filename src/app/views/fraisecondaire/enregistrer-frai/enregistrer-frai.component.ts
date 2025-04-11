@@ -78,19 +78,19 @@ export class EnregistrerFraiComponent implements OnInit {
   }
 
   onClasseChange() {
-    const classeId = this.fraisForm.value.classe;
     const anneeId = this.user.parametre.anneepardefaut.id;
     const ecoleId = this.user.administrateur.ecole.idEcole;
+    const classeId = this.fraisForm.value.classe;
 
-    if (classeId && anneeId && ecoleId) {
-      this.eleveService.getAllEleveecole(
+    if (anneeId && ecoleId && classeId) {
+      this.eleveService.getAllEleve(
         anneeId.toString(),
         ecoleId.toString(),
         classeId.toString()
       ).subscribe({
-        next: (eleves) => {
-          console.log("Élèves reçus :", eleves);
-          this.eleves = eleves;
+        next: (data) => {
+          this.eleves = data;
+          console.log("Élèves reçus :", data);
         },
         error: (err) => {
           console.error("Erreur lors du chargement des élèves", err);

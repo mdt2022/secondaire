@@ -50,7 +50,7 @@ export class ElevesComponent implements OnInit {
 
       classes.forEach(classe => {
 
-        this.eleveService.getAllEleveecole(an.toString(), ecole.toString(), classe.id.toString()).subscribe(eleves => {
+        this.eleveService.getAllEleve(an.toString(), ecole.toString(), classe.id.toString()).subscribe(eleves => {
           console.log(eleves);
           tempClasses.push({ ...classe, nombreEleves: eleves.length });
           total += eleves.length;

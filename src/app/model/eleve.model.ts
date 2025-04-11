@@ -1,3 +1,6 @@
+import { Anneeuv } from "./anneeuv.model";
+import { Classe } from "./classe.model";
+
 export interface Eleve{
     id: number;
     matricule: string;
@@ -10,9 +13,8 @@ export interface Eleve{
     nommere: string;
     nationalite: string;
     sexe: string;
-    anneeScolaire: string;
-    classe: string
+    anneeScolaire: Anneeuv;
+    classe: Classe
  }
- 
- 
- 
+
+

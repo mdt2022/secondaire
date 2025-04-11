@@ -19,9 +19,9 @@ import { ClasseEcoleService } from '../../service/classeecole.service';
   styleUrls: ['./classe.component.scss']
 })
 export class ClasseComponent implements OnInit {
-  classes: Classe[] = []; // Liste des classes de l'école
+  classes: Classe[] = [];
 
-  ecoles: Ecole[] = []; // ✅ Déclarer la variable pour éviter l'erreur
+  ecoles: Ecole[] = [];
   isFormVisible: boolean = false;
   searchText: string = '';
   currentPage: number = 1;
@@ -64,7 +64,7 @@ export class ClasseComponent implements OnInit {
     getAllClasse() {
       this.classeService.getAllClasse().subscribe(
         (data) => {
-          this.classes = data; // ✅ Correction pour correspondre au template
+          this.classes = data; 
         },
         (error) => {
           console.error('Erreur lors de la récupération des ecoles', error);

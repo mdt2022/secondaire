@@ -13,7 +13,7 @@ export class EleveService {
   private apiUrl = environment.apiURL + "/eleveecoles";
 
   constructor(private http: HttpClient, private router: Router) {}
-  getAllEleveecole(an: string, ecole: string, classe: string): Observable<Eleve[]> {
+  getAllEleve(an: string, ecole: string, classe: string): Observable<Eleve[]> {
     const donnees = [an, ecole, classe];
     return this.http.post<Eleve[]>(`${this.apiUrl}/eleveparclasse`, donnees);
   }

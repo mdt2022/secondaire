@@ -112,7 +112,7 @@ export class PointagesComponent implements OnInit {
         this.enseignantService.getEnseignantsByEcole(ecoleId).subscribe(
           (data) => {
             this.enseignants = data;
-            // Vider la sélection enseignant précédente
+            
             this.pointageForm.patchValue({ enseignant: '' });
           },
           (error) => {

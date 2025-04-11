@@ -11,7 +11,6 @@ import { DjournalierComponent } from './views/emploidutemps/djournalier/djournal
 import { SemaineprofComponent } from './views/emploidutemps/semaineprof/semaineprof.component';
 import { ElevecreationComponent } from './views/eleves/elevecreation/elevecreation.component';
 import { ListeelevesComponent } from './views/eleves/listeeleves/listeeleves.component';
-import { RechercheComponent } from './views/eleves/listeeleves/recherche/recherche.component';
 import { PassageeleveComponent } from './views/eleves/passageeleve/passageeleve.component';
 import { ListepassageComponent } from './views/eleves/passageeleve/listepassage/listepassage.component';
 import { RedoubleeleveComponent } from './views/eleves/redoubleeleve/redoubleeleve.component';
@@ -49,7 +48,6 @@ export const routes: Routes = [
       { path: 'semaineprof', component: SemaineprofComponent },
       { path: 'elevecreation', component: ElevecreationComponent},
       { path: 'listeeleves', component: ListeelevesComponent},
-      { path: 'recherche', component: RechercheComponent},
       { path: 'passageeleve', component: PassageeleveComponent},
       { path: 'listepassage', component: ListepassageComponent},
       { path: 'redoubleeleve', component: RedoubleeleveComponent},
