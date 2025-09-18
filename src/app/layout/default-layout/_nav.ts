@@ -17,7 +17,7 @@ export const navItems: INavData[] = [
   {
     name: 'Avance',
     url: '/avance/avance',
-    iconComponent: { name: 'cil-clock' }
+    iconComponent: { name: 'cil-list' }
   },
   {
     name: 'Classe',
@@ -29,13 +29,13 @@ export const navItems: INavData[] = [
     name: 'Eleves',
     url: '/eleves/eleves',
 
-    iconComponent: { name: 'cil-group' }
+    iconComponent: { name: 'cil-list' }
   },
   {
     name: 'Emploi du temps',
     url: '/emploidutemps/emploidutemps',
 
-    iconComponent: { name: 'cil-calendar' }
+    iconComponent: { name: 'cil-list' }
   },
   {
     name: 'Frai du secondaire',
@@ -47,7 +47,7 @@ export const navItems: INavData[] = [
     name: 'Matières',
     url: '/matieres/matieres',
 
-    iconComponent: { name: 'cil-book' }
+    iconComponent: { name: 'cil-list' }
   },
   {
     name: 'Matières enseignées',
@@ -65,17 +65,17 @@ export const navItems: INavData[] = [
     name: 'Paiements secondaires',
     url: '/paiementsecondaires/paiementsecondaires',
 
-    iconComponent: { name: 'cil-money' }
+    iconComponent: { name: 'cil-list' }
   },
   {
     name: 'Pointages',
     url: '/pointages/pointages',
-    iconComponent: { name: 'cil-check-circle' }
+    iconComponent: { name: 'cil-list' }
   },
   {
     name: 'Professeurs',
     url: '/professeurs/professeurs',
-    iconComponent: { name: 'cil-teacher' }
+    iconComponent: { name: 'cil-list' }
   },
   {
     title: true,
@@ -84,16 +84,16 @@ export const navItems: INavData[] = [
   {
     name: 'Role',
     url: '/roles/roles',
-    iconComponent: { name: 'cil-chalkboard' }
+    iconComponent: { name: 'cil-pencil' }
   },
   {
     name: 'Gestion des classes',
     url: '/gestionsdesclasses/gestionsdesclasses',
-    iconComponent: { name: 'cil-chalkboard' }
+    iconComponent: { name: 'cil-pencil' }
   }, 
   {
     name: 'Administrateurs',
     url: '/administrateur/administrateur',
-    iconComponent: { name: 'cil-chalkboard' }
+    iconComponent: { name: 'cil-pencil' }
   }
 ];

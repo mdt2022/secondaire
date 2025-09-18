@@ -1,0 +1,30 @@
+/* Avatar rond */
+.avatar {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Effet de survol sur les lignes */
+  .table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+  }
+  
+  /* Style des badges */
+  .badge {
+    padding: 0.35em 0.65em;
+    font-weight: 500;
+  }
+  
+  /* Pagination personnalisée */
+  .my-pagination .ngx-pagination .current {
+    background: #0d6efd;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }

@@ -27,6 +27,11 @@ import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { IconDirective } from '@coreui/icons-angular';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { delay, filter, map, tap } from 'rxjs/operators';
+import { User } from '../../../model/user.model';
+import { Administrateur } from '../../../model/admin.model';
+import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../../service/auth.service';
+import { AdminService } from '../../../service/admin.service';
 
 @Component({
   selector: 'app-default-header',
@@ -35,6 +40,9 @@ import { delay, filter, map, tap } from 'rxjs/operators';
   imports: [ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconDirective, HeaderNavComponent, NavItemComponent, NavLinkDirective, RouterLink, RouterLinkActive, NgTemplateOutlet, BreadcrumbRouterComponent, ThemeDirective, DropdownComponent, DropdownToggleDirective, TextColorDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective, BadgeComponent, DropdownDividerDirective, ProgressBarDirective, ProgressComponent, NgStyle]
 })
 export class DefaultHeaderComponent extends HeaderComponent {
+  user!: User
+  admin!: Administrateur
+  baseUrl = environment.apiURL+"/administrateurs";
 
   readonly #activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   readonly #colorModeService = inject(ColorModeService);
@@ -52,8 +60,12 @@ export class DefaultHeaderComponent extends HeaderComponent {
     return this.colorModes.find(mode=> mode.name === currentMode)?.icon ?? 'cilSun';
   });
 
-  constructor() {
+  constructor(
+    private authService: AuthService,
+    private adminService: AdminService
+  ) {
     super();
+    this.user = authService.getUserFromLocalStorage();
     this.#colorModeService.localStorageItemName.set('coreui-free-angular-admin-template-theme-default');
     this.#colorModeService.eventName.set('ColorSchemeChange');
 

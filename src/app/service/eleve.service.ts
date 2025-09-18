@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Eleve } from '../model/eleve.model';
+import { ClasseDTO } from "../dto/ClasseDTO.dto";
 
 @Injectable({
   providedIn: 'root'
@@ -18,5 +19,9 @@ export class EleveService {
   getAllEleveecole(an: string, ecole: string, classe: string): Observable<Eleve[]> {
     const donnees = [an, ecole, classe]; // Tableaux des paramètres requis
     return this.http.post<Eleve[]>(`${this.apiUrl}/eleveparclasse`, donnees);
+  }
+   //nombre eleve classe ecole
+  getNombreEleveClasseEcole(ecoleId: number): Observable<ClasseDTO[]>{
+      return this.http.get<ClasseDTO[]>(this.apiUrl+"/nombreparclasse/"+ecoleId)
   }
 }

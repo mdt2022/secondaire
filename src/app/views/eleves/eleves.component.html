@@ -1,78 +1,166 @@
-<h2>Gestion des élèves de </h2>
-
-<div class="row">
-    <div class="col-md-6">
-        <div class="card card-topline-green">
-            <div class="card-head">
-                <header>
-                    <h4>Menus</h4>
-                </header>
-                <div class="tools">
-                    <button class="btn btn-light btn-sm"><i class="fa fa-repeat"></i></button>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="table-scrollable">
-                    <table class="table">
-                        <tbody>
-                            <tr>
-                                <td><button class="btn btn-primary" [routerLink]="['/elevecreation']">Inscription d'un élève</button></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <button class="btn btn-info" [routerLink]="['/listeeleves']">Liste des élèves par classe</button></td>
-                            </tr>
-                            <tr>
-                                <td><button class="btn btn-success " [routerLink]="['/passageeleve']">Passage des élèves</button></td>
-                            </tr>
-                            <tr>
-                                <td><button class="btn btn-warning " [routerLink]="['/redoubleeleve']">Redoublement</button></td>
-                            </tr>
-                            <tr>
-                                <td><button class="btn btn-success " (click)="navigateTo( 'eleve/admission') ">Validation d'examen</button></td>
-                            </tr>
-                            <tr>
-                                <td><button class="btn btn-danger " (click)="navigateTo( 'eleve/exclusion') ">Exclusion d'un élève</button></td>
-                            </tr>
-                            <tr>
-                                <td><button class="btn btn-info " (click)="navigateTo( 'adminexamen/index') ">Gestion des admis aux examens</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+<div class="container-fluid">
+    <!-- Titre principal -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-bold text-primary">
+        <i class="fas fa-user-graduate me-2"></i>Gestion des élèves
+      </h2>
+      <div class="badge bg-primary text-white p-2">
+        <i class="fas fa-sync-alt me-1"></i> Mise à jour: {{ today | date:'dd/MM/yyyy' }}
+      </div>
     </div>
-
-    <div class="col-md-6 ">
-        <div class="card card-topline-yellow ">
-            <div class="card-head ">
-                <header>
-                    <h4>Nombre d'élèves par classe</h4>
-                </header>
-                <div class="tools ">
-                    <button class="btn btn-light btn-sm "><i class="fa fa-repeat "></i></button>
+  
+    <div class="row g-4">
+      <!-- Carte des menus -->
+      <div class="col-lg-6">
+        <div class="card shadow-sm border-0 rounded-lg">
+          <div class="card-header bg-white d-flex justify-content-between align-items-center border-bottom">
+            <h4 class="mb-0 text-primary">
+              <i class="fas fa-bars me-2"></i>Menu des actions
+            </h4>
+            <button class="btn btn-sm btn-outline-secondary" title="Actualiser">
+              <i class="fas fa-sync-alt"></i>
+            </button>
+          </div>
+          <div class="card-body p-0">
+            <div class="list-group list-group-flush">
+              <a [routerLink]="['/elevecreation']" class="list-group-item list-group-item-action d-flex align-items-center">
+                <div class="icon-circle bg-primary text-white me-3">
+                  <i class="fas fa-user-plus"></i>
                 </div>
-            </div>
-            <div class="card-body ">
-                <div class="table-scrollable ">
-                    <table class="table table-bordered ">
-                        <thead>
-                            <tr>
-                                <th>Classe</th>
-                                <th>Nombre d'élèves</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let classe of classes ">
-                                <td><b>{{ classe.nom }}</b></td>
-                                <td>{{ classe.nombreEleves }} Élève(s)</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="alert alert-danger "><b>Total : {{ totalEleves }}</b></div>
+                <div>
+                  <h6 class="mb-0">Inscription d'un élève</h6>
+                  <small class="text-muted">Ajouter un nouvel élève dans le système</small>
                 </div>
+                <i class="fas fa-chevron-right ms-auto text-muted"></i>
+              </a>
+  
+              <a [routerLink]="['/listeeleves']" class="list-group-item list-group-item-action d-flex align-items-center">
+                <div class="icon-circle bg-info text-white me-3">
+                  <i class="fas fa-list-ol"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0">Liste des élèves par classe</h6>
+                  <small class="text-muted">Consulter les élèves classés par niveau</small>
+                </div>
+                <i class="fas fa-chevron-right ms-auto text-muted"></i>
+              </a>
+  
+              <a [routerLink]="['/passageeleve']" class="list-group-item list-group-item-action d-flex align-items-center">
+                <div class="icon-circle bg-success text-white me-3">
+                  <i class="fas fa-arrow-up"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0">Passage des élèves</h6>
+                  <small class="text-muted">Gérer le passage en classe supérieure</small>
+                </div>
+                <i class="fas fa-chevron-right ms-auto text-muted"></i>
+              </a>
+  
+              <a [routerLink]="['/redoubleeleve']" class="list-group-item list-group-item-action d-flex align-items-center">
+                <div class="icon-circle bg-warning text-white me-3">
+                  <i class="fas fa-redo"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0">Redoublement</h6>
+                  <small class="text-muted">Gérer les cas de redoublement</small>
+                </div>
+                <i class="fas fa-chevron-right ms-auto text-muted"></i>
+              </a>
+  
+              <a (click)="navigateTo('eleve/admission')" class="list-group-item list-group-item-action d-flex align-items-center">
+                <div class="icon-circle bg-success text-white me-3">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0">Validation d'examen</h6>
+                  <small class="text-muted">Valider les admissions aux examens</small>
+                </div>
+                <i class="fas fa-chevron-right ms-auto text-muted"></i>
+              </a>
+  
+              <a (click)="navigateTo('eleve/exclusion')" class="list-group-item list-group-item-action d-flex align-items-center">
+                <div class="icon-circle bg-danger text-white me-3">
+                  <i class="fas fa-user-times"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0">Exclusion d'un élève</h6>
+                  <small class="text-muted">Gérer les exclusions disciplinaires</small>
+                </div>
+                <i class="fas fa-chevron-right ms-auto text-muted"></i>
+              </a>
+  
+              <a (click)="navigateTo('adminexamen/index')" class="list-group-item list-group-item-action d-flex align-items-center">
+                <div class="icon-circle bg-info text-white me-3">
+                  <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0">Gestion des admis aux examens</h6>
+                  <small class="text-muted">Consulter et valider les résultats</small>
+                </div>
+                <i class="fas fa-chevron-right ms-auto text-muted"></i>
+              </a>
             </div>
+          </div>
         </div>
+      </div>
+  
+      <!-- Carte des statistiques -->
+      <div class="col-lg-6">
+        <div class="card shadow-sm border-0 rounded-lg h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center border-bottom">
+              <h4 class="mb-0 text-primary">
+                <i class="fas fa-chart-pie me-2"></i>Statistiques par classe
+              </h4>
+              <button class="btn btn-sm btn-outline-secondary" title="Actualiser" (click)="refreshStats()">
+                <i class="fas fa-sync-alt"></i>
+              </button>
+            </div>
+            
+            <div class="card-body position-relative">
+              <!-- Barre de défilement horizontale -->
+              <div class="stats-scroller">
+                <div class="stats-container">
+                  <!-- Carte statistique pour chaque classe -->
+                  <div class="stat-card" *ngFor="let classe of classedots">
+                    <div class="stat-header" [style.background]="getColorForClass(classe.nom)">
+                      <h5>{{ classe.nom }}</h5>
+                    </div>
+                    <div class="stat-body">
+                      <div class="stat-value">{{ classe.nombre }}</div>
+                      <div class="stat-label">Élèves</div>
+                      <div class="stat-percent">
+                        {{ (classe.nombre / totalEleves * 100).toFixed(1) }}%
+                      </div>
+                    </div>
+                    <div class="stat-footer">
+                      <div class="progress">
+                        <div class="progress-bar" 
+                             [style.width.%]="(classe.nombre / totalEleves * 100)"
+                             [style.background]="getColorForClass(classe.nom)">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          
+              <!-- Légende et total -->
+              <div class="mt-4 pt-3 border-top">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="legend">
+                    <span *ngFor="let classe of classedots" class="legend-item me-3">
+                      <span class="legend-color" [style.background]="getColorForClass(classe.nom)"></span>
+                      {{ classe.nom }}
+                    </span>
+                  </div>
+                  <div class="total-badge bg-light-primary text-primary">
+                    <i class="fas fa-users me-1"></i>
+                    Total: {{ totalEleves }} Élèves
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
     </div>
-</div>
+  </div>

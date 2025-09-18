@@ -1,466 +1,515 @@
-<c-accordion>
+<c-accordion class="modern-accordion">
+    <!-- Dossier d'inscription -->
     <c-accordion-item #item0="cAccordionItem" [visible]="true">
-        <ng-template cTemplateId="accordionHeaderTemplate">
-            <button [collapsed]="!item0.visible" cAccordionButton>
-              <h5 style="color: rgb(14, 14, 135);">Dossier d'inscription</h5>
-      </button>
-        </ng-template>
-        <ng-template cTemplateId="accordionBodyTemplate">
-            <div class="accordion-body p-4 bg-light rounded shadow-sm">
-                <form>
-                    <div class="mb-3">
-                        <label class="form-label">Photo</label>
-                        <input type="file" name="photo" class="form-control">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Matricule</label>
-                        <input type="text" name="matricule" class="form-control" placeholder="N° matricule de l'élève !">
-                    </div>
-
-                    <div class="mb-3 row">
-                        <div class="col-md-6">
-                            <label class="form-label">Nom</label>
-                            <input type="text" name="nom" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Prénom</label>
-                            <input type="text" name="prenom" class="form-control">
-                        </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                        <div class="col-md-6">
-                            <label class="form-label">Date de naissance</label>
-                            <input type="date" name="dateNaissance" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Lieu de naissance</label>
-                            <input type="text" name="lieuNaissance" class="form-control">
-                        </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                        <div class="col-md-6">
-                            <label class="form-label">Prénom du père</label>
-                            <input type="text" name="prenomPere" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Prénom de la mère</label>
-                            <input type="text" name="prenomMere" class="form-control">
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Nom de la mère</label>
-                        <input type="text" name="nomMere" class="form-control">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Académie</label>
-                        <select name="academie" class="form-select">
-                          <option value="">- Académie -</option>
-                      </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Établissement</label>
-                        <input type="text" name="etablissement" value="INTEC-B" class="form-control" readonly>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Année scolaire</label>
-                        <input type="text" name="anneeScolaire" class="form-control">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Sexe</label><br>
-                        <div class="form-check form-check-inline">
-                            <input type="radio" name="sexe" value="Homme" class="form-check-input">
-                            <label class="form-check-label">Homme</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input type="radio" name="sexe" value="Femme" class="form-check-input">
-                            <label class="form-check-label">Femme</label>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Classe</label>
-                        <select name="classe" class="form-select">
-                          <option value="">-- Classe --</option>
-                      </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Nationalité</label>
-                        <input type="text" name="nationalite" value="Malienne" class="form-control" readonly>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Tuteur</label>
-                        <input type="text" name="tuteur" class="form-control">
-                    </div>
-                </form>
+      <ng-template cTemplateId="accordionHeaderTemplate">
+        <button [collapsed]="!item0.visible" cAccordionButton class="accordion-header">
+          <div class="header-content">
+            <i class="fas fa-file-alt header-icon"></i>
+            <h5>Dossier d'inscription</h5>
+            <i class="fas fa-chevron-down indicator"></i>
+          </div>
+        </button>
+      </ng-template>
+      <ng-template cTemplateId="accordionBodyTemplate">
+        <div class="accordion-body elegant-form">
+          <div class="mb-3">
+            <label class="form-label">Photo</label>
+            <input type="file" name="photo" class="form-control modern-file-input">
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Matricule</label>
+            <input type="text" name="matricule" class="form-control" placeholder="N° matricule de l'élève !">
+          </div>
+  
+          <div class="mb-3 row">
+            <div class="col-md-6">
+              <label class="form-label">Nom</label>
+              <input type="text" name="nom" class="form-control">
             </div>
-        </ng-template>
+            <div class="col-md-6">
+              <label class="form-label">Prénom</label>
+              <input type="text" name="prenom" class="form-control">
+            </div>
+          </div>
+  
+          <div class="mb-3 row">
+            <div class="col-md-6">
+              <label class="form-label">Date de naissance</label>
+              <input type="date" name="dateNaissance" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Lieu de naissance</label>
+              <input type="text" name="lieuNaissance" class="form-control">
+            </div>
+          </div>
+  
+          <div class="mb-3 row">
+            <div class="col-md-6">
+              <label class="form-label">Prénom du père</label>
+              <input type="text" name="prenomPere" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Prénom de la mère</label>
+              <input type="text" name="prenomMere" class="form-control">
+            </div>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Nom de la mère</label>
+            <input type="text" name="nomMere" class="form-control">
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Académie</label>
+            <select name="academie" class="form-select">
+              <option value="">- Académie -</option>
+            </select>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Établissement</label>
+            <input type="text" name="etablissement" value="INTEC-B" class="form-control" readonly>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Année scolaire</label>
+            <input type="text" name="anneeScolaire" class="form-control">
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Sexe</label><br>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <label class="btn btn-outline-primary">
+                <input type="radio" name="sexe" value="Homme"> Homme
+              </label>
+              <label class="btn btn-outline-primary">
+                <input type="radio" name="sexe" value="Femme"> Femme
+              </label>
+            </div>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Classe</label>
+            <select name="classe" class="form-select">
+              <option value="">-- Classe --</option>
+            </select>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Nationalité</label>
+            <input type="text" name="nationalite" value="Malienne" class="form-control" readonly>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Tuteur</label>
+            <input type="text" name="tuteur" class="form-control">
+          </div>
+        </div>
+      </ng-template>
     </c-accordion-item>
+  
+    <!-- Situation scolaire -->
     <c-accordion-item #item1="cAccordionItem" [visible]="false">
-        <ng-template cTemplateId="accordionHeaderTemplate">
-            <button (click)="item1.toggleItem()" [collapsed]="!item1.visible" cAccordionButton>
-        <h5 style="color: rgb(14, 14, 135);">Situation scolaire</h5>
-      </button>
-        </ng-template>
-        <ng-template cTemplateId="accordionBodyTemplate">
-            <div class="accordion-body p-4 bg-light rounded shadow-sm">
-                <form>
-                    <div class="mb-3">
-                        <label class="form-label">Statut</label><br>
-                        <div class="form-check form-check-inline">
-                            <input type="radio" name="statut" value="Regulier" class="form-check-input">
-                            <label class="form-check-label">Régulier</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input type="radio" name="statut" value="Prive" class="form-check-input">
-                            <label class="form-check-label">Privé</label>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <input type="text" name="defSession" class="form-control" placeholder="DEF obtenue à la session de">
-                    </div>
-
-                    <div class="mb-3">
-                        <input type="text" name="centre" class="form-control" placeholder="centre de...">
-                    </div>
-
-                    <div class="mb-3">
-                        <select name="region" class="form-select">
-                          <option value="">-- Région --</option>
-                      </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <select name="cercle" class="form-select">
-                          <option value="">-- Cercle --</option>
-                      </select>
-                    </div>
-                    <div class="mb-3">
-                        <select name="cap" class="form-select">
-                        <option value="">-- Cap --</option>
-                    </select>
-                    </div>
-                </form>
+      <ng-template cTemplateId="accordionHeaderTemplate">
+        <button (click)="item1.toggleItem()" [collapsed]="!item1.visible" cAccordionButton class="accordion-header">
+          <div class="header-content">
+            <i class="fas fa-school header-icon"></i>
+            <h5>Situation scolaire</h5>
+            <i class="fas fa-chevron-down indicator"></i>
+          </div>
+        </button>
+      </ng-template>
+      <ng-template cTemplateId="accordionBodyTemplate">
+        <div class="accordion-body elegant-form">
+          <div class="mb-3">
+            <label class="form-label">Statut</label><br>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <label class="btn btn-outline-primary">
+                <input type="radio" name="statut" value="Regulier"> Régulier
+              </label>
+              <label class="btn btn-outline-primary">
+                <input type="radio" name="statut" value="Prive"> Privé
+              </label>
             </div>
-        </ng-template>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">DEF obtenue à la session de</label>
+            <input type="text" name="defSession" class="form-control">
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Centre de</label>
+            <input type="text" name="centre" class="form-control">
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Région</label>
+            <select name="region" class="form-select">
+              <option value="">-- Région --</option>
+            </select>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Cercle</label>
+            <select name="cercle" class="form-select">
+              <option value="">-- Cercle --</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">CAP</label>
+            <select name="cap" class="form-select">
+              <option value="">-- Cap --</option>
+            </select>
+          </div>
+        </div>
+      </ng-template>
     </c-accordion-item>
+  
+    <!-- Orientation reçu -->
     <c-accordion-item #item2="cAccordionItem" [visible]="false">
-        <ng-template cTemplateId="accordionHeaderTemplate">
-            <button (click)="item2.toggleItem()" [collapsed]="!item2.visible" cAccordionButton>
-              <h5 style="color: rgb(14, 14, 135);">Orientation reçu</h5>
-      </button>
-        </ng-template>
-        <ng-template cTemplateId="accordionBodyTemplate">
-            <div class="accordion-body">
-
-                <div class="row">
-                    <!-- Admission Card -->
-                    <div class="col-md-4 mb-3">
-                        <div class="card">
-                            <div class="card-header">
-                                Admission
-                            </div>
-                            <div class="card-body">
-                                <select class="form-control">
-                                  <option value="">Admis dans l'établissement par</option>
-                                  <option value="Orientation initial">Orientation initial</option>
-                                  <option value="Transfert">Transfert</option>
-                                  <option value="Inscription">Inscription</option>
-                              </select>
-                            </div>
-                            <div class="card-footer">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Décision -->
-                    <div class="col-md-4 mb-3">
-                        <div class="card">
-                            <div class="card-header">
-                                Décision
-                            </div>
-                            <div class="card-body">
-                                <p>Acte :</p>
-                                <input type="text" class="form-control" placeholder="Les informations de l'acte">
-                                <p>Maintien :</p>
-                                <div class="row mb-3">
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control" placeholder="Décision 1">
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <input type="date" class="form-control" placeholder="Date 1">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control" placeholder="Décision 2">
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <input type="date" class="form-control" placeholder="Date 2">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Orientation -->
-                    <div class="col-md-4 mb-3">
-                        <div class="card">
-                            <div class="card-header">
-                                Orientation
-                            </div>
-                            <div class="card-body">
-                                <select class="form-control mb-3">
-                                  <option value="">ESG</option>
-                                  <option value="10è C">10è C</option>
-                                  <option value="ETP">ETP</option>
-                                  <option value="Transit">Transit</option>
-                                  <option value="EST">EST</option>
-                                  <option value="AF">AF</option>
-                              </select>
-
-                                <select class="form-control mb-3">
-                                  <option value="">-- Choisir --</option>
-                                  <option value="CAP Administration">CAP Administration</option>
-                                  <option value="BT Administration">BT Administration</option>
-                                  <option value="CAP Industrie">CAP Industrie</option>
-                                  <option value="BT Industrie">BT Industrie</option>
-                                  <option value="LT">LT</option>
-                              </select>
-
-                                <input type="text" class="form-control" placeholder="Spécialité">
-                            </div>
-                            <div class="card-footer">
-                            </div>
-                        </div>
-                    </div>
+      <ng-template cTemplateId="accordionHeaderTemplate">
+        <button (click)="item2.toggleItem()" [collapsed]="!item2.visible" cAccordionButton class="accordion-header">
+          <div class="header-content">
+            <i class="fas fa-directions header-icon"></i>
+            <h5>Orientation reçu</h5>
+            <i class="fas fa-chevron-down indicator"></i>
+          </div>
+        </button>
+      </ng-template>
+      <ng-template cTemplateId="accordionBodyTemplate">
+        <div class="accordion-body">
+          <div class="row">
+            <!-- Admission Card -->
+            <div class="col-md-4 mb-4">
+              <div class="card h-100 shadow-sm">
+                <div class="card-header bg-light-primary">
+                  <i class="fas fa-user-graduate me-2"></i>Admission
                 </div>
+                <div class="card-body">
+                  <select class="form-control mb-3">
+                    <option value="">Admis dans l'établissement par</option>
+                    <option value="Orientation initial">Orientation initial</option>
+                    <option value="Transfert">Transfert</option>
+                    <option value="Inscription">Inscription</option>
+                  </select>
+                </div>
+              </div>
             </div>
-        </ng-template>
-
+  
+            <!-- Décision -->
+            <div class="col-md-4 mb-4">
+              <div class="card h-100 shadow-sm">
+                <div class="card-header bg-light-primary">
+                  <i class="fas fa-gavel me-2"></i>Décision
+                </div>
+                <div class="card-body">
+                  <label class="form-label">Acte</label>
+                  <input type="text" class="form-control mb-3" placeholder="Les informations de l'acte">
+                  <label class="form-label">Maintien</label>
+                  <div class="row mb-3">
+                    <div class="col-sm-6">
+                      <input type="text" class="form-control" placeholder="Décision 1">
+                    </div>
+                    <div class="col-sm-6">
+                      <input type="date" class="form-control" placeholder="Date 1">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <input type="text" class="form-control" placeholder="Décision 2">
+                    </div>
+                    <div class="col-sm-6">
+                      <input type="date" class="form-control" placeholder="Date 2">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            <!-- Orientation -->
+            <div class="col-md-4 mb-4">
+              <div class="card h-100 shadow-sm">
+                <div class="card-header bg-light-primary">
+                  <i class="fas fa-route me-2"></i>Orientation
+                </div>
+                <div class="card-body">
+                  <select class="form-control mb-3">
+                    <option value="">ESG</option>
+                    <option value="10è C">10è C</option>
+                    <option value="ETP">ETP</option>
+                    <option value="Transit">Transit</option>
+                    <option value="EST">EST</option>
+                    <option value="AF">AF</option>
+                  </select>
+  
+                  <select class="form-control mb-3">
+                    <option value="">-- Choisir --</option>
+                    <option value="CAP Administration">CAP Administration</option>
+                    <option value="BT Administration">BT Administration</option>
+                    <option value="CAP Industrie">CAP Industrie</option>
+                    <option value="BT Industrie">BT Industrie</option>
+                    <option value="LT">LT</option>
+                  </select>
+  
+                  <label class="form-label">Spécialité</label>
+                  <input type="text" class="form-control">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
     </c-accordion-item>
+  
+    <!-- Infirmité -->
     <c-accordion-item #item3="cAccordionItem" [visible]="false">
-        <ng-template cTemplateId="accordionHeaderTemplate">
-            <button (click)="item3.toggleItem()" [collapsed]="!item3.visible" cAccordionButton>
-          <h5 style="color: rgb(14, 14, 135);">Infirmité</h5>
-    </button>
-        </ng-template>
-        <ng-template cTemplateId="accordionBodyTemplate">
-            <div class="accordion-body">
-                <form>
-                    <div class="mb-3 row align-items-center">
-                        <div class="col-md-2">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="vision" id="vision">
-                                <label class="form-check-label" for="vision">Vision</label>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="asthme" id="asthme">
-                                <label class="form-check-label" for="asthme">Asthme</label>
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <input type="text" name="autreInfirmité" class="form-control" placeholder="Autre infirmité">
-                        </div>
-                    </div>
-                </form>
+      <ng-template cTemplateId="accordionHeaderTemplate">
+        <button (click)="item3.toggleItem()" [collapsed]="!item3.visible" cAccordionButton class="accordion-header">
+          <div class="header-content">
+            <i class="fas fa-wheelchair header-icon"></i>
+            <h5>Infirmité</h5>
+            <i class="fas fa-chevron-down indicator"></i>
+          </div>
+        </button>
+      </ng-template>
+      <ng-template cTemplateId="accordionBodyTemplate">
+        <div class="accordion-body elegant-form">
+          <div class="row align-items-center">
+            <div class="col-md-2">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="vision" id="vision">
+                <label class="form-check-label" for="vision">Vision</label>
+              </div>
             </div>
-        </ng-template>
+            <div class="col-md-2">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="asthme" id="asthme">
+                <label class="form-check-label" for="asthme">Asthme</label>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <label class="form-label">Autre infirmité</label>
+              <input type="text" name="autreInfirmité" class="form-control">
+            </div>
+          </div>
+        </div>
+      </ng-template>
     </c-accordion-item>
+  
+    <!-- Etablissement fréquenté -->
     <c-accordion-item #item4="cAccordionItem" [visible]="false">
-        <ng-template cTemplateId="accordionHeaderTemplate">
-            <button (click)="item4.toggleItem()" [collapsed]="!item4.visible" cAccordionButton>
-             <h5 style="color: rgb(14, 14, 135);">Etablissement fréquenté l'année précédente</h5>
-  </button>
-        </ng-template>
-        <ng-template cTemplateId="accordionBodyTemplate">
-            <div class="accordion-body">
-                <form>
-                    <div class="mb-3 row align-items-center">
-
-                        <div class="col-md-4">
-                            <input type="text" name="nom" class="form-control" placeholder="Nom">
-                        </div>
-                        <div class="col-md-2">
-                            <input type="text" name="classe" class="form-control" placeholder="Classe">
-                        </div>
-                        <div class="col-md-2">
-                            <input type="text" name="privée" class="form-control" placeholder="Privée">
-                        </div>
-                        <div class="col-md-2">
-                            <input type="text" name="cap" class="form-control" placeholder="CAP">
-                        </div>
-                        <div class="col-md-2">
-                            <input type="text" name="academie" class="form-control" placeholder="Academie">
-                        </div>
-                    </div>
-                </form>
+      <ng-template cTemplateId="accordionHeaderTemplate">
+        <button (click)="item4.toggleItem()" [collapsed]="!item4.visible" cAccordionButton class="accordion-header">
+          <div class="header-content">
+            <i class="fas fa-university header-icon"></i>
+            <h5>Etablissement fréquenté l'année précédente</h5>
+            <i class="fas fa-chevron-down indicator"></i>
+          </div>
+        </button>
+      </ng-template>
+      <ng-template cTemplateId="accordionBodyTemplate">
+        <div class="accordion-body elegant-form">
+          <div class="row align-items-center">
+            <div class="col-md-4">
+              <label class="form-label">Nom</label>
+              <input type="text" name="nom" class="form-control">
             </div>
-        </ng-template>
+            <div class="col-md-2">
+              <label class="form-label">Classe</label>
+              <input type="text" name="classe" class="form-control">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Privée</label>
+              <input type="text" name="privée" class="form-control">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">CAP</label>
+              <input type="text" name="cap" class="form-control">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Academie</label>
+              <input type="text" name="academie" class="form-control">
+            </div>
+          </div>
+        </div>
+      </ng-template>
     </c-accordion-item>
+  
+    <!-- Cursus scolaire -->
     <c-accordion-item #item5="cAccordionItem" [visible]="false">
-        <ng-template cTemplateId="accordionHeaderTemplate">
-            <button (click)="item5.toggleItem()" [collapsed]="!item5.visible" cAccordionButton>
-              <h5 style="color: rgb(14, 14, 135);">Cursus scolaire</h5>
-</button>
-        </ng-template>
-        <ng-template cTemplateId="accordionBodyTemplate">
-            <div class="accordion-body">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Etablissement</th>
-                            <th>Classe</th>
-                            <th>Année scolaire</th>
-                            <th>Observation</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldEtablissement' ">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldClasse' ">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldAnneescolaire' ">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldObservation' ">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldEtablissement' ">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldClasse' ">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldAnneescolaire' ">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldObservation' ">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldEtablissement' ">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldClasse' ">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldAnneescolaire' ">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldObservation' ">
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </ng-template>
+      <ng-template cTemplateId="accordionHeaderTemplate">
+        <button (click)="item5.toggleItem()" [collapsed]="!item5.visible" cAccordionButton class="accordion-header">
+          <div class="header-content">
+            <i class="fas fa-graduation-cap header-icon"></i>
+            <h5>Cursus scolaire</h5>
+            <i class="fas fa-chevron-down indicator"></i>
+          </div>
+        </button>
+      </ng-template>
+      <ng-template cTemplateId="accordionBodyTemplate">
+        <div class="accordion-body">
+          <div class="table-responsive">
+            <table class="table table-hover modern-table">
+              <thead class="table-light">
+                <tr>
+                  <th>Etablissement</th>
+                  <th>Classe</th>
+                  <th>Année scolaire</th>
+                  <th>Observation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <input type="text" class="form-control" id="fieldEtablissement">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="fieldClasse">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="fieldAnneescolaire">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="fieldObservation">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <input type="text" class="form-control" id="fieldEtablissement">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="fieldClasse">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="fieldAnneescolaire">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="fieldObservation">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <input type="text" class="form-control" id="fieldEtablissement">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="fieldClasse">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="fieldAnneescolaire">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="fieldObservation">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </ng-template>
     </c-accordion-item>
+  
+    <!-- Dossier disciplinaire -->
     <c-accordion-item #item6="cAccordionItem" [visible]="false">
-        <ng-template cTemplateId="accordionHeaderTemplate">
-            <button (click)="item6.toggleItem()" [collapsed]="!item6.visible" cAccordionButton>
-            <h5 style="color: rgb(14, 14, 135);">Dossier disciplinaire</h5>
-</button>
-        </ng-template>
-        <ng-template cTemplateId="accordionBodyTemplate">
-            <div class="accordion-body">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Dates</th>
-                            <th>Motifs</th>
-                            <th>Observation</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldDates' ">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldMotifs' ">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldObservation' ">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldDates' ">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldMotifs' ">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldObservation' ">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldDates' ">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldMotifs' ">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" [id]="'fieldObservation' ">
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </ng-template>
+      <ng-template cTemplateId="accordionHeaderTemplate">
+        <button (click)="item6.toggleItem()" [collapsed]="!item6.visible" cAccordionButton class="accordion-header">
+          <div class="header-content">
+            <i class="fas fa-exclamation-triangle header-icon"></i>
+            <h5>Dossier disciplinaire</h5>
+            <i class="fas fa-chevron-down indicator"></i>
+          </div>
+        </button>
+      </ng-template>
+      <ng-template cTemplateId="accordionBodyTemplate">
+        <div class="accordion-body">
+          <div class="table-responsive">
+            <table class="table table-hover modern-table">
+              <thead class="table-light">
+                <tr>
+                  <th>Dates</th>
+                  <th>Motifs</th>
+                  <th>Observation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <input type="text" class="form-control" id="fieldDates">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="fieldMotifs">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="fieldObservation">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <input type="text" class="form-control" id="fieldDates">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="fieldMotifs">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="fieldObservation">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <input type="text" class="form-control" id="fieldDates">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="fieldMotifs">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="fieldObservation">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </ng-template>
     </c-accordion-item>
+  
+    <!-- Examen obtenu -->
     <c-accordion-item #item7="cAccordionItem" [visible]="false">
-        <ng-template cTemplateId="accordionHeaderTemplate">
-            <button (click)="item7.toggleItem()" [collapsed]="!item7.visible" cAccordionButton>
-             <h5 style="color: rgb(14, 14, 135);">Examen obtenu</h5>
-</button>
-        </ng-template>
-        <ng-template cTemplateId="accordionBodyTemplate">
-            <div class="accordion-body">
-                <form>
-                    <div class="mb-3 row align-items-center">
-
-                        <div class="col-md-4">
-                            <label class="form-label">Examen</label>
-                            <input type="text" name="examen" class="form-control" placeholder="CAP BT BAC">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Session</label>
-                            <input type="text" name="session" class="form-control">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Mention</label>
-                            <input type="text" name="mention" class="form-control">
-                        </div>
-                    </div>
-                </form>
+      <ng-template cTemplateId="accordionHeaderTemplate">
+        <button (click)="item7.toggleItem()" [collapsed]="!item7.visible" cAccordionButton class="accordion-header">
+          <div class="header-content">
+            <i class="fas fa-award header-icon"></i>
+            <h5>Examen obtenu</h5>
+            <i class="fas fa-chevron-down indicator"></i>
+          </div>
+        </button>
+      </ng-template>
+      <ng-template cTemplateId="accordionBodyTemplate">
+        <div class="accordion-body elegant-form">
+          <div class="row align-items-center">
+            <div class="col-md-4">
+              <label class="form-label">Examen</label>
+              <input type="text" name="examen" class="form-control" placeholder="CAP BT BAC">
             </div>
-        </ng-template>
+            <div class="col-md-4">
+              <label class="form-label">Session</label>
+              <input type="text" name="session" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Mention</label>
+              <input type="text" name="mention" class="form-control">
+            </div>
+          </div>
+        </div>
+      </ng-template>
     </c-accordion-item>
-
-    <div class="form-group">
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
+  
+    <!-- Boutons d'action -->
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary btn-lg">
+        <i class="fas fa-save me-2"></i> Enregistrer
+      </button>
+      <button type="button" class="btn btn-outline-secondary btn-lg ms-3">
+        <i class="fas fa-times me-2"></i> Annuler
+      </button>
     </div>
-</c-accordion>
+  </c-accordion>

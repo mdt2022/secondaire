@@ -1,37 +1,62 @@
-<div class="row">
-    <nav>
-        <button class="btn btn-primary" [routerLink]="['/matieres/matieres']">Retour</button>
-    </nav>
-</div>
-
-<div class="page-header m-5">
-    <h3>Enregistrer une matière</h3>
-</div>
-
-<form (ngSubmit)="onSubmit()" class="form-horizontal">
-    <!-- Nom de la matière -->
-    <div class="form-group d-flex align-items-center">
-        <label class="col-sm-2 control-label mb-0">Nom de la matière</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" formControlName="libelle" placeholder="Nom de la matière" required>
+<div class="container mt-4">
+    <!-- Bouton de retour -->
+    <div class="row mb-4">
+        <div class="col">
+            <button class="btn btn-outline-primary" [routerLink]="['/matieres/matieres']">
+                <i class="fas fa-arrow-left me-2"></i>Retour
+            </button>
         </div>
     </div>
 
-    <!-- Coefficient, Horaire et État sur la même ligne -->
-    <div class="form-group d-flex align-items-center mt-3 gap-2">
-        <label class="col-auto control-label mb-0">Coefficient</label>
-        <input type="number" class="form-control w-auto" formControlName="coefficient" required>
-
-        <label class="col-auto control-label mb-0">Horaire</label>
-        <input type="number" class="form-control w-auto" formControlName="horaire" required>
-
-
-    </div>
-
-    <!-- Bouton d'enregistrement -->
-    <div class="form-group mt-3">
-        <div class="col-sm-2">
-            <button type="submit" class="btn btn-info">Enregistrer</button>
+    <!-- Titre de la page -->
+    <div class="row">
+        <div class="col">
+            <h2 class="page-header text-primary mb-4 fw-bold">
+                <i class="fas fa-book me-2"></i>Enregistrer une matière
+            </h2>
         </div>
     </div>
-</form>
+
+    <!-- Formulaire -->
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <form (ngSubmit)="onSubmit()" class="form-horizontal">
+                <!-- Nom de la matière -->
+                <div class="row mb-4 align-items-center">
+                    <label class="col-md-2 col-form-label fw-bold">Nom de la matière</label>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control form-control-lg" 
+                               formControlName="libelle" 
+                               placeholder="Entrez le nom de la matière" required>
+                    </div>
+                </div>
+
+                <!-- Coefficient, Horaire -->
+                <div class="row mb-4 align-items-center">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <label class="form-label fw-bold">Coefficient</label>
+                        <input type="number" class="form-control" 
+                               formControlName="coefficient" 
+                               min="1" step="1" required>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Horaire (heures)</label>
+                        <input type="number" class="form-control" 
+                               formControlName="horaire" 
+                               min="1" step="1" required>
+                    </div>
+                </div>
+
+                <!-- Bouton d'enregistrement -->
+                <div class="row mt-4">
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn btn-primary btn-lg px-4">
+                            <i class="fas fa-save me-2"></i>Enregistrer
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

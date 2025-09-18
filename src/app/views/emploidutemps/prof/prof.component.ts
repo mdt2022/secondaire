@@ -54,8 +54,8 @@ export class ProfComponent implements OnInit {
     this.today = new Date().toISOString().split('T')[0];
     this.emargementForm = this.fb.group({
       enseignant: [''],
-    jour: [''],
-    annee: ['']
+      jour: [''],
+      annee: ['']
     });
 
     this.getAllEnseignantsByEcole();
@@ -68,14 +68,15 @@ export class ProfComponent implements OnInit {
     const ecoleId = user?.administrateur?.ecole?.idEcole;
 
     if (ecoleId) {
-      this.enseignantService.getEnseignantsByEcole(ecoleId).subscribe(
-        (data) => {
+      this.enseignantService.getEnseignantsByEcole(ecoleId).subscribe({
+        next: (data) => {
           this.listeProf = data;
+          console.log(data+" mdt ---+++")
         },
-        (error) => {
+        error: (error) => {
           console.error('Erreur lors de la récupération des enseignants', error);
         }
-      );
+      });
     } else {
       console.error("Impossible de récupérer l'ID de l'école.");
     }

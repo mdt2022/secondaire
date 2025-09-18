@@ -1,81 +1,140 @@
-<h2>Gestion des Classes</h2>
-
-<div class="container mt-4">
-    <div class="card shadow-lg p-4">
-      <h3 class="text-center text-primary mb-4">Ajouter / Modifier une Classe</h3>
-  
-      <form (ngSubmit)="saveClasse()">
-        <div class="row">
-          <div class="col-sm-2">
-            <input type="text" class="form-control" [(ngModel)]="selectedClasse.nom" name="nom" required placeholder="Nom">
-          </div>
-       
-          <div class="col-sm-2">
-            <input type="text" class="form-control" [(ngModel)]="selectedClasse.description" name="description" placeholder="Description">
-          </div>
-        
-          <div class="col-sm-2">
-            <input type="text" class="form-control" [(ngModel)]="selectedClasse.filiere" name="filiere" placeholder="Filière">
-          </div>
-        
-          <div class="col-sm-2">
-            <input type="text" class="form-control" [(ngModel)]="selectedClasse.options" name="options" placeholder="Options">
-          </div>
-        
-  
-        <div class="col-sm-2">
-          <button type="submit" class="btn btn-success">
-            <i class="bi bi-save"></i> Enregistrer
-          </button>
-        </div>
-
-        <div class="col-sm-2">
-          <button type="reset" class="btn btn-secondary">
-            <i class="bi bi-x-circle"></i> Réinitialiser
-          </button>
-        </div>
-        </div>
-      </form>
-    </div>
+<div class="gestion-classes-container">
+  <!-- En-tête -->
+  <div class="header-section text-center mb-5">
+    <h2 class="display-4 text-gradient">Gestion des Classes</h2>
+    <p class="lead text-muted">Administrez les classes de votre établissement</p>
   </div>
-  
 
-  <div class="container mt-4">
-    <div class="card shadow-lg p-4">
-      <h3 class="text-center text-primary mb-4">Liste des Classes</h3>
-  
-      <div class="table-responsive">
-        <table class="table table-bordered table-striped">
-          <thead class="table-dark">
-            <tr>
-              <th>#</th>
-              <th>Nom</th>
-              <th>Filière</th>
-              <th>Description</th>
-              <th>Options</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let classe of filteredClasses() | paginate: { itemsPerPage: 5, currentPage: currentPage }; let i = index" (click)="selectClasse(classe)" class="table-row">
-              <td>{{ (currentPage - 1) * 5 + i + 1 }}</td>
-              <td>{{ classe.nom }}</td>
-              <td>{{ classe.filiere }}</td>
-              <td>{{ classe.description }}</td>
-              <td>{{ classe.options }}</td>
-              <td>
-                <button class="btn btn-danger btn-sm" (click)="deleteClasse(classe.id); $event.stopPropagation();">
-                  <i class="bi bi-trash"></i> Supprimer
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+  <!-- Formulaire -->
+  <div class="container">
+    <div class="form-card card border-0 shadow-lg rounded-lg">
+      <div class="card-header bg-primary text-white py-3 rounded-top">
+        <h3 class="mb-0 text-center">
+          <i class="bi bi-pencil-square me-2"></i>
+          Ajouter / Modifier une Classe
+        </h3>
       </div>
-      <!-- Pagination -->
-    <div class="d-flex justify-content-center">
-        <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
-    </div>
+      <div class="card-body p-4">
+        <form (ngSubmit)="saveClasse()" class="needs-validation" novalidate>
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label for="nom" class="form-label">Nom</label>
+              <input type="text" class="form-control form-control-lg" id="nom" 
+                     [(ngModel)]="selectedClasse.nom" name="nom" required
+                     placeholder="Ex: TSI1">
+            </div>
+            
+            <div class="col-md-3">
+              <label for="filiere" class="form-label">Filière</label>
+              <input type="text" class="form-control form-control-lg" id="filiere"
+                     [(ngModel)]="selectedClasse.filiere" name="filiere"
+                     placeholder="Ex: Scientifique">
+            </div>
+            
+            <div class="col-md-3">
+              <label for="description" class="form-label">Description</label>
+              <input type="text" class="form-control form-control-lg" id="description"
+                     [(ngModel)]="selectedClasse.description" name="description"
+                     placeholder="Description courte">
+            </div>
+            
+            <div class="col-md-3">
+              <label for="options" class="form-label">Options</label>
+              <input type="text" class="form-control form-control-lg" id="options"
+                     [(ngModel)]="selectedClasse.options" name="options"
+                     placeholder="Options spécifiques">
+            </div>
+            
+            <div class="col-12 d-flex justify-content-end gap-2 mt-3">
+              <button type="reset" class="btn btn-outline-secondary btn-lg px-4">
+                <i class="bi bi-arrow-counterclockwise me-2"></i>
+                Réinitialiser
+              </button>
+              <button type="submit" class="btn btn-primary btn-lg px-4">
+                <i class="bi bi-save-fill me-2"></i>
+                Enregistrer
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
-  
+
+  <!-- Liste des classes -->
+  <div class="container mt-5">
+    <div class="card border-0 shadow-lg rounded-lg">
+      <div class="card-header bg-primary text-white py-3 rounded-top">
+        <div class="d-flex justify-content-between align-items-center">
+          <h3 class="mb-0">
+            <i class="bi bi-list-ul me-2"></i>
+            Liste des Classes
+          </h3>
+          <div class="search-box">
+            <div class="input-group">
+              <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+              <input type="text" class="form-control" placeholder="Rechercher..." 
+                     (input)="onSearch($event)">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th width="5%">#</th>
+                <th width="20%">Nom</th>
+                <th width="20%">Filière</th>
+                <th width="25%">Description</th>
+                <th width="20%">Options</th>
+                <th width="10%">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let classe of filteredClasses() | paginate: { itemsPerPage: 10, currentPage: currentPage }; let i = index"
+                  (click)="selectClasse(classe)" class="clickable-row">
+                <td class="fw-bold text-primary">{{ (currentPage - 1) * 5 + i + 1 }}</td>
+                <td>{{ classe.nom }}</td>
+                <td><span class="badge bg-info text-dark">{{ classe.filiere }}</span></td>
+                <td class="text-truncate" style="max-width: 200px;" title="{{ classe.description }}">
+                  {{ classe.description || '-' }}
+                </td>
+                <td>{{ classe.options || '-' }}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline-danger" 
+                          (click)="deleteClasse(classe.id); $event.stopPropagation()"
+                          tooltip="Supprimer">
+                    <i class="fas fa-trash me-1"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="filteredClasses().length === 0">
+                <td colspan="6" class="text-center py-4 text-muted">
+                  <i class="bi bi-exclamation-circle fs-4"></i>
+                  <p class="mt-2">Aucune classe trouvée</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center p-3 border-top">
+          <div class="text-muted">
+            Affichage de {{ (currentPage - 1) * 5 + 1 }} à 
+            {{ Math.min(currentPage * 5, filteredClasses().length) }} 
+            sur {{ filteredClasses().length }} classes
+          </div>
+          <pagination-controls 
+            (pageChange)="currentPage = $event"
+            previousLabel="Précédent"
+            nextLabel="Suivant"
+            class="my-pagination">
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

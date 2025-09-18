@@ -1,0 +1,39 @@
+/* styles.css ou dans le fichier de styles du composant */
+.table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.form-select, .form-control {
+    box-shadow: none !important;
+}
+
+.card {
+    border: none;
+    border-radius: 0.5rem;
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.table th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+}
+
+.badge {
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .card-header .row > div {
+        margin-bottom: 1rem;
+    }
+    
+    .card-header .row > div:last-child {
+        margin-bottom: 0;
+    }
+}

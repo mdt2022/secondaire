@@ -21,6 +21,10 @@ import { User } from '../../model/user.model';
   styleUrl: './professeurs.component.scss'
 })
 export class ProfesseursComponent implements OnInit {
+  
+  currentPage!: number
+  itemsPerPage!: number
+  searchText!: string
   enseignants: Enseignant[] = [];
   selectedEnseignant: Enseignant = {
     id: 0,
@@ -44,9 +48,16 @@ export class ProfesseursComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadEnseignants();
     this.user = this.authService.getUserFromLocalStorage()
+    this.loadEnseignants();
   }
+  onFileSelected(event: Event){}
+
+  triggerFileInput(){}
+
+  exportToExcel(){}
+
+  confirmDelete(id: number){}
 
   loadEnseignants(): void {   
     this.enseignantService.getEnseignantsByEcole(this.user.administrateur.ecole.idEcole).subscribe(data => {
@@ -57,6 +68,9 @@ export class ProfesseursComponent implements OnInit {
   selectEnseignant(enseignant: Enseignant): void {
     this.selectedEnseignant = { ...enseignant };
   }
+  editEnseignant(enseignant: Enseignant){}
+
+  viewDetails(enseignant: Enseignant){}
 
   saveEnseignant(): void {
     if (this.selectedEnseignant.id === 0) {

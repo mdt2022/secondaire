@@ -1,43 +1,84 @@
-<div class="container mt-4">
-    <h3>Recherche d'empreinte pour les professeurs</h3>
-    <div>
-        <a [routerLink]="['/nouvelle-empreinte']">Nouvelle empreinte</a>
+<!-- recherche-empreinte.component.html -->
+<div class="container-fluid py-4">
+    <!-- En-tête avec titre et bouton -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">
+            <i class="fas fa-fingerprint me-2"></i>Gestion des empreintes professeurs
+        </h2>
+        <a class="btn btn-primary" [routerLink]="['/nouvelle-empreinte']">
+            <i class="fas fa-plus-circle me-2"></i>Nouvelle empreinte
+        </a>
     </div>
 
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" class="form-control" placeholder="Rechercher une empreinte...">
+    <!-- Barre de recherche -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" class="form-control border-0 bg-light" 
+                               [(ngModel)]="searchTerm" 
+                               (input)="onSearch()"
+                               placeholder="Rechercher par professeur, mois ou année...">
+                    </div>
+                </div>
+                <div class="col-md-4 text-md-end mt-2 mt-md-0">
+                    <span class="text-muted me-2">{{ filteredEmpreintes.length }} résultat(s)</span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div *ngIf="filteredEmpreintes.length > 0">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>N°</th>
-                    <th>Professeur</th>
-                    <th>Mois</th>
-                    <th>Année Scolaire</th>
-                    <th>Montant</th>
-                    <th>Date d'empreinte</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let emp of filteredEmpreintes;  let i = index">
-                    <td>{{i + 1}}</td>
-                    <td>{{ emp.enseignant }}</td>
-                    <td>{{ emp.mois }}</td>
-                    <td>{{ emp.anneeScolaire }}</td>
-                    <td>{{ emp.montant }}</td>
-                    <td>{{ emp.dateEmpreinte }}</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm" (click)="deleteEmpreinte(i)">Supprimer</button> </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div *ngIf="filteredEmpreintes.length === 0">
-        <p>Aucune empreinte trouvée.</p>
+    <!-- Tableau des résultats -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div *ngIf="filteredEmpreintes.length > 0; else noResults">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">#</th>
+                                <th>Professeur</th>
+                                <th>Mois</th>
+                                <th>Année Scolaire</th>
+                                <th class="text-end">Montant</th>
+                                <th>Date</th>
+                                <th class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let emp of filteredEmpreintes; let i = index">
+                                <td class="ps-4">{{i + 1}}</td>
+                                <td>
+                                    <span class="fw-semibold">{{ emp.enseignant }}</span>
+                                </td>
+                                <td>{{ emp.mois | titlecase }}</td>
+                                <td>{{ emp.anneeScolaire }}</td>
+                                <td class="text-end">{{ emp.montant | currency:'EUR':'symbol':'1.2-2' }}</td>
+                                <td>{{ emp.dateEmpreinte | date:'dd/MM/yyyy' }}</td>
+                                <td class="text-end pe-4">
+                                    <button class="btn btn-sm btn-outline-danger" 
+                                            (click)="deleteEmpreinte(emp.id)"
+                                            title="Supprimer">
+                                        <i class="fas fa-trash-alt me-1"></i>Supprimer
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <ng-template #noResults>
+                <div class="text-center py-5">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Aucune empreinte trouvée</h5>
+                    <p class="text-muted">Essayez d'ajuster vos critères de recherche</p>
+                </div>
+            </ng-template>
+        </div>
     </div>
 </div>

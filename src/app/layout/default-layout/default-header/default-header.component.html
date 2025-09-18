@@ -11,6 +11,19 @@
       >
         <svg cIcon name="cilMenu" size="lg"></svg>
       </button>
+      <c-header-nav class="d-none d-md-flex">
+        <c-nav-item>
+            <a cNavLink routerLink="/dashboard" routerLinkActive="active">Tableau de Bord</a>
+        </c-nav-item>
+        <c-nav-item>
+            <a cNavLink routerLink="/users" routerLinkActive="active">
+              {{ user.administrateur.prenom }}
+              {{ user.administrateur.nom }}
+              {{ user.administrateur.role.description }}
+            </a>
+        </c-nav-item>
+        
+    </c-header-nav>
   
       <c-header-nav class="d-none d-md-flex ms-auto ">
         <a cNavLink>

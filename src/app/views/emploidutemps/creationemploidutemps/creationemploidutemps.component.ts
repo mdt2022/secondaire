@@ -8,12 +8,12 @@ import { Classe } from '../../../model/classe.model';
 import { EmploidutempService } from '../../../service/emploidutemp.service';
 import { AnneeuvService } from '../../../service/anneeuv.service';
 import { EnseignantService } from '../../../service/enseignant.service';
-import { ClasseService } from '../../../service/classe.service';
 import { MatiereService } from '../../../service/matiere.service';
 import { AuthService } from '../../../service/auth.service';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { ClasseecoleService } from '../../../service/classeecole.service';
 
 @Component({
   selector: 'app-creationemploidutemps',
@@ -38,7 +38,7 @@ export class CreationemploidutempsComponent implements OnInit {
     private emploiService: EmploidutempService,
     private anneeuvService: AnneeuvService,
     private matiereService: MatiereService,
-    private classeService: ClasseService,
+    private classeecoleService: ClasseecoleService,
     private enseignantService: EnseignantService,
     private authService: AuthService,
     private router: Router
@@ -71,7 +71,7 @@ export class CreationemploidutempsComponent implements OnInit {
         error: (err) => { console.error("Erreur enseignants", err); }
       });
 
-      this.classeService.getClasseEcole(ecoleId).subscribe({
+      this.classeecoleService.getClasseEcole(ecoleId).subscribe({
         next: (data) => { this.classes = data; },
         error: (err) => { console.error("Erreur classes", err); }
       });

@@ -10,7 +10,7 @@
     "coreui_library_short_version": "5.1",
     "coreui_library_docs_url": "https://coreui.io/angular/docs/"
   },
-  "scripts": { 
+  "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
@@ -37,6 +37,7 @@
     "@coreui/icons": "^3.0.1",
     "@coreui/icons-angular": "~5.1.1",
     "@coreui/utils": "^2.0.2",
+    "@fortawesome/fontawesome-free": "^7.0.0",
     "chart.js": "^4.4.3",
     "coreui-free-angular-admin-template": "file:",
     "lodash-es": "^4.17.21",
@@ -44,6 +45,7 @@
     "ngx-scrollbar": "^13.0.3",
     "rxjs": "~7.8.1",
     "serve": "^14.2.4",
+    "sweetalert2": "^11.22.2",
     "tslib": "^2.6.2",
     "zone.js": "~0.14.6"
   },

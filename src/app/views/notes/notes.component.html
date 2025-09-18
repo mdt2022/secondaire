@@ -1,1 +1,105 @@
-<p>notes works!</p>
+<div class="container py-4">
+    <div class="row g-4">
+        <!-- Titre principal -->
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1 class="h3 mb-0 text-primary">
+                    <i class="fas fa-chalkboard-teacher me-2"></i>Gestion des notes
+                </h1>
+                <span class="badge bg-primary">Version Professeur</span>
+            </div>
+            <hr class="mt-2 mb-4">
+        </div>
+
+        <!-- Cartes de fonctionnalités -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-primary shadow-sm hover-shadow-lg transition-all">
+                <div class="card-body text-center p-4">
+                    <div class="icon-circle bg-primary text-white mb-3 mx-auto">
+                        <i class="fas fa-users fs-4"></i>
+                    </div>
+                    <h3 class="h5 card-title fw-bold">Notes par classe</h3>
+                    <p class="card-text text-muted mb-3">Consultez et éditez les notes pour une classe entière</p>
+                    <a [routerLink]="['/notes/classe']" class="btn btn-outline-primary btn-sm stretched-link">
+                        Accéder <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-success shadow-sm hover-shadow-lg transition-all">
+                <div class="card-body text-center p-4">
+                    <div class="icon-circle bg-success text-white mb-3 mx-auto">
+                        <i class="fas fa-user-graduate fs-4"></i>
+                    </div>
+                    <h3 class="h5 card-title fw-bold">Notes par élève</h3>
+                    <p class="card-text text-muted mb-3">Suivi individuel des résultats scolaires</p>
+                    <a href="#" class="btn btn-outline-success btn-sm stretched-link">
+                        Accéder <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-info shadow-sm hover-shadow-lg transition-all">
+                <div class="card-body text-center p-4">
+                    <div class="icon-circle bg-info text-white mb-3 mx-auto">
+                        <i class="fas fa-book-open fs-4"></i>
+                    </div>
+                    <h3 class="h5 card-title fw-bold">Notes par matière</h3>
+                    <p class="card-text text-muted mb-3">Analyse des performances par discipline</p>
+                    <a href="#" class="btn btn-outline-info btn-sm stretched-link">
+                        Accéder <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-warning shadow-sm hover-shadow-lg transition-all">
+                <div class="card-body text-center p-4">
+                    <div class="icon-circle bg-warning text-white mb-3 mx-auto">
+                        <i class="fas fa-clipboard-check fs-4"></i>
+                    </div>
+                    <h3 class="h5 card-title fw-bold">Relevé de notes</h3>
+                    <p class="card-text text-muted mb-3">Générez des relevés individuels</p>
+                    <a href="#" class="btn btn-outline-warning btn-sm stretched-link">
+                        Accéder <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-danger shadow-sm hover-shadow-lg transition-all">
+                <div class="card-body text-center p-4">
+                    <div class="icon-circle bg-danger text-white mb-3 mx-auto">
+                        <i class="fas fa-file-alt fs-4"></i>
+                    </div>
+                    <h3 class="h5 card-title fw-bold">Bulletin individuel</h3>
+                    <p class="card-text text-muted mb-3">Éditez les bulletins scolaires</p>
+                    <a href="#" class="btn btn-outline-danger btn-sm stretched-link">
+                        Accéder <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-secondary shadow-sm hover-shadow-lg transition-all">
+                <div class="card-body text-center p-4">
+                    <div class="icon-circle bg-secondary text-white mb-3 mx-auto">
+                        <i class="fas fa-calculator fs-4"></i>
+                    </div>
+                    <h3 class="h5 card-title fw-bold">Bulletins de classe</h3>
+                    <p class="card-text text-muted mb-3">Génération des bulletins collectifs</p>
+                    <a href="#" class="btn btn-outline-secondary btn-sm stretched-link">
+                        Accéder <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

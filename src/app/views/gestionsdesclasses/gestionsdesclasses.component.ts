@@ -4,6 +4,7 @@ import { GestiondesclassesService } from '../../service/gestiondesclasses.servic
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-gestionsdesclasses',
@@ -17,6 +18,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
   styleUrl: './gestionsdesclasses.component.scss'
 })
 export class GestionsdesclassesComponent implements OnInit {
+  Math = Math;
   classes: Classe[] = [];
   selectedClasse: Classe = { id: 0, nom: '', description: '', filiere: '', options: '' };
   searchText: string = '';
@@ -53,11 +55,19 @@ export class GestionsdesclassesComponent implements OnInit {
   }
 
   deleteClasse(id: number): void {
-    if (confirm('Voulez-vous vraiment supprimer cette classe ?')) {
-      this.classeService.deleteClasse(id).subscribe(() => {
-        this.loadClasses();
-      });
-    }
+    Swal.fire({
+      title: 'Confirmation',
+      text: 'Voulez-vous vraiment supprimer ?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Oui, supprimer',
+      cancelButtonText: 'Annuler'
+      }).then((result) => {
+        if (result.isConfirmed) { 
+          this.classeService.deleteClasse(id).subscribe(() => { this.loadClasses(); });
+        }
+      }
+  );
   }
   filteredClasses(): any[] {
     return this.classes.filter(classe =>
@@ -67,4 +77,5 @@ export class GestionsdesclassesComponent implements OnInit {
       classe.options.toLowerCase().includes(this.searchText.toLowerCase())
     );
   }
+  onSearch(event: Event){}
 }

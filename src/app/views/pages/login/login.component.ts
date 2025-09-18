@@ -52,10 +52,10 @@ export class LoginComponent {
     }
     this.isLoading = true; // Active le loader
     this.authService.login(this.credentials).subscribe({
-      next: (response) => {
+      next: (response) => { 
         this.isLoading = false; // Désactive le loader après la réponse
-        this.authService.saveUserToLocalStorage(response);
-        console.log(response.administrateur.ecole.nomEcole+" mdt ++");
+        this.authService.saveUserAndToken(response);
+        //console.log(response.administrateur.ecole.nomEcole+" mdt ++");
         this.router.navigate(['/dashboard']); // Redirige vers le tableau de bord
       },
       error: () => {

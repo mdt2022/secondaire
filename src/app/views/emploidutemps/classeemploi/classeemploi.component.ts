@@ -1,6 +1,6 @@
 import { MatiereService } from '../../../service/matiere.service';
 import { Component, OnInit } from '@angular/core';
-import { ClasseService } from '../../../service/classe.service';
+import { ClasseecoleService } from '../../../service/classeecole.service';
 import { Classe } from '../../../model/classe.model';
 import { Anneeuv } from '../../../model/anneeuv.model';
 import { Emploidutemp } from '../../../model/emploidutemp.model';
@@ -36,7 +36,7 @@ export class ClasseemploiComponent implements OnInit {
 
   constructor(
     private emploiService: EmploidutempService,
-    private classeService: ClasseService,
+    private classeecoleService: ClasseecoleService,
     private anneeService: AnneeuvService,
     private matiereService: MatiereService,
     private authService: AuthService
@@ -54,7 +54,7 @@ export class ClasseemploiComponent implements OnInit {
     const ecoleId = this.user.administrateur.ecole.idEcole;
 
     if (ecoleId) {
-      this.classeService.getClasseEcole(ecoleId).subscribe({
+      this.classeecoleService.getClasseEcole(ecoleId).subscribe({
         next: (data) => {
           this.classes = data;
           console.log("Classes après mise à jour :", this.classes);

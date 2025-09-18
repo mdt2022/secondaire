@@ -1,93 +1,129 @@
-<div>
-    <a [routerLink]="['/emploidutemps/emploidutemps']" class="btn btn-primary mb-4">Retour</a>
-</div>
-<div class="page-header m-5">
-    <h2>Gestion des émargements des professeurs</h2>
-</div>
+<div class="container-fluid py-4">
+    <!-- Bouton Retour -->
+    <div class="mb-4">
+        <a [routerLink]="['/emploidutemps/emploidutemps']" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-2"></i>Retour
+        </a>
+    </div>
 
-<form [formGroup]="emargementForm" class="form-horizontal">
-    <div class="panel panel-default">
-        <div class="panel-heading m-3">
-            <div class="row">
-                <div class="col-sm-3">
-                    <select formControlName="enseignant" class="form-control">
-                    <option value="">-- Professeur --</option>
-                    <option *ngFor="let prof of listeProf" [value]="prof.id">
-                        {{ prof.prenom }} {{ prof.nom }}
-                    </option>
-                </select>
+    <!-- Titre de la page -->
+    <div class="page-header mb-5">
+        <h2 class="fw-bold text-primary">
+            <i class="fas fa-clipboard-check me-2"></i>Gestion des émargements des professeurs
+        </h2>
+        <hr class="border-primary opacity-75">
+    </div>
+
+    <!-- Formulaire de filtrage -->
+    <form [formGroup]="emargementForm" class="card shadow-sm mb-5">
+        <div class="card-header bg-light py-3">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-3">
+                    <label class="form-label small text-muted">Professeur</label>
+                    <select formControlName="enseignant" class="form-select">
+                        <option value="">-- Sélectionner --</option>
+                        <option *ngFor="let prof of listeProf" [value]="prof.id">
+                            {{ prof.prenom }} {{ prof.nom }}
+                        </option>
+                    </select>
                 </div>
-                <div class="col-sm-2">
-                    <select formControlName="jour" class="form-control">
-                    <option value="">-- Jour --</option>
-                    <option value="Lundi">Lundi</option>
-                    <option value="Mardi">Mardi</option>
-                    <option value="Mercredi">Mercredi</option>
-                    <option value="Jeudi">Jeudi</option>
-                    <option value="Vendredi">Vendredi</option>
-                    <option value="Samedi">Samedi</option>
-                </select>
+
+                <div class="col-md-2">
+                    <label class="form-label small text-muted">Jour</label>
+                    <select formControlName="jour" class="form-select">
+                        <option value="">-- Tous --</option>
+                        <option *ngFor="let day of ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi']" [value]="day">
+                            {{ day }}
+                        </option>
+                    </select>
                 </div>
-                <div class="col-sm-3">
-                    <select formControlName="annee" class="form-control">
-                    <option value="">-- Choisir une année --</option>
-                    <option *ngFor="let annee of annees" [value]="annee.id">
-                        {{ annee.nom }}
-                    </option>
-                </select>
+
+                <div class="col-md-3">
+                    <label class="form-label small text-muted">Année scolaire</label>
+                    <select formControlName="annee" class="form-select">
+                        <option value="">-- Sélectionner --</option>
+                        <option *ngFor="let annee of annees" [value]="annee.id">
+                            {{ annee.nom }}
+                        </option>
+                    </select>
                 </div>
-                <div class="col-sm-2">
-                    <button type="button" class="btn btn-success" (click)="afficherEmploiProf()">Afficher</button>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-primary w-100" (click)="afficherEmploiProf()">
+                        <i class="fas fa-filter me-2"></i>Filtrer
+                    </button>
                 </div>
-                <div class="col-sm-2">
-                    <a routerLink="/pointages/pointages" class="btn btn-warning">Pointage</a>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <a routerLink="/pointages/pointages" class="btn btn-outline-warning w-100">
+                        <i class="fas fa-clock me-2"></i>Pointage
+                    </a>
                 </div>
             </div>
         </div>
 
-        <div class="panel-body">
-            <div *ngIf="loading" id="loading">
-                <h4>Chargement de la page .....</h4>
+        <!-- Tableau des émargements -->
+        <div class="card-body">
+            <!-- Loading State -->
+            <div *ngIf="loading" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Chargement...</span>
+                </div>
+                <p class="mt-3 text-muted">Chargement des données en cours...</p>
             </div>
 
-            <div class="col-sm-12">
-                <table class="table table-bordered">
-                    <thead>
+            <!-- Tableau -->
+            <div *ngIf="!loading" class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
                         <tr>
-                            <th>N°</th>
+                            <th width="50">N°</th>
                             <th>Jour</th>
                             <th>Classe</th>
                             <th>Matière</th>
-                            <th>Arrivé</th>
+                            <th>Arrivée</th>
                             <th>Départ</th>
-                            <th>Nombre d'heures</th>
-
+                            <th>Heures</th>
                             <th>Date</th>
                         </tr>
                     </thead>
                     <tbody> 
                         <tr *ngFor="let emploi of emploisFiltres; let i = index">
-                            <td>{{ i + 1 }}</td>
+                            <td class="fw-bold">{{ i + 1 }}</td>
                             <td>{{ emploi.jour }}</td>
-                            <td>{{ emploi.classe.nom }}</td>
-                            <td>{{ emploi.matiere.libelle }}</td>
-                            <td>{{ emploi.heuredebut }}</td>
-                            <td>{{ emploi.heurefin }}</td>
-                            <td>{{ emploi.matiere.horaire }}</td>
-
                             <td>
-                                <input type="date" class="form-control" [(ngModel)]="emploi.anneeuv" [ngModelOptions]="{standalone: true}" [value]="today | date:'yyyy-MM-dd'">
+                                <span class="badge bg-info text-dark">{{ emploi.classe.nom }}</span>
+                            </td>
+                            <td>{{ emploi.matiere.libelle }}</td>
+                            <td>
+                                <input type="time" class="form-control form-control-sm" [(ngModel)]="emploi.heuredebut" [ngModelOptions]="{standalone: true}">
+                            </td>
+                            <td>
+                                <input type="time" class="form-control form-control-sm" [(ngModel)]="emploi.heurefin" [ngModelOptions]="{standalone: true}">
+                            </td>
+                            <td class="fw-bold">{{ emploi.matiere.horaire }}h</td>
+                            <td>
+                                <input type="date" class="form-control form-control-sm" [(ngModel)]="emploi.anneeuv" [ngModelOptions]="{standalone: true}" [value]="today | date:'yyyy-MM-dd'">
                             </td>
                         </tr>
                     </tbody>
                 </table>
-            </div>
 
-            <div class="form-group">
-                <div class="col-sm-10">
-                    <button type="submit" class="btn btn-info">Enregistrer</button>
+                <!-- Message si vide -->
+                <div *ngIf="emploisFiltres.length === 0" class="text-center py-4 text-muted">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <p>Aucun cours trouvé pour les critères sélectionnés</p>
                 </div>
             </div>
         </div>
-    </div>
-</form>
+
+        <!-- Bouton d'enregistrement -->
+        <div class="card-footer bg-light py-3">
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-success px-4" [disabled]="loading || emploisFiltres.length === 0">
+                    <i class="fas fa-save me-2"></i>Enregistrer les émargements
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

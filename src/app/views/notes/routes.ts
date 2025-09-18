@@ -18,6 +18,13 @@ export const routes: Routes = [
         data: {
           title: 'Notes'
         }
+      },
+      {
+        path: 'classe',
+        loadComponent: () => import('./classe/classe.component').then(m => m.ClasseComponent),
+        data:{
+          title: 'Note par classe'
+        }
       }
     ]
   }

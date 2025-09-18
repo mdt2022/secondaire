@@ -1,67 +1,149 @@
 <c-row>
-    <c-col xs="12">
-      <c-card class="mb-4">
-        <c-card-header>
-          <div class="row">
-            <form (ngSubmit)="saveOrUpdate()" class="d-flex flex-wrap">
-              <div class="col-md-2">
-                <input type="text" [(ngModel)]="adminForm.nom" name="nom" placeholder="Nom" required class="form-control">
+  <c-col xs="12">
+    <!-- Carte principale avec ombre et bordure arrondie -->
+    <c-card class="mb-4 shadow-lg border-0 rounded-lg">
+      <!-- En-tête avec fond dégradé -->
+      <c-card-header class="bg-gradient-primary text-white py-3 rounded-top">
+        <h5 class="mb-0">
+          <i class="fas fa-user-cog me-2"></i>
+          Gestion des Administrateurs
+        </h5>
+      </c-card-header>
+      
+      <!-- Formulaire amélioré -->
+      <div class="card-body p-4">
+        <form (ngSubmit)="saveOrUpdate()" class="needs-validation" novalidate>
+          <div class="row g-3">
+            <!-- Champ Nom -->
+            <div class="col-md-2">
+              <label class="form-label small text-muted">Nom</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="fas fa-user"></i></span>
+                <input type="text" [(ngModel)]="adminForm.nom" name="nom" 
+                       class="form-control form-control-sm shadow-sm" 
+                       placeholder="Nom" required>
               </div>
-              <div class="col-md-2">
-                <input type="text" [(ngModel)]="adminForm.prenom" name="prenom" placeholder="Prénom" required class="form-control">
+            </div>
+            
+            <!-- Champ Prénom -->
+            <div class="col-md-2">
+              <label class="form-label small text-muted">Prénom</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="fas fa-user"></i></span>
+                <input type="text" [(ngModel)]="adminForm.prenom" name="prenom" 
+                       class="form-control form-control-sm shadow-sm" 
+                       placeholder="Prénom" required>
               </div>
-              <div class="col-md-2">
-                <input type="text" [(ngModel)]="adminForm.email" name="email" placeholder="Email" class="form-control">
+            </div>
+            
+            <!-- Champ Email -->
+            <div class="col-md-2">
+              <label class="form-label small text-muted">Email</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="fas fa-envelope"></i></span>
+                <input type="email" [(ngModel)]="adminForm.email" name="email" 
+                       class="form-control form-control-sm shadow-sm" 
+                       placeholder="Email">
               </div>
-              <div class="col-md-2">
-                <select [(ngModel)]="adminForm.ecole" name="ecole" class="form-control">
-                  <option *ngFor="let ecole of ecoles" [ngValue]="ecole">{{ ecole.nomEcole }}</option>
-                </select>
-              </div>
-              
-              <div class="col-md-2">
-                <select [(ngModel)]="adminForm.role" name="role" class="form-control">
-                  <option *ngFor="let role of roles" [ngValue]="role">{{ role.description }}</option>
-                </select>
-              </div>
-              <div class="col-md-2 mt-2">
-                <button type="submit" class="btn btn-primary w-100">{{ isEditing ? 'Modifier' : 'Ajouter' }}</button>
-              </div>
-            </form>
+            </div>
+            
+            <!-- Sélecteur École -->
+            <div class="col-md-2">
+              <label class="form-label small text-muted">École</label>
+              <select [(ngModel)]="adminForm.ecole" name="ecole" 
+                      class="form-select form-select-sm shadow-sm">
+                <option *ngFor="let ecole of ecoles" [ngValue]="ecole">
+                  {{ ecole.nomEcole }}
+                </option>
+              </select>
+            </div>
+            
+            <!-- Sélecteur Rôle -->
+            <div class="col-md-2">
+              <label class="form-label small text-muted">Rôle</label>
+              <select [(ngModel)]="adminForm.role" name="role" 
+                      class="form-select form-select-sm shadow-sm">
+                <option *ngFor="let role of roles" [ngValue]="role">
+                  {{ role.description }}
+                </option>
+              </select>
+            </div>
+            
+            <!-- Bouton Soumettre -->
+            <div class="col-md-2 d-flex align-items-end">
+              <button type="submit" class="btn btn-sm w-100" 
+                      [class.btn-primary]="!isEditing" 
+                      [class.btn-success]="isEditing"
+                      [ngClass]="{'pulse-animation': isEditing}">
+                <i class="fas" [class.fa-plus]="!isEditing" [class.fa-save]="isEditing"></i>
+                {{ isEditing ? 'Modifier' : 'Ajouter' }}
+              </button>
+            </div>
           </div>
-          
-        </c-card-header>
-        <c-card-body>
-          <c-row>
-            <c-col md="12">
-              <table class="table table-bordered">
-                <tr>
-                  <th>N</th>
-                  <th>Nom</th>
-                  <th>Prenom</th>
-                  <th>Téléphone</th>
-                  <th>Ecole</th>
-                  <th>Role</th>
-                  <th colspan="2">Action</th>
-                </tr>
-                <tr *ngFor="let admin of admins; let i = index">     
-                    <td>{{ i+1 }}</td>             
-                  <td>{{ admin.nom }}</td>
-                  <td>{{ admin.prenom }}</td>
-                  <td>{{ admin.telephone }}</td>
-                  <td>{{ admin.ecole.nomEcole }}</td>
-                  <td>{{ admin.role.nom }}</td>
-                  <td>
-                    <button class="btn btn-warning" (click)="edit(admin)">Modifier</button>
-                  </td>
-                  <td>
-                    <button class="btn btn-danger" (click)="deleteAdmin(admin.id)">Supprimer</button>
-                  </td>
-                </tr>
-              </table>
-            </c-col>
-          </c-row>
-        </c-card-body>
-      </c-card>
-    </c-col>
+        </form>
+      </div>
+      
+      <!-- Tableau amélioré -->
+      <c-card-body class="p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th width="40px">#</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Téléphone</th>
+                <th>École</th>
+                <th>Rôle</th>
+                <th width="120px" class="text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let admin of admins; let i = index" class="hover-shadow">
+                <td class="fw-bold text-primary">{{ i+1 }}</td>
+                <td>{{ admin.nom }}</td>
+                <td>{{ admin.prenom }}</td>
+                <td>
+                  <span class="badge bg-light text-dark">
+                    <i class="fas fa-phone me-1"></i>
+                    {{ admin.telephone || '-' }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge bg-info text-dark">
+                    {{ admin.ecole.nomEcole }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge" 
+                        [ngClass]="{'bg-warning': admin.role.nom === 'Admin', 
+                                   'bg-secondary': admin.role.nom !== 'Admin'}">
+                    {{ admin.role.nom }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <button class="btn btn-sm btn-outline-warning me-1" 
+                          (click)="edit(admin)"
+                          title="Modifier">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" 
+                          (click)="deleteAdmin(admin.id)"
+                          title="Supprimer">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="admins.length === 0">
+                <td colspan="7" class="text-center py-4 text-muted">
+                  <i class="fas fa-exclamation-circle fa-2x mb-2"></i>
+                  <p class="mb-0">Aucun administrateur trouvé</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
 </c-row>

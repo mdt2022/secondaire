@@ -1,0 +1,160 @@
+/* Styles pour la mise en forme moderne */
+.icon-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .list-group-item {
+    padding: 1rem 1.25rem;
+    border-left: 0;
+    border-right: 0;
+    transition: all 0.2s;
+  }
+  
+  .list-group-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+  }
+  
+  .color-indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+  }
+  
+  /* Animation pour les boutons */
+  .btn-outline-secondary:hover {
+    transform: rotate(90deg);
+    transition: transform 0.3s ease;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .card-body {
+      padding: 1rem;
+    }
+    
+    .list-group-item {
+      padding: 0.75rem;
+    }
+  }
+  /* Conteneur principal avec défilement */
+.stats-scroller {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 10px; /* Espace pour la barre de défilement */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling sur iOS */
+}
+
+.stats-container {
+  display: flex;
+  gap: 15px;
+  min-width: max-content;
+  padding: 5px 3px;
+}
+
+/* Carte statistique individuelle */
+.stat-card {
+  min-width: 180px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.stat-header {
+  padding: 12px;
+  color: white;
+  text-align: center;
+}
+
+.stat-header h5 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.stat-body {
+  padding: 15px;
+  text-align: center;
+  background: white;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.stat-label {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+.stat-percent {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.stat-footer {
+  padding: 0 15px 15px;
+  background: white;
+}
+
+/* Légende */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  margin-right: 6px;
+  display: inline-block;
+}
+
+/* Barre de défilement personnalisée */
+.stats-scroller::-webkit-scrollbar {
+  height: 6px;
+}
+
+.stats-scroller::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.stats-scroller::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.stats-scroller::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Total badge */
+.total-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}

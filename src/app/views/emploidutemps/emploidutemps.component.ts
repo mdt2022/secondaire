@@ -20,6 +20,8 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./emploidutemps.component.scss']
 })
 export class EmploidutempsComponent implements OnInit {
+  // Ajoutez cette propriété
+  Math = Math;
   emploisDuTemps: Emploidutemp[] = [];
   searchText: string = '';
   currentPage: number = 1;
@@ -28,12 +30,13 @@ export class EmploidutempsComponent implements OnInit {
   sortColumn: string = '';
   sortDirection: boolean = true;
   itemsPerPage: number = 10;
-  constructor(private emploiDuTempsService: EmploidutempService,
+  constructor(
+    private emploiDuTempsService: EmploidutempService,
     private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    //this.getEmploisDuTemps()
+    this.getEmploisDuTemps()
 
   }
 
@@ -42,7 +45,7 @@ export class EmploidutempsComponent implements OnInit {
     const ecoleId = this.user.administrateur.ecole.idEcole;
     const anneeuvId = this.user.parametre.anneepardefaut.id;
 
-    this.emploiDuTempsService.getByAnneeEcole(anneeuvId, ecoleId).subscribe({
+    this.emploiDuTempsService.getByAnneeEcole(anneeuvId, 10).subscribe({
       next: (data) => {
         this.emploisDuTemps = data;
         console.log('Emplois du temps:', this.emploisDuTemps);

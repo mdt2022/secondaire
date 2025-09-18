@@ -10,16 +10,13 @@ import { Observable } from 'rxjs';
 })
 export class ClasseService {
 
-  private apiUrl = environment.apiURL;
+  private apiUrl = environment.apiURL+"/classes";
   
   constructor(private http: HttpClient) {}
   //la liste des classes du secondaires
   getAllClasse(): Observable<Classe[]>{
-    return this.http.get<Classe[]>(this.apiUrl+"/classes");
+    return this.http.get<Classe[]>(this.apiUrl);
   }
-  //la liste des classes de l'ecole
-  getClasseEcole(ecoleId: number): Observable<Classe[]>{
-    return this.http.get<Classe[]>(this.apiUrl+"/classeecoles/"+ecoleId);
-  }
+ 
 
 }

@@ -2,20 +2,22 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Anneeuv } from 'src/app/model/anneeuv.model';
-import { Classe } from 'src/app/model/classe.model';
-import { Eleve } from 'src/app/model/eleve.model';
-import { User } from 'src/app/model/user.model';
-import { AnneeuvService } from 'src/app/service/anneeuv.service';
-import { AuthService } from 'src/app/service/auth.service';
-import { ClasseService } from 'src/app/service/classe.service';
+import { Anneeuv } from '../../../../model/anneeuv.model';
+import { Classe } from '../../../../model/classe.model';
+import { Eleve } from '../../../../model/eleve.model';
+import { User } from '../../../../model/user.model';
+import { AnneeuvService } from '../../../../service/anneeuv.service';
+import { AuthService } from '../../../../service/auth.service';
+import { ClasseecoleService } from '../../../../service/classeecole.service';
 
 @Component({
   selector: 'app-listepassage',
   standalone: true,
-  imports: [ CommonModule,
+  imports: [ 
+    CommonModule,
     RouterLink,
-    ReactiveFormsModule],
+    ReactiveFormsModule
+  ],
   templateUrl: './listepassage.component.html',
   styleUrls: ['./listepassage.component.scss']
 })
@@ -30,7 +32,7 @@ export class ListepassageComponent implements OnInit {
   user!: User;
 
   constructor(private fb: FormBuilder,
-    private classeService: ClasseService,
+    private classeecoleService: ClasseecoleService,
     private anneeService: AnneeuvService,
     private authService: AuthService) {
     this.reinscriptionForm = this.fb.group({
@@ -51,7 +53,7 @@ export class ListepassageComponent implements OnInit {
     const ecoleId = this.user.administrateur.ecole.idEcole; 
 
     if (ecoleId) {
-      this.classeService.getClasseEcole(ecoleId).subscribe({
+      this.classeecoleService.getClasseEcole(ecoleId).subscribe({
         next: (data) => {
           this.classes = data; 
           console.log("Classes après mise à jour :", this.classes);

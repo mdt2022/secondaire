@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Anneeuv } from 'src/app/model/anneeuv.model';
-import { Classe } from 'src/app/model/classe.model';
-import { User } from 'src/app/model/user.model';
-import { AnneeuvService } from 'src/app/service/anneeuv.service';
-import { AuthService } from 'src/app/service/auth.service';
-import { ClasseService } from 'src/app/service/classe.service';
+import { Classe } from '../../../model/classe.model';
+import { Anneeuv } from '../../../model/anneeuv.model';
+import { User } from '../../../model/user.model';
+import { ClasseecoleService } from '../../../service/classeecole.service';
+import { AnneeuvService } from '../../../service/anneeuv.service';
+import { AuthService } from '../../../service/auth.service';
 
 @Component({
   selector: 'app-listeeleves',
@@ -26,7 +26,7 @@ export class ListeelevesComponent implements OnInit {
   anneesScolaires: Anneeuv[] = [];
   user!: User
   constructor(private fb: FormBuilder,
-    private classeService: ClasseService,
+    private classeecoleService: ClasseecoleService,
     private anneeService: AnneeuvService,
     private authService: AuthService) {
     this.studentForm = this.fb.group({
@@ -47,7 +47,7 @@ export class ListeelevesComponent implements OnInit {
     const ecoleId = this.user.administrateur.ecole.idEcole; 
 
     if (ecoleId) {
-      this.classeService.getClasseEcole(ecoleId).subscribe({
+      this.classeecoleService.getClasseEcole(ecoleId).subscribe({
         next: (data) => {
           this.classes = data; 
           console.log("Classes après mise à jour :", this.classes);
