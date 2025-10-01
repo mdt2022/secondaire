@@ -62,19 +62,30 @@
   
           <div class="mb-3">
             <label class="form-label">Académie</label>
-            <select name="academie" class="form-select">
-              <option value="">- Académie -</option>
-            </select>
+            <ng-select 
+            [items]="academies"
+            bindLabel="libelle"
+            bindValue="id"
+            formControlName="academie"
+            class="form-control"
+            ></ng-select>             
           </div>
-  
+          <!--
           <div class="mb-3">
             <label class="form-label">Établissement</label>
             <input type="text" name="etablissement" value="INTEC-B" class="form-control" readonly>
           </div>
+          -->
   
           <div class="mb-3">
             <label class="form-label">Année scolaire</label>
-            <input type="text" name="anneeScolaire" class="form-control">
+            <ng-select
+            [items]="anneeuvs"
+            bindLabel="nom"
+            bindValue="id"
+            formControlName="anneeuv"
+            class="form-control"
+            ></ng-select>
           </div>
   
           <div class="mb-3">
@@ -91,9 +102,13 @@
   
           <div class="mb-3">
             <label class="form-label">Classe</label>
-            <select name="classe" class="form-select">
-              <option value="">-- Classe --</option>
-            </select>
+            <ng-select
+            [items]="classes"
+            bindLabel="nom"
+            bindValue="id"
+            formControlName="classe"
+            class="form-control"
+            ></ng-select>
           </div>
   
           <div class="mb-3">
@@ -145,22 +160,37 @@
   
           <div class="mb-3">
             <label class="form-label">Région</label>
-            <select name="region" class="form-select">
-              <option value="">-- Région --</option>
-            </select>
+            <ng-select 
+            [items]="regions"
+            bindLabel="nom"
+            bindValue="id"
+            formControlName="region"
+            class="form-control"           
+            >
+            </ng-select>
           </div>
   
           <div class="mb-3">
             <label class="form-label">Cercle</label>
-            <select name="cercle" class="form-select">
-              <option value="">-- Cercle --</option>
-            </select>
+            <ng-select 
+            [items]="cercles"
+            bindLabel="nom"
+            bindValue="id"
+            formControlName="cercle"
+            class="form-control"           
+            >
+            </ng-select>
           </div>
           <div class="mb-3">
             <label class="form-label">CAP</label>
-            <select name="cap" class="form-select">
-              <option value="">-- Cap --</option>
-            </select>
+            <ng-select 
+            [items]="caps"
+            bindLabel="nom"
+            bindValue="id"
+            formControlName="cap"
+            class="form-control"           
+            >
+            </ng-select>
           </div>
         </div>
       </ng-template>

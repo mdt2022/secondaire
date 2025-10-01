@@ -1,9 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { Classe } from '../../model/classe.model';
-import { Ecole } from '../../model/ecole.model';
-import { ClasseService } from '../../service/classe.service';
 import { EleveService } from '../../service/eleve.service';
 import { User } from '../../model/user.model';
 import { AuthService } from '../../service/auth.service';

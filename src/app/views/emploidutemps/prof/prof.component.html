@@ -84,6 +84,7 @@
                             <th>Arrivée</th>
                             <th>Départ</th>
                             <th>Heures</th>
+                            <th>Présent</th>
                             <th>Date</th>
                         </tr>
                     </thead>
@@ -103,6 +104,9 @@
                             </td>
                             <td class="fw-bold">{{ emploi.matiere.horaire }}h</td>
                             <td>
+                                <input type="checkbox" name="valider" id="">
+                            </td>
+                            <td>
                                 <input type="date" class="form-control form-control-sm" [(ngModel)]="emploi.anneeuv" [ngModelOptions]="{standalone: true}" [value]="today | date:'yyyy-MM-dd'">
                             </td>
                         </tr>
@@ -120,8 +124,8 @@
         <!-- Bouton d'enregistrement -->
         <div class="card-footer bg-light py-3">
             <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-success px-4" [disabled]="loading || emploisFiltres.length === 0">
-                    <i class="fas fa-save me-2"></i>Enregistrer les émargements
+                <button type="submit" class="btn btn-success px-4" (click)="enregistrerTout()" [disabled]="loading || emploisFiltres.length === 0">
+                    💾 Enregistrer les émargements
                 </button>
             </div>
         </div>

@@ -6,8 +6,11 @@ import { Classe } from '../../../model/classe.model';
 import { Anneeuv } from '../../../model/anneeuv.model';
 import { User } from '../../../model/user.model';
 import { ClasseecoleService } from '../../../service/classeecole.service';
+import { EleveService } from '../../../service/eleve.service'
 import { AnneeuvService } from '../../../service/anneeuv.service';
 import { AuthService } from '../../../service/auth.service';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { Eleve } from '../../../model/eleve.model';
 
 @Component({
   selector: 'app-listeeleves',
@@ -15,7 +18,8 @@ import { AuthService } from '../../../service/auth.service';
   imports: [
     CommonModule,
     RouterLink,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgSelectModule
   ],
   templateUrl: './listeeleves.component.html',
   styleUrls: ['./listeeleves.component.scss']
@@ -23,58 +27,39 @@ import { AuthService } from '../../../service/auth.service';
 export class ListeelevesComponent implements OnInit {
   studentForm: FormGroup;
   classes: Classe[] = [];
-  anneesScolaires: Anneeuv[] = [];
+  anneeuvs: Anneeuv[] = [];
   user!: User
+  eleves: Eleve[] = [];
   constructor(private fb: FormBuilder,
     private classeecoleService: ClasseecoleService,
-    private anneeService: AnneeuvService,
-    private authService: AuthService) {
-    this.studentForm = this.fb.group({
-      classe: ['', Validators.required],
-      anneeuv: ['', Validators.required]
-    });
+    private eleveService: EleveService,
+    private anneeuvService: AnneeuvService,
+    private authService: AuthService
+  ) {    
+      this.studentForm = this.fb.group({
+        classe: [null],
+        anneeuv: [null]
+      });
     
   }
 
   ngOnInit(): void {
-    this.getClasseEcole();
-    this.getAllAnnee()
+    this.user = this.authService.getUserFromLocalStorage()
+    this.loadData()
+  }
+
+  loadData(){
+    this.anneeuvService.getAllAnnee().subscribe({
+      next: (data) => { this.anneeuvs = data }
+    })
+    this.classeecoleService.getClasseEcole(this.user.administrateur.ecole.idEcole).subscribe({
+      next: (data) => { this.classes = data }
+    })
   }
   
-
-  getClasseEcole() {
-    this.user = this.authService.getUserFromLocalStorage(); 
-    const ecoleId = this.user.administrateur.ecole.idEcole; 
-
-    if (ecoleId) {
-      this.classeecoleService.getClasseEcole(ecoleId).subscribe({
-        next: (data) => {
-          this.classes = data; 
-          console.log("Classes après mise à jour :", this.classes);
-        },
-        error: (error) => {
-          console.error('Erreur lors de la récupération des classes', error);
-        }
-      });
-    } else {
-      console.error("Impossible de récupérer l'ID de l'école.");
-    }
-  }
-  getAllAnnee() {
-    this.anneeService.getAllAnnee().subscribe(
-      (data) => {
-        this.anneesScolaires = data;
-      },
-      (error) => {
-        console.error('Erreur lors de la récupération des années', error);
-      }
-    );
-  }
-
   rechercher(): void {
-    if (this.studentForm.valid) {
-      console.log('Formulaire soumis', this.studentForm.value);
-      // Logique pour récupérer la liste des élèves
-    }
+    this.eleveService.getAllEleveecole(this.studentForm.value.anneeuv, ''+this.user.administrateur.ecole.idEcole, this.studentForm.value.classe).subscribe({
+      next: (data) => { this.eleves = data}
+    })
   }
 }

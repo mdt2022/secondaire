@@ -45,7 +45,7 @@ export class EmploidutempsComponent implements OnInit {
     const ecoleId = this.user.administrateur.ecole.idEcole;
     const anneeuvId = this.user.parametre.anneepardefaut.id;
 
-    this.emploiDuTempsService.getByAnneeEcole(anneeuvId, 10).subscribe({
+    this.emploiDuTempsService.getByAnneeEcole(anneeuvId, ecoleId).subscribe({
       next: (data) => {
         this.emploisDuTemps = data;
         console.log('Emplois du temps:', this.emploisDuTemps);

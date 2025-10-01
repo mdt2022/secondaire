@@ -11,7 +11,7 @@ import { environment } from '../../environments/environment';
 export class EmploidutempService{
     private apiUrl = environment.apiURL+"/emploidutemps";
     constructor(private http: HttpClient, private router: Router) {}
-
+    
     // Obtenir tous les emplois du temps
     getAllemploidutemps(): Observable<Emploidutemp[]> {
       return this.http.get<Emploidutemp[]>(`${this.apiUrl}`);

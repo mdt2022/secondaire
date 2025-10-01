@@ -11,6 +11,7 @@ import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { AuthService } from '../../../service/auth.service';
+import { PointageService } from '../../../service/pointage.service';
 import { User } from '../../../model/user.model';
 
 @Component({
@@ -47,7 +48,7 @@ export class ProfComponent implements OnInit {
     private anneeService: AnneeuvService,
     private emploiService: EmploidutempService,
     private authService: AuthService,
-
+    private pointageService: PointageService
   ) {}
 
   ngOnInit(): void {
@@ -129,5 +130,8 @@ export class ProfComponent implements OnInit {
     });
   }
 
+  enregistrerTout() {
+   
+  }
 
 }
