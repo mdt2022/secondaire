@@ -1,0 +1,70 @@
+<div class="container mt-4">
+  <h4>Promotion des élèves</h4>
+
+  <form [formGroup]="promoForm" class="row g-3 mb-3">
+    <div class="col-md-3">
+      <label>Classe actuelle</label>
+      <select class="form-select" formControlName="classeActuelle">
+        <option [ngValue]="null">-- Sélectionner --</option>
+        <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.nom }}</option>
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label>Année actuelle</label>
+      <select class="form-select" formControlName="anneeActuelle">
+        <option [ngValue]="null">-- Sélectionner --</option>
+        <option *ngFor="let a of annees" [ngValue]="a.id">{{ a.nom }}</option>
+      </select>
+    </div>
+
+    <div class="col-md-3 align-self-end">
+      <button type="button" class="btn btn-primary w-100" (click)="chargerEleves()">Charger les élèves</button>
+    </div>
+  </form>
+
+  <div *ngIf="eleves.length > 0">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th><input type="checkbox" (change)="toggleAll($event)" /></th>
+          <th>Matricule</th>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Sexe</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let e of eleves">
+          <td><input type="checkbox" [checked]="isSelected(e.id!)" (change)="toggleSelection(e.id!, $event)" /></td>
+          <td>{{ e.eleve.matricule }}</td>
+          <td>{{ e.eleve.nom }}</td>
+          <td>{{ e.eleve.prenom }}</td>
+          <td>{{ e.eleve.sexe }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="row g-3 mt-3">
+      <div class="col-md-3">
+        <label>Classe suivante</label>
+        <select class="form-select" formControlName="classeSuivante">
+          <option [ngValue]="null">-- Sélectionner --</option>
+          <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.nom }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label>Année suivante</label>
+        <select class="form-select" formControlName="anneeSuivante">
+          <option [ngValue]="null">-- Sélectionner --</option>
+          <option *ngFor="let a of annees" [ngValue]="a.id">{{ a.nom }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-3 align-self-end">
+        <button type="button" class="btn btn-success w-100" (click)="promouvoir()">Promouvoir</button>
+      </div>
+    </div>
+  </div>
+</div>

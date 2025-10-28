@@ -1,0 +1,112 @@
+<c-row>
+    <c-col xs="12">
+        <c-card class="mb-4">
+        <c-card-header>
+            Ajouter / Modifier
+        </c-card-header>
+        <c-card-body>            
+            <form [formGroup]="adminForm" (ngSubmit)="onSubmit()">
+                <div class="row g-3">
+
+                    <!-- Nom -->
+                    <div class="col-md-6">
+                    <label class="form-label">Nom</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        formControlName="nom"
+                        placeholder="Entrez le nom"
+                    />
+                    </div>
+
+                    <!-- Prénom -->
+                    <div class="col-md-6">
+                    <label class="form-label">Prénom</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        formControlName="prenom"
+                        placeholder="Entrez le prénom"
+                    />
+                    </div>
+                    <!-- Téléphone -->
+                    <div class="col-md-6">
+                    <label class="form-label">Téléphone</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        formControlName="telephone"
+                        placeholder="Entrez le Téléphone"
+                    />
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        formControlName="email"
+                        placeholder="Entrez l'email"
+                    />
+                    </div>
+
+                    <!-- Nom d'utilisateur -->
+                    <div class="col-md-6">
+                    <label class="form-label">Nom d'utilisateur</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        formControlName="username"
+                        placeholder="Nom d'utilisateur"
+                    />
+                    </div>
+
+                    <!-- Mot de passe -->
+                    <div class="col-md-6">
+                    <label class="form-label">Mot de passe</label>
+                    <input
+                        type="password"
+                        class="form-control"
+                        formControlName="password"
+                        placeholder="Mot de passe"
+                    />
+                    </div>
+
+                    <!-- Rôle -->
+                    <div class="col-md-6">
+                    <label class="form-label">Rôle</label>
+                    <select class="form-select" formControlName="role">
+                        <option value="">-- Sélectionner un rôle --</option>
+                        <option *ngFor="let role of roles" [value]="role.id">
+                        {{ role.description }}
+                        </option>
+                    </select>
+                    </div>
+
+                    <!-- Ecole -->
+                    <div class="col-md-6">
+                    <label class="form-label">Ecole</label>
+                    <select class="form-select" formControlName="ecole">
+                        <option value="">-- Sélectionner une école --</option>
+                        <option *ngFor="let ecole of ecoles" [value]="ecole.idEcole">
+                        {{ ecole.nomEcole }}
+                        </option>
+                    </select>
+                    </div>
+
+                    <!-- Boutons -->
+                    <div class="col-12 text-center mt-3">
+                    <button type="submit" class="btn btn-primary me-2" [disabled]="adminForm.invalid">
+                        {{ editMode ? 'Modifier' : 'Ajouter' }}
+                    </button>
+                    <button type="button" class="btn btn-secondary" (click)="resetForm()">
+                        Annuler
+                    </button>
+                    </div>
+                </div>
+                </form>
+        </c-card-body>
+        </c-card>
+    </c-col>
+</c-row>

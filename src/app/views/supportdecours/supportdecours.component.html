@@ -1,0 +1,37 @@
+<div class="container mt-4">
+  <h3>Liste des supports de cours</h3>
+  <a routerLink="add" class="btn btn-primary mb-3">Ajouter</a>
+
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nom</th>
+        <th>Classe</th>
+        <th>Nom fichier</th>
+        <th>PDF</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of supports; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ s.nom }}</td>
+        <td>{{ s.classe.nom }}</td>
+        <td>{{ s.nomfichier }}</td>
+        <td>
+          <ng-container *ngIf="s.nomfichier; else noFile">
+            <a [href]="apiUrl+'/download/' + s.nomfichier" target="_blank">
+              {{ s.nomfichier }}
+            </a>
+          </ng-container>
+          <ng-template #noFile>-</ng-template>
+        </td>
+        <td>
+          <a [routerLink]="['/supports/edit', s.id]" class="btn btn-warning btn-sm">Modifier</a>
+          <button class="btn btn-danger btn-sm" (click)="delete(s.id!)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

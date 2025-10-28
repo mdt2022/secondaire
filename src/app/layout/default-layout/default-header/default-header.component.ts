@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, Input } from '@angular/core';
+import { Component, computed, DestroyRef, inject, Input, OnInit } from '@angular/core';
 import {
   AvatarComponent,
   BadgeComponent,
@@ -27,11 +27,8 @@ import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { IconDirective } from '@coreui/icons-angular';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { delay, filter, map, tap } from 'rxjs/operators';
-import { User } from '../../../model/user.model';
-import { Administrateur } from '../../../model/admin.model';
-import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../service/auth.service';
-import { AdminService } from '../../../service/admin.service';
+import { User } from '../../../model/user';
 
 @Component({
   selector: 'app-default-header',
@@ -39,11 +36,8 @@ import { AdminService } from '../../../service/admin.service';
   standalone: true,
   imports: [ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconDirective, HeaderNavComponent, NavItemComponent, NavLinkDirective, RouterLink, RouterLinkActive, NgTemplateOutlet, BreadcrumbRouterComponent, ThemeDirective, DropdownComponent, DropdownToggleDirective, TextColorDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective, BadgeComponent, DropdownDividerDirective, ProgressBarDirective, ProgressComponent, NgStyle]
 })
-export class DefaultHeaderComponent extends HeaderComponent {
-  user!: User
-  admin!: Administrateur
-  baseUrl = environment.apiURL+"/administrateurs";
-
+export class DefaultHeaderComponent extends HeaderComponent implements OnInit{
+  user!: User;
   readonly #activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   readonly #colorModeService = inject(ColorModeService);
   readonly colorMode = this.#colorModeService.colorMode;
@@ -59,13 +53,13 @@ export class DefaultHeaderComponent extends HeaderComponent {
     const currentMode = this.colorMode();
     return this.colorModes.find(mode=> mode.name === currentMode)?.icon ?? 'cilSun';
   });
+  ngOnInit(): void {
+    this.user = this.authService.getAdminData();
+    //alert(this.user.administrateur.nom)
+  }
 
-  constructor(
-    private authService: AuthService,
-    private adminService: AdminService
-  ) {
+  constructor(private authService: AuthService) {
     super();
-    this.user = authService.getUserFromLocalStorage();
     this.#colorModeService.localStorageItemName.set('coreui-free-angular-admin-template-theme-default');
     this.#colorModeService.eventName.set('ColorSchemeChange');
 

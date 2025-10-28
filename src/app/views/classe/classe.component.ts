@@ -1,85 +1,72 @@
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Classe } from '../../model/classe';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ClasseService } from '../../service/classe.service';
-import { AuthService } from '../../service/auth.service';
-import { Classe } from '../../model/classe.model';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { NgxPaginationModule } from 'ngx-pagination';
-import { Ecole } from '../../model/ecole.model';
-import { EcoleService } from '../../service/ecole.service';
-import { User } from '../../model/user.model';
-
 @Component({
   selector: 'app-classe',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterModule, NgxPaginationModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule
+  ],
   templateUrl: './classe.component.html',
-  styleUrls: ['./classe.component.scss']
+  styleUrl: './classe.component.scss'
 })
 export class ClasseComponent implements OnInit {
-  classes: Classe[] = []; // Liste des classes de l'école
-  ecoles: Ecole[] = []; // ✅ Déclarer la variable pour éviter l'erreur
-  isFormVisible: boolean = false;
-  searchText: string = '';
-  currentPage: number = 1;
-  user!: User
-  constructor(
-    private classeService: ClasseService,
-    private ecoleService: EcoleService,
+  classes: Classe[] = [];
+  classeForm!: FormGroup;
+  editMode = false;
+  currentId?: number;
 
-    private authService: AuthService
-  ) {}
+  constructor(private classeService: ClasseService, private fb: FormBuilder) {}
 
-    ngOnInit(): void {
-      this. getAllClasse()
-      this.getAllEcole()
-    }   
-    
-    getAllClasse() {
-      this.classeService.getAllClasse().subscribe(
-        (data) => {
-          this.classes = data; // ✅ Correction pour correspondre au template
-        },
-        (error) => {
-          console.error('Erreur lors de la récupération des ecoles', error);
-        }
-      );
-    }
-    
-    getAllEcole() {
-      this.ecoleService.getAllEcole().subscribe(
-        (data) => {
-          this.ecoles = data; // ✅ Correction pour correspondre au template
-        },
-        (error) => {
-          console.error('Erreur lors de la récupération des ecoles', error);
-        }
-      );
-    }
+  ngOnInit(): void {
+    this.loadClasses();
 
+    this.classeForm = this.fb.group({
+      nom: ['', Validators.required],
+      description: [''],
+      filiere: [''],
+      options: ['']
+    });
+  }
 
-    deleteClasse(id: number): void {
-      if (confirm('Voulez-vous vraiment supprimer cette classe ?')) {
-        ;
-      }
-    }
-    filteredClasses(){
-      return this.classes.filter(classe =>
-        (classe.nom ?? '').toLowerCase().includes(this.searchText.toLowerCase()) ||
-        (classe.filiere ?? '').toLowerCase().includes(this.searchText.toLowerCase()) ||
-        (classe.description ?? '').toLowerCase().includes(this.searchText.toLowerCase()) ||
-        (classe.options ?? '').toLowerCase().includes(this.searchText.toLowerCase())
-      );
-    }
+  loadClasses(): void {
+    this.classeService.getAll().subscribe(data => this.classes = data);
+  }
 
-    toggleForm(): void {
-      this.isFormVisible = !this.isFormVisible;
+  save(): void {
+    const classe: Classe = this.classeForm.value;
+
+    if (this.editMode && this.currentId) {
+      this.classeService.update(this.currentId, classe).subscribe(() => {
+        this.loadClasses();
+        this.resetForm();
+      });
+    } else {
+      this.classeService.create(classe).subscribe(() => {
+        this.loadClasses();
+        this.resetForm();
+      });
     }
   }
 
+  edit(classe: Classe): void {
+    this.editMode = true;
+    this.currentId = classe.id;
+    this.classeForm.patchValue(classe);
+  }
 
+  delete(id?: number): void {
+    if (id && confirm('Voulez-vous vraiment supprimer cette classe ?')) {
+      this.classeService.delete(id).subscribe(() => this.loadClasses());
+    }
+  }
 
-
-
-
+  resetForm(): void {
+    this.editMode = false;
+    this.currentId = undefined;
+    this.classeForm.reset();
+  }
+}

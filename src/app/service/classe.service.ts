@@ -1,22 +1,33 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
+import { Injectable } from "@angular/core";
+import { Classe } from "../model/classe";
+import { Observable } from "rxjs";
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { Classe } from '../model/classe.model';
-import { Observable } from 'rxjs';
-
+import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class ClasseService {
-
   private apiUrl = environment.apiURL+"/classes";
-  
+
   constructor(private http: HttpClient) {}
-  //la liste des classes du secondaires
-  getAllClasse(): Observable<Classe[]>{
+
+  getAll(): Observable<Classe[]> {
     return this.http.get<Classe[]>(this.apiUrl);
   }
- 
 
+  getById(id: number): Observable<Classe> {
+    return this.http.get<Classe>(`${this.apiUrl}/${id}`);
+  }
+
+  create(classe: Classe): Observable<Classe> {
+    return this.http.post<Classe>(this.apiUrl, classe);
+  }
+
+  update(id: number, classe: Classe): Observable<Classe> {
+    return this.http.put<Classe>(`${this.apiUrl}/${id}`, classe);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

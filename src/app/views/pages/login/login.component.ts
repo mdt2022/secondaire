@@ -1,68 +1,46 @@
 import { Component } from '@angular/core';
-import { CommonModule, NgStyle } from '@angular/common';
+import { NgStyle, CommonModule } from '@angular/common';
 import { IconDirective } from '@coreui/icons-angular';
 import { ContainerComponent, RowComponent, ColComponent, CardGroupComponent, TextColorDirective, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, InputGroupTextDirective, FormControlDirective, ButtonDirective } from '@coreui/angular';
-import { AuthService } from '../../../service/auth.service';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-
+import { AuthService } from '../../../service/auth.service';
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss'],
     standalone: true,
-    imports: [
-      ContainerComponent, 
-      RowComponent, 
-      ColComponent, 
-      CardGroupComponent, 
-      TextColorDirective, 
-      CardComponent, 
-      CardBodyComponent, 
-      FormDirective, 
-      InputGroupComponent, 
-      InputGroupTextDirective, 
-      IconDirective, 
-      FormControlDirective, 
-      ButtonDirective, 
-      NgStyle,
-      CommonModule,
-      FormsModule
-    ]
+    imports: [CommonModule, ReactiveFormsModule, ContainerComponent, RowComponent, ColComponent, CardGroupComponent, TextColorDirective, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, InputGroupTextDirective, IconDirective, FormControlDirective, ButtonDirective, NgStyle]
 })
 export class LoginComponent {
-  credentials = { username: '', password: '' };
-  errorMessage: string | null = null;
-  isLoading: boolean = false;  // Indicateur de chargement
-  errersul: boolean = false
-  
-  constructor(
-    private authService: AuthService, 
-    private router: Router
-  ) { }
 
-  onLogin(): void {
-    if(this.credentials.username == ''){
-      alert("Nom utilsateur obligatoire")
-      return
-    }
-    if(this.credentials.password == ''){
-      alert("Mot de passe obligatoire")
-      return
-    }
-    this.isLoading = true; // Active le loader
-    this.authService.login(this.credentials).subscribe({
-      next: (response) => { 
-        this.isLoading = false; // Désactive le loader après la réponse
-        this.authService.saveUserAndToken(response);
-        //console.log(response.administrateur.ecole.nomEcole+" mdt ++");
-        this.router.navigate(['/dashboard']); // Redirige vers le tableau de bord
+ loginForm: FormGroup;
+ errorMessage = '';
+
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+    this.loginForm = this.fb.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required]
+    });
+  }
+
+  onSubmit(): void {
+    if (this.loginForm.invalid) return;
+    const { username, password } = this.loginForm.value;
+
+    this.authService.login(username, password).subscribe({
+      next: (res) => {
+        if (res.token) {
+          this.authService.saveAdminData(res.user)
+          this.authService.saveToken(res.token)
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.errorMessage = 'Identifiants incorrects.';
+        }
       },
       error: () => {
-        this.errorMessage = 'Nom d’utilisateur ou mot de passe incorrect.';
-        this.isLoading = false; // Désactive le loader en cas d'erreur
-        this.errersul = true
-      },
+        this.errorMessage = 'Erreur de connexion.';
+      }
     });
   }
 

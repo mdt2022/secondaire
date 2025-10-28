@@ -1,20 +1,21 @@
-import { Injectable } from "@angular/core";
-import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
-import { Router } from "@angular/router";
-import { Academie } from "../model/academie.model";
+import { environment } from "../../environments/environment";
 import { Observable } from "rxjs";
+import { Administrateur } from "../model/administrateur";
+import { Injectable } from "@angular/core";
+import { Role } from "../model/role";
+import { Academie } from "../model/academie";
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'  // ✅ c’est essentiel
 })
-export class AcademieService {
-  
+
+export class AcademieService{
     private apiUrl = environment.apiURL+"/academies";
-  
+
     constructor(private http: HttpClient) {}
-  
+
     getAll(): Observable<Academie[]>{
-      return this.http.get<Academie[]>(this.apiUrl);
+        return this.http.get<Academie[]>(this.apiUrl);
     }
 }

@@ -1,34 +1,34 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { environment } from '../../environments/environment';
-import { Administrateur } from '../model/admin.model';
-import { Observable } from 'rxjs';
+import { HttpClient } from "@angular/common/http";
+import { environment } from "../../environments/environment";
+import { Observable } from "rxjs";
+import { Administrateur } from "../model/administrateur";
+import { Injectable } from "@angular/core";
+import { Role } from "../model/role";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root'  // ✅ c’est essentiel
 })
-export class AdminService {
 
-  private apiUrl = environment.apiURL;
+export class AdministrateurService{
+    private apiUrl = environment.apiURL;
 
-  constructor(private http: HttpClient, private router: Router) {}
+    constructor(private http: HttpClient) {}
 
-  getAllAdmin(): Observable<Administrateur[]>{
-    return this.http.get<Administrateur[]>(this.apiUrl+"/administrateurs/second");
-  }
+    getRoles(): Observable<Role[]>{
+        return this.http.get<Role[]>(this.apiUrl+"/roles/categorie/2");
+    }
 
+    getAll(): Observable<Administrateur[]>{
+        return this.http.get<Administrateur[]>(this.apiUrl+"/administrateurs/second");
+    }
+    update(id: number, admin: Administrateur): Observable<Administrateur>{
+        return this.http.put<Administrateur>(this.apiUrl+"/administrateurs/"+id, admin);
+    }
+    create(admin: Administrateur): Observable<Administrateur>{
+        return this.http.post<Administrateur>(this.apiUrl+"/administrateurs", admin);
+    }
+    getById(id: number): Observable<Administrateur>{
+        return this.http.get<Administrateur>(this.apiUrl+"/administrateurs/"+id)
+    }
 
-  save(admin: Administrateur): Observable<Administrateur> {
-    return this.http.post<Administrateur>(this.apiUrl+"/administrateurs", admin);
-  }
-
-  update(id: number, admin: Administrateur): Observable<Administrateur> {
-    return this.http.put<Administrateur>(this.apiUrl+"/administrateurs/"+id, admin);
-
-  }
-
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(this.apiUrl+"/administrateurs"+id);
-  }
 }

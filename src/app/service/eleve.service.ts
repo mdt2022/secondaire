@@ -1,27 +1,34 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
-import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { Eleve } from '../model/eleve.model';
-import { ClasseDTO } from "../dto/ClasseDTO.dto";
 
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { Eleve } from '../model/eleve';
 @Injectable({
   providedIn: 'root'
 })
 export class EleveService {
-  
-  private apiUrl = environment.apiURL + "/eleveecoles";
-  
-  constructor(private http: HttpClient, private router: Router) {}
+  private apiUrl = environment.apiURL+"/eleves";
 
-  // Récupérer la liste des élèves pour une classe spécifique
-  getAllEleveecole(an: string, ecole: string, classe: string): Observable<Eleve[]> {
-    const donnees = [an, ecole, classe]; // Tableaux des paramètres requis
-    return this.http.post<Eleve[]>(`${this.apiUrl}/eleveparclasse`, donnees);
+  constructor(private http: HttpClient) {}
+  
+  getAll(): Observable<Eleve[]> {
+    return this.http.get<Eleve[]>(this.apiUrl);
   }
-   //nombre eleve classe ecole
-  getNombreEleveClasseEcole(ecoleId: number): Observable<ClasseDTO[]>{
-      return this.http.get<ClasseDTO[]>(this.apiUrl+"/nombreparclasse/"+ecoleId)
+
+  getById(id: number): Observable<Eleve> {
+    return this.http.get<Eleve>(`${this.apiUrl}/${id}`);
+  }
+
+  create(eleve: Eleve): Observable<Eleve> {
+    return this.http.post<Eleve>(this.apiUrl, eleve);
+  }
+
+  update(id: number, eleve: Eleve): Observable<Eleve> {
+    return this.http.put<Eleve>(`${this.apiUrl}/${id}`, eleve);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

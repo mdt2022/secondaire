@@ -1,0 +1,42 @@
+<div class="container mt-4">
+  <h3>{{ id ? 'Modifier' : 'Ajouter' }} Support de cours</h3>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" enctype="multipart/form-data" novalidate>
+    <div class="mb-3">
+      <label for="nom" class="form-label">Nom</label>
+      <input id="nom" class="form-control" formControlName="nom" />
+      <div *ngIf="form.controls['nom'].invalid && form.controls['nom'].touched" class="text-danger">
+        Le nom est requis.
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="classe" class="form-label">Classe</label>
+      <select id="classe" class="form-select" formControlName="classeId">
+        <option [ngValue]="null">-- Choisir --</option>
+        <!-- Remplace par ta liste de classes -->
+        <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.nom }}</option>
+      </select>
+      <div *ngIf="form.controls['classeId'].invalid && form.controls['classeId'].touched" class="text-danger">
+        La classe est requise.
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Fichier (PDF / DOC / DOCX)</label>
+      <input type="file" (change)="onFileSelected($event)" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+      <div *ngIf="filenamePreview" class="mt-2">
+        Fichier sélectionné: <strong>{{ filenamePreview }}</strong>
+        <button type="button" class="btn btn-sm btn-outline-secondary ms-2" (click)="removeSelectedFile()">Retirer</button>
+      </div>
+
+      <!-- si déjà un fichier côté edit -->
+      <div *ngIf="!filenamePreview && id">
+        <small class="text-muted">Aucun fichier sélectionné. (si existant, il est affiché dans la liste)</small>
+      </div>
+    </div>
+
+    <button [disabled]="form.invalid" class="btn btn-primary" type="submit">{{ id ? 'Enregistrer' : 'Créer' }}</button>
+    <a class="btn btn-secondary ms-2" routerLink="/supports">Annuler</a>
+  </form>
+</div>

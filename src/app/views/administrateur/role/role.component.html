@@ -1,0 +1,63 @@
+<!-- src/app/components/roles/roles.component.html -->
+<div class="container">
+  <h3>Gestion des rôles</h3>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <!-- Liste -->
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Nom</th>
+        <th>Description</th>
+        <th>Catégorie</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let r of roles">
+        <td>{{ r.id }}</td>
+        <td>{{ r.nom }}</td>
+        <td>{{ r.description }}</td>
+        <td>{{ r.categorie?.nom }}</td>
+        <td>
+          <button class="btn btn-sm btn-primary me-1" (click)="startEdit(r)">Modifier</button>
+          <button class="btn btn-sm btn-danger" (click)="deleteRole(r.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr/>
+
+  <!-- Formulaire -->
+  <div class="card p-3">
+    <h5>{{ editing ? 'Modifier un rôle' : 'Ajouter un rôle' }}</h5>
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <div class="mb-2">
+        <label class="form-label">Nom *</label>
+        <input formControlName="nom" class="form-control" />
+        <div *ngIf="form.controls['nom'].invalid && form.controls['nom'].touched" class="text-danger">
+          Le nom est requis.
+        </div>
+      </div>
+
+      <div class="mb-2">
+        <label class="form-label">Description</label>
+        <input formControlName="description" class="form-control"/>
+      </div>
+
+      <div class="mb-2">
+        <label class="form-label">Catégorie (id)</label>
+        <input type="number" formControlName="categorieId" class="form-control" />
+        <small class="text-muted">Si tu veux lier une catégorie existante, mets son id.</small>
+      </div>
+
+      <div class="mt-2">
+        <button class="btn btn-success" [disabled]="form.invalid">{{ editing ? 'Mettre à jour' : 'Créer' }}</button>
+        <button type="button" class="btn btn-secondary ms-2" (click)="startCreate()">Nouveau</button>
+      </div>
+    </form>
+  </div>
+</div>

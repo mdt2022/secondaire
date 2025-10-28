@@ -12,7 +12,7 @@ import { iconSubset } from './icons/icon-subset';
   imports: [RouterOutlet]
 })
 export class AppComponent implements OnInit {
-  title = 'Espace secondaire';
+  title = 'Espace Secondaire';
 
   constructor(
     private router: Router,

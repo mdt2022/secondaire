@@ -2,98 +2,129 @@ import { INavData } from '@coreui/angular';
 
 export const navItems: INavData[] = [
   {
-    name: 'Tableau de Bord',
+    name: 'Tableau de bord',
     url: '/dashboard',
     iconComponent: { name: 'cil-speedometer' },
     badge: {
       color: 'info',
       text: 'Nouveau'
     }
-  },
+  }, 
   {
     title: true,
-    name: 'Secondaires'
+    name: 'Configuration'
   },
   {
-    name: 'Avance',
-    url: '/avance/avance',
+    name: 'Administrateur',
+    url: '/administrateur',
     iconComponent: { name: 'cil-drop' }
   },
   {
-    name: 'Classe',
-    url: '/classe/classe',
-
-    iconComponent: { name: 'cil-puzzle' }
+    name: 'Rôle',
+    url: '/administrateur/role',
+    linkProps: { fragment: 'headings' },
+    iconComponent: { name: 'cil-pencil' }
+  },
+  {
+    name: 'Gestion des Classe',
+    url: '/classe',
+    linkProps: { fragment: 'headings' },
+    iconComponent: { name: 'cil-pencil' }
+  },
+  {
+    name: 'Affecter une Classe',
+    url: '/classeecole',
+    linkProps: { fragment: 'headings' },
+    iconComponent: { name: 'cil-pencil' }
+  },
+  {
+    name: 'Matière',
+    url: '/matiere',
+    linkProps: { fragment: 'headings' },
+    iconComponent: { name: 'cil-pencil' }
+  },
+  {
+    name: 'Gestions',
+    title: true
+  },
+  {
+    name: 'Supports',
+    url: '/supports',
+    iconComponent: { name: 'cil-puzzle' }    
   },
   {
     name: 'Eleves',
-    url: '/eleves/eleves',
-
-    iconComponent: { name: 'cil-notes' }
+    url: '/eleve/eleve',
+    iconComponent: { name: 'cil-puzzle' }    
   },
   {
-    name: 'Emploi du temps',
-    url: '/emploidutemps/emploidutemps',
-
-    iconComponent: { name: 'cil-list' }
+    name: 'Enseignants',
+    url: '/enseignant',
+    iconComponent: { name: 'cil-cursor' }    
   },
   {
-    name: 'Frai du secondaire',
-    url: '/fraisecondaire/fraisecondaire',
-
-    iconComponent: { name: 'cil-credit-card' }
+    name: 'Emplois du temps',
+    url: '/temps',
+    iconComponent: { name: 'cil-cursor' }    
   },
   {
-    name: 'Matières',
-    url: '/matieres/matieres',
-
-    iconComponent: { name: 'cil-chart-pie' }
+    name: 'Frais Scolaire',
+    url: '/frais',
+    iconComponent: { name: 'cil-notes' }    
   },
   {
-    name: 'Matières enseignées',
-    url: '/matieresenseignees/matieresenseignees',
-
-    iconComponent: { name: 'cil-bookmark' }
+    name: 'Matières Enseignées',
+    iconComponent: { name: 'cil-chart-pie' },
+    url: '/enseigner'
   },
   {
     name: 'Notes',
-    url: '/notes/notes',
-
-    iconComponent: { name: 'cil-pencil' }
+    iconComponent: { name: 'cil-star' },
+    url: '/note'    
   },
   {
-    name: 'Paiements secondaires',
-    url: '/paiementsecondaires/paiementsecondaires',
-
-    iconComponent: { name: 'cil-star' }
-  },
-  {
-    name: 'Pointages',
-    url: '/pointages/pointages',
+    name: 'Paiement',
+    url: '/paiement',
     iconComponent: { name: 'cil-bell' }
   },
   {
-    name: 'Professeurs',
-    url: '/professeurs/professeurs',
-    iconComponent: { name: 'cil-calculator' }
+    name: 'Pointage',
+    url: '/pointage',
+    iconComponent: { name: 'cil-calculator' },
+    badge: {
+      color: 'info',
+      text: 'NEW'
+    }
   },
   {
     title: true,
-    name: 'Configurations'
+    name: 'Extras'
   },
   {
-    name: 'Role',
-    url: '/roles/roles',
-    iconComponent: { name: 'cil-pencil' }
-  },
-  {
-    name: 'Gestion des classes',
-    url: '/gestionsdesclasses/gestionsdesclasses',
-    iconComponent: { name: 'cil-pencil' }
-  }, 
-  {
-    name: 'Administrateurs',
-    url: '/administrateur/administrateur',
-    iconComponent: { name: 'cil-pencil' }
+    name: 'Pages',
+    url: '/login',
+    iconComponent: { name: 'cil-star' },
+    children: [
+      {
+        name: 'Login',
+        url: '/login',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Register',
+        url: '/register',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Error 404',
+        url: '/404',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Error 500',
+        url: '/500',
+        icon: 'nav-icon-bullet'
+      }
+    ]
   }
 ];

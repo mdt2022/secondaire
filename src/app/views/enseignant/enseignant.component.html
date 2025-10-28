@@ -1,0 +1,92 @@
+<c-card>
+  <c-card-header>
+    <strong>Gestion des Enseignants</strong>
+  </c-card-header>
+
+  <c-card-body>
+    <form [formGroup]="enseignantForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label>Matricule</label>
+          <input class="form-control" formControlName="matricule"/>
+        </div>
+        <div class="col-md-4">
+          <label>Nom</label>
+          <input class="form-control" formControlName="nom"/>
+        </div>
+        <div class="col-md-4">
+          <label>Prénom</label>
+          <input class="form-control" formControlName="prenom"/>
+        </div>
+        <div class="col-md-4">
+          <label>Adresse</label>
+          <input class="form-control" formControlName="adresse"/>
+        </div>
+        <div class="col-md-4">
+          <label>Téléphone</label>
+          <input class="form-control" formControlName="telephone"/>
+        </div>
+        <div class="col-md-4">
+          <label>Email</label>
+          <input class="form-control" type="email" formControlName="email"/>
+        </div>
+        <div class="col-md-4">
+          <label>Lieu de naissance</label>
+          <input class="form-control" formControlName="lieun"/>
+        </div>
+        <div class="col-md-4">
+          <label>Date de naissance</label>
+          <input class="form-control" type="date" formControlName="datedn"/>
+        </div>
+        <div class="col-md-4">
+          <label>Tarif</label>
+          <input class="form-control" type="number" formControlName="tarif"/>
+        </div>
+        <div class="col-md-4">
+          <label>Photo</label>
+          <input type="file" (change)="onPhotoSelected($event)" class="form-control"/>
+          <img *ngIf="selectedPhoto" [src]="selectedPhoto" alt="photo" class="img-thumbnail mt-2" style="max-height:100px;">
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <button class="btn btn-primary" type="submit">{{ editMode ? 'Modifier' : 'Ajouter' }}</button>
+        <button class="btn btn-secondary ms-2" type="button" (click)="resetForm()">Annuler</button>
+      </div>
+    </form>
+  </c-card-body>
+</c-card>
+
+<hr/>
+
+<c-card>
+  <c-card-body>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Matricule</th>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Téléphone</th>
+          <th>Email</th>
+          <th>Tarif</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let e of enseignants">
+          <td>{{ e.matricule }}</td>
+          <td>{{ e.nom }}</td>
+          <td>{{ e.prenom }}</td>
+          <td>{{ e.telephone }}</td>
+          <td>{{ e.email }}</td>
+          <td>{{ e.tarif }}</td>
+          <td>
+            <button class="btn btn-warning btn-sm" (click)="edit(e)">✏️</button>
+            <button class="btn btn-danger btn-sm ms-2" (click)="delete(e.id!)">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </c-card-body>
+</c-card>

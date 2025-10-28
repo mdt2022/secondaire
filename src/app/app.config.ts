@@ -1,13 +1,19 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideRouter, RouterModule, withEnabledBlockingInitialNavigation, withHashLocation, withInMemoryScrolling, withRouterConfig, withViewTransitions } from '@angular/router';
+import {
+  provideRouter,
+  withEnabledBlockingInitialNavigation,
+  withHashLocation,
+  withInMemoryScrolling,
+  withRouterConfig,
+  withViewTransitions
+} from '@angular/router';
 
 import { DropdownModule, SidebarModule } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // ✅ Ajouté ici
 import { routes } from './app.routes';
-import { provideHttpClient } from '@angular/common/http';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { jwtInterceptor } from './service/jwt.interceptor'; // ton intercepteur
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,11 +27,11 @@ export const appConfig: ApplicationConfig = {
       }),
       withEnabledBlockingInitialNavigation(),
       withViewTransitions(),
-      withHashLocation(),      
+      withHashLocation()
     ),
-    importProvidersFrom(SidebarModule, DropdownModule, ReactiveFormsModule, RouterModule, FormsModule),
+    importProvidersFrom(SidebarModule, DropdownModule),
     IconSetService,
     provideAnimations(),
-    provideHttpClient(), provideAnimationsAsync(), provideAnimationsAsync()
+    provideHttpClient(withInterceptors([jwtInterceptor])),
   ]
 };

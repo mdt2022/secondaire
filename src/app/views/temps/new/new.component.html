@@ -1,0 +1,85 @@
+<c-card>
+  <c-card-header>
+    <strong>Gestion des emplois du temps</strong>
+  </c-card-header>
+
+  <c-card-body>
+    <form [formGroup]="emploiForm" (ngSubmit)="onSubmit()">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label>Jour</label>
+          <input class="form-control" formControlName="jour" placeholder="Ex: Lundi" />
+        </div>
+        <div class="col-md-3">
+          <label>Heure début</label>
+          <input class="form-control" formControlName="heuredebut" type="time" />
+        </div>
+        <div class="col-md-3">
+          <label>Heure fin</label>
+          <input class="form-control" formControlName="heurefin" type="time" />
+        </div>
+        <div class="col-md-3">
+          <label>Matière</label>
+          <input class="form-control" formControlName="matiere" placeholder="ID Matière" />
+        </div>
+        <div class="col-md-3">
+          <label>Professeur</label>
+          <input class="form-control" formControlName="professeur" placeholder="ID Professeur" />
+        </div>
+        <div class="col-md-3">
+          <label>Classe</label>
+          <input class="form-control" formControlName="classe" placeholder="ID Classe" />
+        </div>
+        <div class="col-md-3">
+          <label>École</label>
+          <input class="form-control" formControlName="ecole" placeholder="ID École" />
+        </div>
+        <div class="col-md-3">
+          <label>Année universitaire</label>
+          <input class="form-control" formControlName="anneeuv" placeholder="ID Année" />
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <button class="btn btn-primary" type="submit">
+          {{ editMode ? 'Modifier' : 'Enregistrer' }}
+        </button>
+        <button class="btn btn-secondary ms-2" type="button" (click)="resetForm()">Annuler</button>
+      </div>
+    </form>
+  </c-card-body>
+</c-card>
+
+<hr />
+
+<c-card>
+  <c-card-body>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Jour</th>
+          <th>Heure Début</th>
+          <th>Heure Fin</th>
+          <th>Matière</th>
+          <th>Professeur</th>
+          <th>Classe</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let e of emplois">
+          <td>{{ e.jour }}</td>
+          <td>{{ e.heuredebut }}</td>
+          <td>{{ e.heurefin }}</td>
+          <td>{{ e.matiere.libelle }}</td>
+          <td>{{ e.professeur.prenom }} {{ e.professeur.nom }}</td>
+          <td>{{ e.classe.nom }}</td>
+          <td>
+            <button class="btn btn-warning btn-sm" (click)="edit(e)">✏️</button>
+            <button class="btn btn-danger btn-sm ms-2" (click)="delete(e.id!)">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </c-card-body>
+</c-card>

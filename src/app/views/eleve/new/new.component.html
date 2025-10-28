@@ -1,0 +1,81 @@
+<div class="card p-4">
+  <h4>Enregistrer et affecter un élève</h4>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="row g-3">
+
+      <!-- Informations élève -->
+      <div formGroupName="eleve" class="col-md-12 mb-3">
+        <label>Matricule</label>
+        <input type="text" class="form-control" formControlName="matricule">
+
+        <label class="mt-2">Nom</label>
+        <input type="text" class="form-control" formControlName="nom">
+
+        <label class="mt-2">Prénom</label>
+        <input type="text" class="form-control" formControlName="prenom">
+
+        <label class="mt-2">Date de naissance</label>
+        <input type="date" class="form-control" formControlName="datedn">
+
+        <label class="mt-2">Lieu de naissance</label>
+        <input type="text" class="form-control" formControlName="lieudn">
+
+        <label class="mt-2">Sexe</label>
+        <select  class="form-select" formControlName="sexe">
+          <option value="">-- Sélectionner --</option>
+          <option value="M">Masculin</option>
+          <option value="F">Féminin</option>
+        </select>
+
+        <label class="mt-2">Prénom père</label>
+        <input type="text" class="form-control" formControlName="prenompere">
+
+        <label class="mt-2">Prénom mère</label>
+        <input type="text" class="form-control" formControlName="prenommere">
+
+        <label class="mt-2">Nom mère</label>
+        <input type="text" class="form-control" formControlName="nommere">
+
+        <label class="mt-2">Nationalité</label>
+        <input type="text" class="form-control" formControlName="nationalite">
+      </div>
+
+      <!-- Affectation école/année/classe/academie -->
+      <div class="col-md-3">
+        <label>École</label>
+        <select class="form-select" formControlName="ecole">
+          <option [ngValue]="null">-- Sélectionner --</option>
+          <option *ngFor="let e of ecoles" [ngValue]="e">{{ e.nomEcole }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label>Classe</label>
+        <select class="form-select" formControlName="classe">
+          <option [ngValue]="null">-- Sélectionner --</option>
+          <option *ngFor="let c of classes" [ngValue]="c">{{ c.nom }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label>Année</label>
+        <select class="form-select" formControlName="anneeuv">
+          <option [ngValue]="null">-- Sélectionner --</option>
+          <option *ngFor="let a of annees" [ngValue]="a">{{ a.nom }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label>Académie</label>
+        <select class="form-select" formControlName="academie">
+          <option [ngValue]="null">-- Sélectionner --</option>
+          <option *ngFor="let ac of academies" [ngValue]="ac">{{ ac.libelle }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <button type="submit" class="btn btn-primary">Enregistrer & Affecter</button>
+    </div>
+  </form>
+</div>

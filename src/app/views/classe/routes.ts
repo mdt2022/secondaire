@@ -1,25 +1,13 @@
 import { Routes } from '@angular/router';
 
+import { ClasseComponent } from './classe.component';
+
 export const routes: Routes = [
   {
     path: '',
+    component: ClasseComponent,
     data: {
-      title: 'Classe'
-    },
-    children: [
-      {
-        path: '',
-        redirectTo: 'classe',
-        pathMatch: 'full'
-      },
-      {
-        path: 'classe',
-        loadComponent: () => import('./classe.component').then(m => m.ClasseComponent),
-        data: {
-          title: 'Classe'
-        }
-      }
-    ]
+      title: 'Gestion des Classes'
+    }
   }
 ];
-

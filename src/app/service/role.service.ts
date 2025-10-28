@@ -1,37 +1,34 @@
-import { HttpClient } from '@angular/common/http';
+// src/app/services/role.service.ts
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Role } from '../model/role.model';
-import { environment } from '../../environments/environment';
-
+import { Role } from '../model/role';
+import { environment } from '../../environments/environment'
 @Injectable({
   providedIn: 'root'
 })
 export class RoleService {
-  readonly apiUrl = environment.apiURL
+  private apiUrl = environment.apiURL+"/roles"; // adapte l'URL
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  createRole(role: Role): Observable<Role> {
-    return this.http.post<Role>(this.apiUrl+"/roles", role);
-  }
-
-  getRoleById(id: number): Observable<Role> {
-    return this.http.get<Role>(this.apiUrl+"/roles/"+id);
+  getAll(): Observable<Role[]> {
+    return this.http.get<Role[]>(this.apiUrl+"/categorie/2");
   }
 
-  updateRole(id: number, role: Role): Observable<Role> {
-    return this.http.put<Role>(this.apiUrl+"/roles/"+id, role);
+  getById(id: number) {
+    return this.http.get<Role>(`${this.apiUrl}/${id}`);
   }
-  getRoles(): Observable<Role[]> {
-    return this.http.get<Role[]>(this.apiUrl+"/roles/categorie/2");
+
+  create(role: Role) {
+    return this.http.post<Role>(this.apiUrl, role);
   }
-  // Supprimer un rôle
-  deleteRole(id: number): Observable<void> {
-    return this.http.delete<void>(this.apiUrl+"/roles/"+id);
+
+  update(id: number, role: Role) {
+    return this.http.put<Role>(`${this.apiUrl}/${id}`, role);
   }
-  
-  updateRolePermissions(roleId: number, permissionIds: number[]): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${roleId}/roles/permissions`, permissionIds);
+
+  delete(id: number) {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
