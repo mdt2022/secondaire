@@ -1,8 +1,14 @@
+import { Academie } from "./academie";
+import { Anneeuv } from "./anneeuv";
+import { Classe } from "./classe";
+import { Ecole } from "./ecole";
+import { Eleve } from "./eleve";
+
 export interface Eleveecole {
   id?: number;
-  eleve: any;      // ou type Eleve si tu as l'interface Eleve
-  ecole: any;
-  classe: any;
-  anneeuv: any;
-  academie?: any;
+  eleve: Eleve;      // ou type Eleve si tu as l'interface Eleve
+  ecole: Ecole;
+  classe: Classe;
+  anneeuv: Anneeuv;
+  academie: Academie;
 }

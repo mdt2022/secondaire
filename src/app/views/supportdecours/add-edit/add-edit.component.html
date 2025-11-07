@@ -1,42 +1,81 @@
-<div class="container mt-4">
-  <h3>{{ id ? 'Modifier' : 'Ajouter' }} Support de cours</h3>
-
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" enctype="multipart/form-data" novalidate>
-    <div class="mb-3">
-      <label for="nom" class="form-label">Nom</label>
-      <input id="nom" class="form-control" formControlName="nom" />
-      <div *ngIf="form.controls['nom'].invalid && form.controls['nom'].touched" class="text-danger">
-        Le nom est requis.
-      </div>
+<div class="container mt-5">
+  <div class="card shadow-lg border-0 rounded-4">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center rounded-top-4">
+      <h4 class="mb-0">
+        <i class="bi bi-file-earmark-text me-2"></i>
+        {{ id ? 'Modifier un support de cours' : 'Ajouter un support de cours' }}
+      </h4>
+      <a class="btn btn-light btn-sm" routerLink="/supports">
+        <i class="bi bi-arrow-left-circle me-1"></i> Retour
+      </a>
     </div>
 
-    <div class="mb-3">
-      <label for="classe" class="form-label">Classe</label>
-      <select id="classe" class="form-select" formControlName="classeId">
-        <option [ngValue]="null">-- Choisir --</option>
-        <!-- Remplace par ta liste de classes -->
-        <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.nom }}</option>
-      </select>
-      <div *ngIf="form.controls['classeId'].invalid && form.controls['classeId'].touched" class="text-danger">
-        La classe est requise.
-      </div>
+    <div class="card-body p-4">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" enctype="multipart/form-data" novalidate>
+        
+        <!-- Nom -->
+        <div class="mb-4">
+          <label for="nom" class="form-label fw-semibold">Nom du support</label>
+          <input
+            id="nom"
+            class="form-control form-control-lg rounded-3"
+            placeholder="Ex: Cours d’Algorithmique"
+            formControlName="nom"
+          />
+          <div *ngIf="form.controls['nom'].invalid && form.controls['nom'].touched" class="text-danger mt-1 small">
+            <i class="bi bi-exclamation-circle me-1"></i> Le nom est requis.
+          </div>
+        </div>
+
+        <!-- Classe -->
+        <div class="mb-4">
+          <label for="classe" class="form-label fw-semibold">Classe concernée</label>
+          <select id="classe" class="form-select form-select-lg rounded-3" formControlName="classeId">
+            <option [ngValue]="null">-- Choisir une classe --</option>
+            <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.nom }}</option>
+          </select>
+          <div *ngIf="form.controls['classeId'].invalid && form.controls['classeId'].touched" class="text-danger mt-1 small">
+            <i class="bi bi-exclamation-circle me-1"></i> La classe est requise.
+          </div>
+        </div>
+
+        <!-- Fichier -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Fichier du support</label>
+          <div class="input-group">
+            <input
+              type="file"
+              class="form-control"
+              (change)="onFileSelected($event)"
+              accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            />
+          </div>
+
+          <div *ngIf="filenamePreview" class="mt-2 alert alert-info py-2 px-3 d-flex align-items-center justify-content-between">
+            <span>
+              <i class="bi bi-paperclip me-2"></i>
+              Fichier sélectionné : <strong>{{ filenamePreview }}</strong>
+            </span>
+            <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeSelectedFile()">
+              <i class="bi bi-x-circle me-1"></i> Retirer
+            </button>
+          </div>
+
+          <div *ngIf="!filenamePreview && id" class="text-muted small mt-1">
+            <i class="bi bi-info-circle me-1"></i> Aucun nouveau fichier sélectionné (le fichier existant reste inchangé).
+          </div>
+        </div>
+
+        <!-- Boutons -->
+        <div class="d-flex justify-content-end mt-4">
+          <button [disabled]="form.invalid" class="btn btn-success btn-lg px-4 rounded-3" type="submit">
+            <i class="bi bi-save me-2"></i> {{ id ? 'Enregistrer les modifications' : 'Créer le support' }}
+          </button>
+          <a class="btn btn-outline-secondary btn-lg ms-3 px-4 rounded-3" routerLink="/supports">
+            <i class="bi bi-x-circle me-2"></i> Annuler
+          </a>
+        </div>
+      </form>
     </div>
-
-    <div class="mb-3">
-      <label class="form-label">Fichier (PDF / DOC / DOCX)</label>
-      <input type="file" (change)="onFileSelected($event)" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
-      <div *ngIf="filenamePreview" class="mt-2">
-        Fichier sélectionné: <strong>{{ filenamePreview }}</strong>
-        <button type="button" class="btn btn-sm btn-outline-secondary ms-2" (click)="removeSelectedFile()">Retirer</button>
-      </div>
-
-      <!-- si déjà un fichier côté edit -->
-      <div *ngIf="!filenamePreview && id">
-        <small class="text-muted">Aucun fichier sélectionné. (si existant, il est affiché dans la liste)</small>
-      </div>
-    </div>
-
-    <button [disabled]="form.invalid" class="btn btn-primary" type="submit">{{ id ? 'Enregistrer' : 'Créer' }}</button>
-    <a class="btn btn-secondary ms-2" routerLink="/supports">Annuler</a>
-  </form>
+  </div>
 </div>

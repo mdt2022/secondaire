@@ -1,37 +1,59 @@
-<div class="container mt-4">
-  <h3>Liste des supports de cours</h3>
-  <a routerLink="add" class="btn btn-primary mb-3">Ajouter</a>
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0"><i class="fa fa-book me-2 text-primary"></i>Liste des supports de cours</h3>
+    <a routerLink="add" class="btn btn-primary">
+      <i class="fa fa-plus-circle me-1"></i> Ajouter un support
+    </a>
+  </div>
 
-  <table class="table table-bordered table-striped">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Nom</th>
-        <th>Classe</th>
-        <th>Nom fichier</th>
-        <th>PDF</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let s of supports; let i = index">
-        <td>{{ i + 1 }}</td>
-        <td>{{ s.nom }}</td>
-        <td>{{ s.classe.nom }}</td>
-        <td>{{ s.nomfichier }}</td>
-        <td>
-          <ng-container *ngIf="s.nomfichier; else noFile">
-            <a [href]="apiUrl+'/download/' + s.nomfichier" target="_blank">
-              {{ s.nomfichier }}
-            </a>
-          </ng-container>
-          <ng-template #noFile>-</ng-template>
-        </td>
-        <td>
-          <a [routerLink]="['/supports/edit', s.id]" class="btn btn-warning btn-sm">Modifier</a>
-          <button class="btn btn-danger btn-sm" (click)="delete(s.id!)">Supprimer</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-responsive shadow-sm rounded">
+    <table class="table table-hover align-middle text-center">
+      <thead class="table-primary">
+        <tr>
+          <th>#</th>
+          <th>Nom</th>
+          <th>Classe</th>
+          <th>PDF</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of supports; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ s.nom }}</td>
+          <td>{{ s.classe.nom || '-' }}</td>
+          <td>
+            <ng-container *ngIf="s.nomfichier; else noFile">
+              <a
+                [href]="apiUrl + '/download/' + s.nomfichier"
+                target="_blank"
+                class="btn btn-sm btn-outline-success"
+              >
+                <i class="fa fa-file-pdf"></i>                
+              </a>
+            </ng-container>
+            <ng-template #noFile>
+              <span class="text-muted">Aucun fichier</span>
+            </ng-template>
+          </td>
+          <td>
+            <div class="btn-group" role="group">
+              <a
+                [routerLink]="['/supports/edit', s.id]"
+                class="btn btn-sm btn-outline-warning"
+              >
+                <i class="fa fa-pencil"></i>
+              </a>
+              <button
+                class="btn btn-sm btn-outline-danger"
+                (click)="delete(s.id!)"
+              >
+                <i class="fa fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

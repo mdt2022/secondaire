@@ -1,38 +1,50 @@
-<div class="container mt-4">
-    <div class="c-row row">
-        <!-- Lien 1 -->
-        <div class="col-md-4 col-lg-3 mb-3">
-            <a [routerLink]="['../enseignant']" class="btn btn-outline-primary w-100 d-block p-3 text-decoration-none">
-                <i class="fas fa-home me-2"></i>PAR ENSEIGNANT
-            </a>
-        </div>
-        
-        <!-- Lien 2 -->
-        <div class="col-md-4 col-lg-3 mb-3">
-            <a [routerLink]="['../semaine']" class="btn btn-outline-primary w-100 d-block p-3 text-decoration-none">
-                <i class="fas fa-calendar me-2"></i>PAR SEMAINE
-            </a>
-        </div>
-        
-        <!-- Lien 3 -->
-        <div class="col-md-4 col-lg-3 mb-3">
-            <a [routerLink]="['../jour']" class="btn btn-outline-primary w-100 d-block p-3 text-decoration-none">
-                <i class="fas fa-users me-2"></i>JOURNALIER
-            </a>
-        </div>
-        
-        <!-- Lien 4 -->
-        <div class="col-md-4 col-lg-3 mb-3">
-            <a [routerLink]="['../classe']" class="btn btn-outline-primary w-100 d-block p-3 text-decoration-none">
-                <i class="fas fa-chalkboard-teacher me-2"></i>PAR CLASSE
-            </a>
-        </div>
-        
-        <!-- Lien 5 -->
-        <div class="col-md-4 col-lg-3 mb-3">
-            <a [routerLink]="['../new']" class="btn btn-outline-primary w-100 d-block p-3 text-decoration-none">
-                <i class="fas fa-book me-2"></i>AJOUTER UN PROGRAMME
-            </a>
-        </div>
+
+
+<div class="container mt-5">
+  <div class="text-center mb-5">
+    <h2 class="fw-bold text-primary">Gestion des Programmes</h2>
+    <p class="text-muted">Choisissez une option pour consulter ou gérer les programmes d’enseignement</p>
+  </div>
+
+  <div class="row g-4 justify-content-center">
+    <!-- Lien 1 -->
+    <div class="col-md-4 col-lg-3">
+      <a [routerLink]="['../enseignant']" class="menu-card">
+        <i class="fas fa-home icon"></i>
+        <span>PAR ENSEIGNANT</span>
+      </a>
     </div>
+
+    <!-- Lien 2 -->
+    <div class="col-md-4 col-lg-3">
+      <a [routerLink]="['../semaine']" class="menu-card">
+        <i class="fas fa-calendar icon"></i>
+        <span>PAR SEMAINE</span>
+      </a>
+    </div>
+
+    <!-- Lien 3 -->
+    <div class="col-md-4 col-lg-3">
+      <a [routerLink]="['../jour']" class="menu-card">
+        <i class="fas fa-users icon"></i>
+        <span>JOURNALIER</span>
+      </a>
+    </div>
+
+    <!-- Lien 4 -->
+    <div class="col-md-4 col-lg-3">
+      <a [routerLink]="['../classe']" class="menu-card">
+        <i class="fas fa-chalkboard-teacher icon"></i>
+        <span>PAR CLASSE</span>
+      </a>
+    </div>
+
+    <!-- Lien 5 -->
+    <div class="col-md-4 col-lg-3">
+      <a [routerLink]="['../new']" class="menu-card">
+        <i class="fas fa-book icon"></i>
+        <span>AJOUTER UN PROGRAMME</span>
+      </a>
+    </div>
+  </div>
 </div>

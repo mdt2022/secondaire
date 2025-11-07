@@ -2,52 +2,28 @@
   <div class="card-header"><strong>Gestion des inscriptions</strong></div>
   <div class="card-body">
     <form [formGroup]="eleveecoleForm" (ngSubmit)="onSubmit()">
-      <div class="row g-3">
-        <div class="col-md-3">
-          <label>Élève</label>
-          <select class="form-select" formControlName="eleve">
-            <option [ngValue]="null">-- Sélectionner --</option>
-            <option *ngFor="let e of eleves" [ngValue]="e">{{ e.nom }} {{ e.prenom }}</option>
-          </select>
-        </div>
+      <div class="row g-3">        
 
         <div class="col-md-3">
-          <label>École</label>
-          <select class="form-select" formControlName="ecole">
-            <option [ngValue]="null">-- Sélectionner --</option>
-            <option *ngFor="let e of ecoles" [ngValue]="e">{{ e.nomEcole }}</option>
-          </select>
-        </div>
-
-        <div class="col-md-3">
-          <label>Classe</label>
           <select class="form-select" formControlName="classe">
-            <option [ngValue]="null">-- Sélectionner --</option>
-            <option *ngFor="let c of classes" [ngValue]="c">{{ c.nom }}</option>
+            <option [ngValue]="null">-- Sélectionner la Classe --</option>
+            <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.nom }}</option>
           </select>
         </div>
 
         <div class="col-md-3">
-          <label>Année</label>
           <select class="form-select" formControlName="anneeuv">
-            <option [ngValue]="null">-- Sélectionner --</option>
-            <option *ngFor="let a of annees" [ngValue]="a">{{ a.nom }}</option>
+            <option [ngValue]="null">-- Sélectionner une Année --</option>
+            <option *ngFor="let a of annees" [ngValue]="a.id">{{ a.nom }}</option>
           </select>
         </div>
 
         <div class="col-md-3">
-          <label>Académie</label>
-          <select class="form-select" formControlName="academie">
-            <option [ngValue]="null">-- Sélectionner --</option>
-            <option *ngFor="let ac of academies" [ngValue]="ac">{{ ac.libelle }}</option>
-          </select>
+          <button type="submit" class="btn btn-primary">Rechercher</button>
+          <button type="button" class="btn btn-secondary ms-2" (click)="resetForm()">Annuler</button>
         </div>
-      </div>
-
-      <div class="mt-3">
-        <button type="submit" class="btn btn-primary">{{ editMode ? 'Modifier' : 'Ajouter' }}</button>
-        <button type="button" class="btn btn-secondary ms-2" (click)="resetForm()">Annuler</button>
-      </div>
+        
+      </div>      
     </form>
   </div>
 </div>
@@ -68,14 +44,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let e of eleveecoleList">
-          <td>{{ e.eleve?.nom }} {{ e.eleve?.prenom }}</td>
-          <td>{{ e.ecole?.nomEcole }}</td>
-          <td>{{ e.classe?.nom }}</td>
-          <td>{{ e.anneeuv?.nom }}</td>
-          <td>{{ e.academie?.libelle }}</td>
+        <tr *ngFor="let e of eleves">
+          <td>{{ e.eleve.matricule }} {{ e.eleve.nom }} {{ e.eleve.prenom }}</td>
+          <td>{{ e.ecole.nomEcole }}</td>
+          <td>{{ e.classe.nom }}</td>
+          <td>{{ e.anneeuv.nom }}</td>
+          <td>{{ e.academie.libelle }}</td>
           <td>
-            <button class="btn btn-warning btn-sm" (click)="edit(e)">✏️</button>
+            <a class="btn btn-warning btn-sm" [routerLink]="['/eleve/new', e.id]">✏️</a>
             <button class="btn btn-danger btn-sm ms-2" (click)="delete(e.id!)">🗑️</button>
           </td>
         </tr>

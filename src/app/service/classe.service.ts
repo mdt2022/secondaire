@@ -13,7 +13,7 @@ export class ClasseService {
 
   getAll(): Observable<Classe[]> {
     return this.http.get<Classe[]>(this.apiUrl);
-  }
+  }  
 
   getById(id: number): Observable<Classe> {
     return this.http.get<Classe>(`${this.apiUrl}/${id}`);

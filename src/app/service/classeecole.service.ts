@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ClasseEcole } from '../model/classeecole';
+import { Classe } from '../model/classe';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,10 @@ export class ClasseEcoleService {
   getAll(): Observable<ClasseEcole[]> {
     return this.http.get<ClasseEcole[]>(this.apiUrl);
   }
-
+  //retourner les classes d'une ecole
+  getAllClasseParEcole(idEcole: number): Observable<Classe[]>{
+    return this.http.get<Classe[]>(this.apiUrl+"/ecole/"+idEcole)
+  }
   getById(id: number): Observable<ClasseEcole> {
     return this.http.get<ClasseEcole>(`${this.apiUrl}/${id}`);
   }

@@ -32,4 +32,8 @@ export class EnseignantService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+  //les enseignants de cette ecole
+  getEnseignantEcole(idecole: number): Observable<Enseignant[]>{
+    return this.http.get<Enseignant[]>(this.apiUrl+"/ecole/"+idecole)
+  }
 }

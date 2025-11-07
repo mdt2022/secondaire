@@ -25,6 +25,14 @@ export const routes: Routes = [
         data: {
           title: 'Inscription'
         }
+      }
+      ,
+      {
+        path: 'new/:id',
+        loadComponent: () => import('./new/new.component').then(m => m.NewComponent),
+        data: {
+          title: 'Mise a jour'
+        }
       },
       {
         path: 'liste',
