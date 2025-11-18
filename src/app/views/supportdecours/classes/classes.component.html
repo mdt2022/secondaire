@@ -1,0 +1,30 @@
+<div class="container mt-4">
+  <h4 class="mb-3 text-primary">
+    <i class="fa fa-book me-2"></i> Liste des Matières
+  </h4>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6" *ngFor="let m of matieres">
+      <div class="card border-0 shadow-sm h-100 hover-shadow rounded-4">
+        <div class="card-body text-center">
+          <i class="fa fa-school text-primary fa-2x mb-3"></i>
+          <h6 class="card-title fw-bold text-dark mb-2">{{ m.libelle }}</h6>
+
+          <p class="text-muted small mb-3">
+            <span class="me-2"><i class="fa fa-calculator me-1"></i>Coef : {{ m.coefficient }}</span> |
+            <span class="ms-2"><i class="fa fa-clock me-1"></i>{{ m.horaire }}h</span>
+          </p>
+
+          <div class="d-flex justify-content-center gap-2">
+            <a [routerLink]="['/supports/gestion', m.id]"  [queryParams]="{ type: 'cours' }" class="btn btn-sm btn-outline-primary px-3">
+              <i class="fa fa-eye me-1"></i> Cours
+            </a>
+            <a class="btn btn-sm btn-outline-success px-3">
+              <i class="fa fa-clipboard-list me-1"></i> Exercices
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

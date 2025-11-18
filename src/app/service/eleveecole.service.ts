@@ -19,7 +19,15 @@ export class EleveecoleService {
   }
 
   promouvoir(eleveIds: number[], classeSuivanteId: number, anneeSuivanteId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/promotion`, {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/promotion`, {
+      eleveIds,
+      classeSuivanteId,
+      anneeSuivanteId
+    });
+  }
+
+  redoubler(eleveIds: number[], classeSuivanteId: number, anneeSuivanteId: number): Observable<any> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/redoubler`, {
       eleveIds,
       classeSuivanteId,
       anneeSuivanteId

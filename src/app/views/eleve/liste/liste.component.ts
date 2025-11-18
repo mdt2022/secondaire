@@ -30,8 +30,10 @@ export class ListeComponent implements OnInit {
   eleveecoleList: Eleveecole[] = [];
   editMode = false;
   currentId?: number;
+  loading: boolean = false; // ✅ indicateur de chargement
+  resultat: boolean = false
   
-  eleves: Eleveecole[] = [];
+  eleves: any[] = [];
   ecoles: any[] = [];
   classes: Classe[] = [];
   annees: any[] = [];
@@ -71,9 +73,9 @@ export class ListeComponent implements OnInit {
   }
 
   onSubmit() {
+    this.loading = true
     const donnees = this.eleveecoleForm.value   
-    const donnee: string[] = [donnees.anneeuv,this.user.administrateur.ecole.idEcole,donnees.classe];
-   
+    const donnee: string[] = [donnees.anneeuv,this.user.administrateur.ecole.idEcole,donnees.classe];   
     //console.log('Données envoyées :', donnee); // 👀 Vérifie ici
     this.eleveecoleService.getByClasseAndAnnee(donnee).subscribe({
       next: (data) =>{ 
@@ -81,6 +83,10 @@ export class ListeComponent implements OnInit {
       },
       error: (err) => {
         console.error('Erreur lors de la récupération des élèves :', err);
+      },
+      complete: () =>{ 
+        this.loading = false
+        this.resultat = true
       }
     })
   }
@@ -126,5 +132,6 @@ export class ListeComponent implements OnInit {
     this.eleveecoleForm.reset();
     this.editMode = false;
     this.currentId = undefined;
+    this.resultat = false
   }
 }

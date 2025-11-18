@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Enseigner } from '../model/enseigner';
+import { Matiere } from '../model/matiere';
 @Injectable({ providedIn: 'root' })
 export class EnseignerService {
   private apiUrl = environment.apiURL+"/enseigners";
@@ -31,5 +32,9 @@ export class EnseignerService {
   //matieres enseigner pour cette ecole
   getAllForEcole(idecole: number): Observable<Enseigner[]>{
     return this.http.get<Enseigner[]>(this.apiUrl+"/ecole/"+idecole)
+  }
+  //get matieres enseigner par classe
+  getMatiereEcoleClasse(donnees: number[]): Observable<Matiere[]>{
+    return this.http.post<Matiere[]>(this.apiUrl+"/matieres", donnees)
   }
 }

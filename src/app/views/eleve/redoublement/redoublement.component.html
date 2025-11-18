@@ -1,1 +1,113 @@
-<p>redoublement works!</p>
+<div class="container mt-4">
+  <div class="card shadow-sm border-0">
+    <!-- 🟦 EN-TÊTE -->
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0 fw-bold">Redoublement des élèves</h5>
+      <i class="bi bi-people-fill fs-4"></i>
+    </div>
+
+    <!-- 🟩 CORPS -->
+    <div class="card-body">
+      <form [formGroup]="promoForm" class="row g-3">
+
+        <!-- Sélection Classe / Année actuelle -->
+        <div class="col-md-3">
+          <select class="form-select" formControlName="classeActuelle">
+            <option [ngValue]="null">-- Classe actuelle --</option>
+            <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.nom }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <select class="form-select" formControlName="anneeActuelle">
+            <option [ngValue]="null">-- Année actuelle --</option>
+            <option *ngFor="let a of annees" [ngValue]="a.id">{{ a.nom }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-3 align-self-end">
+          <button
+            type="button"
+            class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
+            (click)="chargerEleves()"
+          >
+            <i class="bi bi-search"></i>
+            Charger les élèves
+          </button>
+        </div>
+
+        <!-- 🌀 Spinner de chargement -->
+        <div *ngIf="loading" class="text-center my-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+          <p class="mt-2 fw-semibold text-secondary">Chargement des données...</p>
+        </div>
+
+        <!-- 📋 Tableau des élèves -->
+        <div *ngIf="eleves.length > 0" class="mt-4">
+          <table class="table table-bordered table-hover align-middle text-center">
+            <thead class="table-light">
+              <tr>
+                <th style="width: 40px;">
+                  <input type="checkbox" (change)="toggleAll($event)" />
+                </th>
+                <th>Matricule</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Sexe</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let e of eleves">
+                <td>
+                  <input
+                    type="checkbox"
+                    [checked]="isSelected(e.id!)"
+                    (change)="toggleSelection(e.id!, $event)"
+                  />
+                </td>
+                <td>{{ e.eleve.matricule }}</td>
+                <td>{{ e.eleve.nom }}</td>
+                <td>{{ e.eleve.prenom }}</td>
+                <td>{{ e.eleve.sexe }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Sélection classe et année suivante -->
+          <div class="row g-3 mt-4">
+            <div class="col-md-6">
+               Selectionner l'ensemble des élèves a faire redoubler pour
+            </div>
+
+            <div class="col-md-3">
+              <select class="form-select" formControlName="anneeSuivante">
+                <option [ngValue]="null">-- Année --</option>
+                <option *ngFor="let a of annees" [ngValue]="a.id">{{ a.nom }}</option>
+              </select>
+            </div>
+
+            <div class="col-md-3 align-self-end">
+              <button
+                type="button"
+                class="btn btn-success w-100 d-flex align-items-center justify-content-center gap-2"
+                (click)="Redoubler()"
+              >
+                <i class="bi bi-arrow-up-circle"></i>
+                Redoubler
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- 🟥 PIED DE PAGE -->
+    <div class="card-footer bg-light text-end">
+      <small class="text-muted">
+        © {{ currentYear }} - Gestion des élèves | Version 1.0
+      </small>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+<div>
+  <h5>Liste des supports</h5>
+  <table class="table table-striped">
+    <thead><tr><th>#</th><th>Nom</th><th>Type</th><th>Structure</th><th>Fichiers</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr *ngFor="let s of supports; let i = index">
+        <td>{{i+1}}</td>
+        <td>{{s.nom}}</td>
+        <td>{{s.typeSupport}}</td>
+        <td>{{s.structureSupport}}</td>
+        <td>
+          <div *ngIf="s.nomfichier"><a [href]="s.nomfichier" target="_blank">Voir</a></div>
+          <div *ngIf="s.chapitres?.length">
+            <div *ngFor="let c of s.chapitres">
+              <a [href]="c.fichier" target="_blank">{{c.titre}}</a>
+            </div>
+          </div>
+        </td>
+        <td><button class="btn btn-danger btn-sm" (click)="delete(s.id)">Suppr</button></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -32,6 +32,20 @@ export const routes: Routes = [
         data: {
           title: 'Ajouter*Modifier'
         }
+      },
+      {
+        path: 'classes/:id',
+        loadComponent: () => import('./classes/classes.component').then(m => m.ClassesComponent),
+        data: {
+          title: 'Les matières par classe'
+        }
+      },
+      {
+        path: 'gestion/:id',
+        loadComponent: () => import('./gestion/gestion.component').then(m => m.GestionComponent),
+        data: {
+          title: 'Gestion des contenues'
+        }
       }
     ]
   }

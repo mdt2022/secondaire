@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpEventType, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { SupportDeCours } from '../model/supportDeCours';
+import { SupportDeCours, SupportDTO } from '../model/supportDeCours';
 import { environment } from '../../environments/environment';
+import { map } from 'rxjs/operators';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -54,4 +56,36 @@ export class SupportDeCoursService {
   downloadFile(filename: string) {
     return this.http.get(`${this.apiUrl}/download/${filename}`, { responseType: 'blob' });
   }
+  //nouveau
+  
+
+  // création avec progression
+  createWithFiles(dto: SupportDTO, livreFile?: File, chapitreFiles?: (File | null)[], progressCb?: (p: number) => void): Observable<any> {
+    const form = new FormData();
+    form.append('support', JSON.stringify(dto));
+
+    if (livreFile) form.append('livreFile', livreFile, livreFile.name);
+    if (chapitreFiles && chapitreFiles.length) {
+      chapitreFiles.forEach(f => { if (f) form.append('chapitreFiles', f, (f as File).name); else form.append('chapitreFiles', new File([], 'empty')); });
+    }
+
+    const req = new HttpRequest('POST', this.apiUrl, form, { reportProgress: true });
+
+    return this.http.request(req).pipe(
+      map((event: HttpEvent<any>) => {
+        if (event.type === HttpEventType.UploadProgress) {
+          const percent = Math.round(100 * (event.loaded / (event.total ?? 1)));
+          if (progressCb) progressCb(percent);
+          return { status: 'progress', message: percent };
+        } else if (event.type === HttpEventType.Response) {
+          if (progressCb) progressCb(100);
+          return { status: 'done', body: event.body };
+        } else {
+          return { status: 'other' };
+        }
+      })
+    );
+  }
+
+  update(id: number, dto: SupportDTO) { return this.http.put(`${this.apiUrl}/${id}`, dto); }
 }
