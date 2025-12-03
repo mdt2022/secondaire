@@ -7,6 +7,21 @@
 
   <div class="mb-2 row">
     <div class="col">
+      <label for="">Classe</label>
+      <select class="form-select" [(ngModel)]="classe_id" (change)="ChargeMatiere(classe_id)">
+        <option *ngFor="let classe of classes" [value]="classe.id">{{ classe.nom }}</option>
+      </select>
+    </div>
+    <div class="col">
+      <label for="">Matière</label>
+      <select class="form-select" [(ngModel)]="matiere_id">
+        <option *ngFor="let matiere of matieres"  value="">{{ matiere.libelle }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="mb-2 row">
+    <div class="col">
       <select class="form-select" [(ngModel)]="typeSupport">
         <option value="COURS">Cours</option>
         <option value="EXERCICE">Exercice</option>

@@ -4,8 +4,14 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms'; // Import FormsModule
-import { ChapitreMeta, SupportDeCours, SupportDTO } from '../../../model/supportDeCours';
+import { ChapitreMeta, SupportDTO } from '../../../model/supportDeCours';
 import { finalize } from 'rxjs';
+import { Classe } from '../../../model/classe';
+import { User } from '../../../model/user';
+import { AuthService } from '../../../service/auth.service';
+import { ClasseEcoleService } from '../../../service/classeecole.service';
+import { Matiere } from '../../../model/matiere';
+import { EnseignerService } from '../../../service/enseigner.service';
 @Component({
   selector: 'app-add-edit',
   standalone: true,
@@ -19,18 +25,51 @@ import { finalize } from 'rxjs';
   styleUrl: './add-edit.component.scss'
 })
 export class AddEditComponent implements OnInit {
-nom = '';
+  user!: User
+  nom = '';
+  classe_id = 0;
+  matiere_id = 0;
   typeSupport: 'COURS' | 'EXERCICE' = 'COURS';
   structureSupport: 'LIVRE' | 'CHAPITRE' = 'LIVRE';
   livreFile?: File | null;
   chapitres: ChapitreMeta[] = [];
+  classes: Classe[] = []
+  matieres: Matiere[] = []
 
   uploading = false;
   progress = 0;
 
-  constructor(private svc: SupportDeCoursService) {}
+  constructor(
+    private svc: SupportDeCoursService,
+    private classeecoleservice: ClasseEcoleService,
+    private authservice: AuthService,
+    private enseignerservice: EnseignerService
+  ) {}
   ngOnInit(): void {
-    
+    this.user = this.authservice.getAdminData()
+    this.getAllClasse()
+  }
+  //chargement des classes
+  getAllClasse(){
+    let userid = this.user.administrateur.ecole.idEcole
+    this.classeecoleservice.getAllClasseParEcole(userid).subscribe({
+      next: (data) =>{ this.classes = data},
+      error: () => { console.log("Erreur !!") }
+    })
+  }
+  //charge en fonction du choix
+  ChargeMatiere(idclasse: number){
+    //ecole et classe
+    let idecole = this.user.administrateur.ecole.idEcole
+    let donnees = [idecole,idclasse]
+    this.getAllMatiere(donnees)
+  }
+  //chargement les matieres enseignées
+  getAllMatiere(donnees: number[]){    
+    this.enseignerservice.getMatiereEcoleClasse(donnees).subscribe({
+      next: (data) => { this.matieres = data},
+      error: () => { console.log("Erreur !!") }
+    })
   }
   onLivreSelected(e: Event) {
     const input = e.target as HTMLInputElement;
@@ -72,7 +111,17 @@ nom = '';
       nom: this.nom,
       typeSupport: this.typeSupport,
       structureSupport: this.structureSupport,
-      chapitres: this.chapitres.map(c => ({ id: c.id, titre: c.titre, numero: c.numero, contenu: c.contenu, fichier: c.fichier }))
+      chapitres: this.chapitres.map(
+        c => (
+          { 
+            id: c.id, 
+            titre: c.titre, 
+            numero: c.numero, 
+            contenu: c.contenu, 
+            fichier: c.fichier 
+          }
+        )
+      )
     };
 
     const chapitreFiles = this.chapitres.map(c => c.file ?? null);
