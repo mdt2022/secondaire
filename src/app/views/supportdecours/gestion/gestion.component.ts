@@ -20,14 +20,38 @@ import { FormsModule } from '@angular/forms'; // Import FormsModule
   templateUrl: './gestion.component.html',
   styleUrl: './gestion.component.scss'
 })
-export class GestionComponent implements OnInit{
+export class GestionComponent implements OnInit {
+
   supports: any[] = [];
+  backendUrl = environment.apiURL + '/uploads/supports/'; // URL directe vers les PDFs
 
   constructor(private svc: SupportDeCoursService) {}
 
-  ngOnInit() { this.load(); }
+  ngOnInit() {
+    this.load();
+  }
 
-  load() { this.svc.getAll().subscribe((res:any) => this.supports = res); }
+  load() {
+    this.svc.getAll().subscribe((res: any) => {
+      // Nettoyer le nom de fichier pour éviter les doublons de chemin
+      this.supports = res.map((s: any) => {
+        if (s.nomfichier) {
+          const parts = s.nomfichier.split('/');
+          s.nomfichier = parts[parts.length - 1]; // garde juste le nom du fichier
+        }
+        if (s.chapitres?.length) {
+          s.chapitres = s.chapitres.map((c: any) => {
+            if (c.fichier) {
+              const p = c.fichier.split('/');
+              c.fichier = p[p.length - 1]; // idem pour les chapitres
+            }
+            return c;
+          });
+        }
+        return s;
+      });
+    });
+  }
 
   delete(id: number) {
     if (!confirm('Supprimer ?')) return;

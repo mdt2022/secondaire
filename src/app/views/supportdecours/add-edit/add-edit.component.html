@@ -1,83 +1,86 @@
 <div class="card p-3">
-  <h5>Créer support</h5>
+    <h5>Créer support</h5>
 
-  <div class="mb-2">
-    <input class="form-control" placeholder="Nom du support" [(ngModel)]="nom">
-  </div>
-
-  <div class="mb-2 row">
-    <div class="col">
-      <label for="">Classe</label>
-      <select class="form-select" [(ngModel)]="classe_id" (change)="ChargeMatiere(classe_id)">
-        <option *ngFor="let classe of classes" [value]="classe.id">{{ classe.nom }}</option>
-      </select>
+    <div class="mb-2">
+        <input class="form-control" placeholder="Nom du support" [(ngModel)]="nom">
     </div>
-    <div class="col">
-      <label for="">Matière</label>
-      <select class="form-select" [(ngModel)]="matiere_id">
-        <option *ngFor="let matiere of matieres"  value="">{{ matiere.libelle }}</option>
-      </select>
-    </div>
-  </div>
 
-  <div class="mb-2 row">
-    <div class="col">
-      <select class="form-select" [(ngModel)]="typeSupport">
+    <div class="mb-2 row">
+        <div class="col">
+            <label for="">Classe</label>
+            <select class="form-select" [(ngModel)]="classe_id" (change)="ChargeMatiere(classe_id)">
+        <option [ngValue]="null" disabled selected>-- Sélectionner --</option>
+        <option *ngFor="let classe of classes" [ngValue]="classe.id">{{ classe.nom }}</option>
+      </select>
+        </div>
+        <div class="col">
+            <label for="">Matière</label>
+            <select class="form-select" [(ngModel)]="matiere_id">
+        <option [ngValue]="null" disabled selected>-- Sélectionner --</option>
+        <option *ngFor="let matiere of matieres" [ngValue]="matiere.id">{{ matiere.libelle }}</option>
+      </select>
+        </div>
+    </div>
+
+    <div class="mb-2 row">
+        <div class="col">
+            <select class="form-select" [(ngModel)]="typeSupport">
         <option value="COURS">Cours</option>
         <option value="EXERCICE">Exercice</option>
       </select>
-    </div>
-    <div class="col">
-      <select class="form-select" [(ngModel)]="structureSupport">
+        </div>
+        <div class="col">
+            <select class="form-select" [(ngModel)]="structureSupport">
         <option value="LIVRE">Livre</option>
         <option value="CHAPITRE">Par chapitres</option>
       </select>
-    </div>
-  </div>
-
-  <div *ngIf="structureSupport === 'LIVRE'">
-    <label>Fichier livre</label>
-    <input type="file" (change)="onLivreSelected($event)" class="form-control">
-  </div>
-
-  <div *ngIf="structureSupport === 'CHAPITRE'">
-    <div class="mb-2">
-      <button class="btn btn-outline-primary btn-sm" (click)="addEmptyChapitre()">Ajouter chapitre</button>
-    </div>
-
-    <div cdkDropList (cdkDropListDropped)="drop($event)">
-      <div *ngFor="let ch of chapitres; index as i" cdkDrag class="card mb-2 p-2">
-        <div class="d-flex gap-2">
-          <div style="flex:1">
-            <input class="form-control mb-1" [(ngModel)]="ch.titre" placeholder="Titre">
-            <textarea class="form-control mb-1" [(ngModel)]="ch.contenu" rows="3" placeholder="Contenu (texte)"></textarea>
-            <div class="border p-2" (drop)="onDropChapterFile($event, i)" (dragover)="onDragOver($event)">
-              <div *ngIf="ch.file">Fichier: {{ch.file.name}}</div>
-              <div *ngIf="!ch.file" class="text-muted">Glisser-déposer un fichier ici</div>
-            </div>
-          </div>
-          <div class="d-flex flex-column align-items-end">
-            <button class="btn btn-danger btn-sm mb-1" (click)="removeChapitre(i)">Suppr</button>
-            <div class="text-muted">#{{ch.numero}}</div>
-            <div cdkDragHandle style="cursor:move">⋮⋮</div>
-          </div>
         </div>
-      </div>
     </div>
 
-    <div class="border p-3 text-center" (drop)="onDropChapterFile($event)" (dragover)="onDragOver($event)">
-      Glisser un fichier ici pour créer un nouveau chapitre
+    <div *ngIf="structureSupport === 'LIVRE'">
+        <label>Fichier livre</label>
+        <input type="file" (change)="onLivreSelected($event)" class="form-control">
     </div>
-  </div>
 
-  <div *ngIf="uploading" class="mt-3">
-    <label>Progression : {{progress}}%</label>
-    <div class="progress">
-      <div class="progress-bar" role="progressbar" [style.width.%]="progress"></div>
+    <div *ngIf="structureSupport === 'CHAPITRE'">
+        <div class="mb-2">
+            <button class="btn btn-outline-primary btn-sm" (click)="addEmptyChapitre()">Ajouter chapitre</button>
+        </div>
+
+        <div cdkDropList (cdkDropListDropped)="drop($event)">
+            <div *ngFor="let ch of chapitres; index as i" cdkDrag class="card mb-2 p-2">
+                <div class="d-flex gap-2">
+                    <div style="flex:1">
+                        <input class="form-control mb-1" [(ngModel)]="ch.titre" placeholder="Titre">
+                        <textarea class="form-control mb-1" [(ngModel)]="ch.contenu" rows="3" placeholder="Contenu (texte)"></textarea>
+                        <div class="border p-2" (drop)="onDropChapterFile($event, i)" (dragover)="onDragOver($event)">
+                            <div *ngIf="ch.file">Fichier: {{ch.file.name}}</div>
+                            <div *ngIf="!ch.file && ch.fichier" class="small">Fichier serveur: {{ch.fichier}}</div>
+                            <div *ngIf="!ch.file && !ch.fichier" class="text-muted">Glisser-déposer un fichier ici</div>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column align-items-end">
+                        <button class="btn btn-danger btn-sm mb-1" (click)="removeChapitre(i)">Suppr</button>
+                        <div class="text-muted">#{{ch.numero}}</div>
+                        <div cdkDragHandle style="cursor:move">⋮⋮</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="border p-3 text-center" (drop)="onDropChapterFile($event)" (dragover)="onDragOver($event)">
+            Glisser un fichier ici pour créer un nouveau chapitre
+        </div>
     </div>
-  </div>
 
-  <div class="mt-3">
-    <button class="btn btn-primary" (click)="submit()" [disabled]="uploading">Enregistrer</button>
-  </div>
+    <div *ngIf="uploading" class="mt-3">
+        <label>Progression : {{progress}}%</label>
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" [style.width.%]="progress"></div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <button class="btn btn-primary" (click)="submit()" [disabled]="uploading">Enregistrer</button>
+    </div>
 </div>

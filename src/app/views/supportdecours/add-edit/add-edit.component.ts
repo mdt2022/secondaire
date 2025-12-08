@@ -3,74 +3,105 @@ import { SupportDeCoursService } from '../../../service/supportDeCours.service';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
-import { FormsModule } from '@angular/forms'; // Import FormsModule
-import { ChapitreMeta, SupportDTO } from '../../../model/supportDeCours';
+import { FormsModule } from '@angular/forms';
+import { ChapitreMeta, SupportDTO, SupportDeCours } from '../../../model/supportDeCours';
 import { finalize } from 'rxjs';
 import { Classe } from '../../../model/classe';
+import { Matiere } from '../../../model/matiere';
 import { User } from '../../../model/user';
 import { AuthService } from '../../../service/auth.service';
 import { ClasseEcoleService } from '../../../service/classeecole.service';
-import { Matiere } from '../../../model/matiere';
 import { EnseignerService } from '../../../service/enseigner.service';
+import { ActivatedRoute } from '@angular/router';
+
 @Component({
   selector: 'app-add-edit',
   standalone: true,
-  imports: [   
-    RouterModule,
-    CommonModule,
-    FormsModule,
-    DragDropModule
-  ],
+  imports: [RouterModule, CommonModule, FormsModule, DragDropModule],
   templateUrl: './add-edit.component.html',
-  styleUrl: './add-edit.component.scss'
+  styleUrls: ['./add-edit.component.scss']
 })
 export class AddEditComponent implements OnInit {
-  user!: User
+  user!: User;
+
   nom = '';
-  classe_id = 0;
-  matiere_id = 0;
+  classe_id: number | null = null;
+  matiere_id: number | null = null;
   typeSupport: 'COURS' | 'EXERCICE' = 'COURS';
   structureSupport: 'LIVRE' | 'CHAPITRE' = 'LIVRE';
   livreFile?: File | null;
   chapitres: ChapitreMeta[] = [];
-  classes: Classe[] = []
-  matieres: Matiere[] = []
+  classes: Classe[] = [];
+  matieres: Matiere[] = [];
 
   uploading = false;
   progress = 0;
+  supportId?: number;
 
   constructor(
     private svc: SupportDeCoursService,
     private classeecoleservice: ClasseEcoleService,
     private authservice: AuthService,
-    private enseignerservice: EnseignerService
+    private enseignerservice: EnseignerService,
+    private route: ActivatedRoute
   ) {}
+
   ngOnInit(): void {
-    this.user = this.authservice.getAdminData()
-    this.getAllClasse()
+    this.user = this.authservice.getAdminData();
+    this.getAllClasse();
+
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.supportId = +id;
+      this.loadSupport(this.supportId);
+    }
   }
-  //chargement des classes
-  getAllClasse(){
-    let userid = this.user.administrateur.ecole.idEcole
+
+  loadSupport(id: number) {
+    this.svc.getById(id).subscribe({
+      next: (s: SupportDeCours) => {
+        this.nom = s.nom;
+        this.classe_id = s.classe?.id ?? null;
+        this.matiere_id = s.matiere?.id ?? null;
+        this.typeSupport = s.type;
+        this.structureSupport = s.structure;
+
+        if (this.structureSupport === 'CHAPITRE') {
+          this.chapitres = (s.chapitres ?? []).map((c: ChapitreMeta) => ({
+            id: c.id,
+            titre: c.titre,
+            numero: c.numero,
+            contenu: c.contenu,
+            fichier: c.fichier ?? undefined, // <-- correction ici
+            file: null
+          }));
+        }
+      },
+      error: err => console.error('Erreur chargement support:', err)
+    });
+  }
+
+  getAllClasse() {
+    const userid = this.user.administrateur.ecole.idEcole;
     this.classeecoleservice.getAllClasseParEcole(userid).subscribe({
-      next: (data) =>{ this.classes = data},
-      error: () => { console.log("Erreur !!") }
-    })
+      next: (data: Classe[]) => this.classes = Array.isArray(data) ? data : [],
+      error: err => console.error("Erreur chargement classes :", err)
+    });
   }
-  //charge en fonction du choix
-  ChargeMatiere(idclasse: number){
-    //ecole et classe
-    let idecole = this.user.administrateur.ecole.idEcole
-    let donnees = [idecole,idclasse]
-    this.getAllMatiere(donnees)
+
+  ChargeMatiere(idclasse: number | null) {
+    if (!idclasse) return;
+    const idecole = this.user.administrateur.ecole.idEcole;
+    this.getAllMatiere([idecole, idclasse]);
   }
-  //chargement les matieres enseignées
-  getAllMatiere(donnees: number[]){    
+
+  getAllMatiere(donnees: number[]) {
     this.enseignerservice.getMatiereEcoleClasse(donnees).subscribe({
-      next: (data) => { this.matieres = data},
-      error: () => { console.log("Erreur !!") }
-    })
+      next: (data: Matiere[]) => this.matieres = Array.isArray(data) ? data : [],
+      error: err => console.error("Erreur chargement matières :", err)
+    });
   }
+
   onLivreSelected(e: Event) {
     const input = e.target as HTMLInputElement;
     if (input.files && input.files.length) this.livreFile = input.files[0];
@@ -81,11 +112,13 @@ export class AddEditComponent implements OnInit {
   }
 
   removeChapitre(i: number) {
-    this.chapitres.splice(i,1);
+    this.chapitres.splice(i, 1);
     this.renumber();
   }
 
-  renumber() { this.chapitres.forEach((c, i) => c.numero = i+1); }
+  renumber() {
+    this.chapitres.forEach((c, i) => c.numero = i + 1);
+  }
 
   onDropChapterFile(e: DragEvent, index?: number) {
     e.preventDefault();
@@ -99,7 +132,9 @@ export class AddEditComponent implements OnInit {
     }
   }
 
-  onDragOver(e: DragEvent) { e.preventDefault(); }
+  onDragOver(e: DragEvent) {
+    e.preventDefault();
+  }
 
   drop(event: CdkDragDrop<ChapitreMeta[]>) {
     moveItemInArray(this.chapitres, event.previousIndex, event.currentIndex);
@@ -107,47 +142,54 @@ export class AddEditComponent implements OnInit {
   }
 
   submit() {
+    if (!this.classe_id || !this.matiere_id) {
+      alert('Veuillez sélectionner la classe et la matière');
+      return;
+    }
+
     const dto: SupportDTO = {
+      id: this.supportId,
       nom: this.nom,
       typeSupport: this.typeSupport,
       structureSupport: this.structureSupport,
-      chapitres: this.chapitres.map(
-        c => (
-          { 
-            id: c.id, 
-            titre: c.titre, 
-            numero: c.numero, 
-            contenu: c.contenu, 
-            fichier: c.fichier 
-          }
-        )
-      )
+      classeId: this.classe_id,
+      matiereId: this.matiere_id,
+      chapitres: this.chapitres.map(c => ({
+        ...(c.id ? { id: c.id } : {}),
+        titre: c.titre,
+        numero: c.numero,
+        contenu: c.contenu,
+        fichier: c.fichier ?? undefined 
+      }))
     };
 
-    const chapitreFiles = this.chapitres.map(c => c.file ?? null);
+    const chapitreFiles: File[] = this.chapitres
+      .map(c => c.file)
+      .filter((f): f is File => !!f);
 
     this.uploading = true;
     this.progress = 0;
 
-    this.svc.createWithFiles(dto, this.livreFile ?? undefined, chapitreFiles, p => this.progress = p)
-      .pipe(finalize(() => this.uploading = false))
-      .subscribe({
-        next: (r) => {
-          console.log(r)
-          this.reset();
-        },
-        error: (e) => {
-          console.error(e);
-          alert('Erreur');
-        },
-        complete: () =>{
-          alert('Support créé');
-        }
-      });
+    const obs$ = this.supportId
+      ? this.svc.updateSupportWithFiles(this.supportId, dto, this.livreFile ?? undefined, chapitreFiles)
+      : this.svc.createWithFiles(dto, this.livreFile ?? undefined, chapitreFiles, p => this.progress = p);
+
+    obs$.pipe(finalize(() => this.uploading = false)).subscribe({
+      next: res => {
+        alert(this.supportId ? 'Support mis à jour avec succès !' : 'Support créé avec succès !');
+        this.reset();
+      },
+      error: err => {
+        console.error(err);
+        alert('Erreur lors de la sauvegarde du support');
+      }
+    });
   }
 
   reset() {
     this.nom = '';
+    this.classe_id = null;
+    this.matiere_id = null;
     this.typeSupport = 'COURS';
     this.structureSupport = 'LIVRE';
     this.livreFile = null;
