@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 })
 export class SupportDeCoursService {
 
-  private apiUrl = environment.apiURL+"/supports";
+  private apiUrl = environment.apiURL + "/supports";
 
   constructor(private http: HttpClient) {}
 
@@ -27,9 +27,7 @@ export class SupportDeCoursService {
     const form = new FormData();
     form.append('nom', data.nom);
     if (data.classeId != null) {
-      // envoie seulement l'id si backend le supporte
       form.append('classe', JSON.stringify({ id: data.classeId }));
-      // ou form.append('classeId', String(data.classeId)); selon backend
     }
     if (data.file) {
       form.append('file', data.file, data.file.name);
@@ -56,17 +54,22 @@ export class SupportDeCoursService {
   downloadFile(filename: string) {
     return this.http.get(`${this.apiUrl}/download/${filename}`, { responseType: 'blob' });
   }
-  //nouveau
-  
 
-  // création avec progression
-  createWithFiles(dto: SupportDTO, livreFile?: File, chapitreFiles?: (File | null)[], progressCb?: (p: number) => void): Observable<any> {
+  // création avec progression (corrigée)
+  createWithFiles(dto: any, livreFile?: File, chapitreFiles?: File[], progressCb?: (p: number) => void): Observable<any> {
     const form = new FormData();
     form.append('support', JSON.stringify(dto));
 
-    if (livreFile) form.append('livreFile', livreFile, livreFile.name);
+    if (livreFile) {
+      form.append('livreFile', livreFile, livreFile.name);
+    }
+
     if (chapitreFiles && chapitreFiles.length) {
-      chapitreFiles.forEach(f => { if (f) form.append('chapitreFiles', f, (f as File).name); else form.append('chapitreFiles', new File([], 'empty')); });
+      chapitreFiles.forEach(f => {
+        if (f) {
+          form.append('chapitreFiles', f, f.name);
+        }
+      });
     }
 
     const req = new HttpRequest('POST', this.apiUrl, form, { reportProgress: true });
@@ -88,4 +91,30 @@ export class SupportDeCoursService {
   }
 
   update(id: number, dto: SupportDTO) { return this.http.put(`${this.apiUrl}/${id}`, dto); }
+  
+  updateSupportWithFiles(id: number, dto: any, livreFile?: File, chapitreFiles?: File[]): Observable<any> {
+  const formData = new FormData();
+
+  formData.append("support", JSON.stringify(dto));
+
+  if (livreFile) {
+    formData.append("livreFile", livreFile);
+  }
+
+  if (chapitreFiles && chapitreFiles.length > 0) {
+    chapitreFiles.forEach(f => formData.append("chapitreFiles", f));
+  }
+
+  const req = new HttpRequest("PUT", `${this.apiUrl}/${id}`, formData, {
+    reportProgress: true
+  });
+
+  return this.http.request(req).pipe(
+    map((event: HttpEvent<any>) => {
+      if (event.type === HttpEventType.Response) return event.body;
+      return null;
+    })
+  );
+}
+
 }
