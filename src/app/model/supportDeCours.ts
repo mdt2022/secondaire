@@ -31,10 +31,10 @@ export interface SupportDeCours {
 export interface SupportDTO {
   id?: number;
   nom: string;
-  typeSupport: TypeSupport;
-  structureSupport: StructureSupport;
-  classeId?: number;
-  matiereId?: number;
-  nomfichier?: string;
+  type: TypeSupport;
+  structure: StructureSupport;
+  classeId: number;
+  matiereId: number;
   chapitres?: ChapitreMeta[];
 }
+

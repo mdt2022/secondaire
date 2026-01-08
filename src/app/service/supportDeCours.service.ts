@@ -56,42 +56,64 @@ export class SupportDeCoursService {
   }
 
   // création avec progression (corrigée)
-  createWithFiles(dto: any, livreFile?: File, chapitreFiles?: File[], progressCb?: (p: number) => void): Observable<any> {
-    const form = new FormData();
-    form.append('support', JSON.stringify(dto));
+   createWithFiles(
+    dto: {
+      nom: string;
+      type?: string;
+      matiereId: number;
+      classeId: number;
+    },
+    livreFile?: File,
+    chapitreFiles?: File[],
+    progressCb?: (p: number) => void
+  ): Observable<any> {
+
+    const formData = new FormData();
+
+    // 🔴 ICI EST LA CORRECTION MAJEURE
+    const supportPayload = {
+      nom: dto.nom,
+      type: dto.type ?? 'COURS',
+      matiere: { id: dto.matiereId },
+      classe: { id: dto.classeId }
+    };
+
+    formData.append("support", JSON.stringify(supportPayload));
 
     if (livreFile) {
-      form.append('livreFile', livreFile, livreFile.name);
+      formData.append("livreFile", livreFile, livreFile.name);
     }
 
-    if (chapitreFiles && chapitreFiles.length) {
-      chapitreFiles.forEach(f => {
-        if (f) {
-          form.append('chapitreFiles', f, f.name);
-        }
-      });
+    if (chapitreFiles?.length) {
+      chapitreFiles.forEach(f =>
+        formData.append("chapitreFiles", f, f.name)
+      );
     }
 
-    const req = new HttpRequest('POST', this.apiUrl, form, { reportProgress: true });
+    const req = new HttpRequest(
+      'POST',
+      this.apiUrl,
+      formData,
+      { reportProgress: true }
+    );
 
     return this.http.request(req).pipe(
       map((event: HttpEvent<any>) => {
         if (event.type === HttpEventType.UploadProgress) {
           const percent = Math.round(100 * (event.loaded / (event.total ?? 1)));
-          if (progressCb) progressCb(percent);
-          return { status: 'progress', message: percent };
-        } else if (event.type === HttpEventType.Response) {
-          if (progressCb) progressCb(100);
-          return { status: 'done', body: event.body };
-        } else {
-          return { status: 'other' };
+          progressCb?.(percent);
+          return { status: 'progress', percent };
         }
+        if (event.type === HttpEventType.Response) {
+          progressCb?.(100);
+          return event.body;
+        }
+        return null;
       })
     );
   }
-
   update(id: number, dto: SupportDTO) { return this.http.put(`${this.apiUrl}/${id}`, dto); }
-  
+
   updateSupportWithFiles(id: number, dto: any, livreFile?: File, chapitreFiles?: File[]): Observable<any> {
   const formData = new FormData();
 
@@ -116,5 +138,17 @@ export class SupportDeCoursService {
     })
   );
 }
+
+getByMatiere(matiereId: number) {
+  return this.http.get<SupportDeCours[]>(
+    `${this.apiUrl}/matiere/${matiereId}`
+  );
+}
+
+ getByMatiereAndClasse(matiereId: number, classeId: number): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${this.apiUrl}/matiere/${matiereId}/classe/${classeId}`
+    );
+  }
 
 }
