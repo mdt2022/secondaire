@@ -141,50 +141,54 @@ export class AddEditComponent implements OnInit {
     this.renumber();
   }
 
-  submit() {
-    if (!this.classe_id || !this.matiere_id) {
-      alert('Veuillez sélectionner la classe et la matière');
-      return;
-    }
+submit() {
 
-    const dto: SupportDTO = {
-      id: this.supportId,
-      nom: this.nom,
-      typeSupport: this.typeSupport,
-      structureSupport: this.structureSupport,
-      classeId: this.classe_id,
-      matiereId: this.matiere_id,
-      chapitres: this.chapitres.map(c => ({
-        ...(c.id ? { id: c.id } : {}),
-        titre: c.titre,
-        numero: c.numero,
-        contenu: c.contenu,
-        fichier: c.fichier ?? undefined 
-      }))
-    };
-
-    const chapitreFiles: File[] = this.chapitres
-      .map(c => c.file)
-      .filter((f): f is File => !!f);
-
-    this.uploading = true;
-    this.progress = 0;
-
-    const obs$ = this.supportId
-      ? this.svc.updateSupportWithFiles(this.supportId, dto, this.livreFile ?? undefined, chapitreFiles)
-      : this.svc.createWithFiles(dto, this.livreFile ?? undefined, chapitreFiles, p => this.progress = p);
-
-    obs$.pipe(finalize(() => this.uploading = false)).subscribe({
-      next: res => {
-        alert(this.supportId ? 'Support mis à jour avec succès !' : 'Support créé avec succès !');
-        this.reset();
-      },
-      error: err => {
-        console.error(err);
-        alert('Erreur lors de la sauvegarde du support');
-      }
-    });
+  if (!this.classe_id || !this.matiere_id) {
+    alert(' Classe et matière obligatoires');
+    return;
   }
+
+  // ✅ DTO PROPRE
+  const dto: SupportDTO = {
+    nom: this.nom,
+    type: this.typeSupport,
+    structure: this.structureSupport,
+    classeId: this.classe_id,
+    matiereId: this.matiere_id,
+    chapitres: this.chapitres.map(c => ({
+      id: c.id,
+      titre: c.titre,
+      numero: c.numero,
+      contenu: c.contenu
+    }))
+  };
+
+  // ✅ EXTRACTION DES FICHIERS DES CHAPITRES
+  const chapitresFiles: File[] = this.chapitres
+    .filter(c => c.file)
+    .map(c => c.file!);
+
+  console.log('DTO envoyé ', dto);
+  console.log('Fichiers chapitres ', chapitresFiles);
+
+  this.uploading = true;
+  this.progress = 0;
+
+  this.svc.createWithFiles(dto, this.livreFile ?? undefined, chapitresFiles, p => {
+    this.progress = p;
+  })
+  .pipe(finalize(() => this.uploading = false))
+  .subscribe({
+    next: () => {
+      alert('Support créé avec succès');
+      this.reset();
+    },
+    error: err => {
+      console.error(err);
+      alert(' Erreur lors de la création');
+    }
+  });
+}
 
   reset() {
     this.nom = '';

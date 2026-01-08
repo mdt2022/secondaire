@@ -7,6 +7,7 @@ import { EnseignerService } from '../../../service/enseigner.service';
 import { User } from '../../../model/user';
 import { AuthService } from '../../../service/auth.service';
 import { Matiere } from '../../../model/matiere';
+
 @Component({
   selector: 'app-classes',
   standalone: true,
@@ -19,10 +20,10 @@ import { Matiere } from '../../../model/matiere';
   templateUrl: './classes.component.html',
   styleUrl: './classes.component.scss'
 })
-export class ClassesComponent implements OnInit{
-  idclasse!: number
-  user!: User
-  matieres: Matiere[] = []
+export class ClassesComponent implements OnInit {
+  idclasse!: number;
+  user!: User;
+  matieres: Matiere[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -32,19 +33,16 @@ export class ClassesComponent implements OnInit{
 
   ngOnInit(): void {
     this.idclasse = Number(this.route.snapshot.paramMap.get('id'));
-    this.user = this.authservice.getAdminData()
-    this.loadMatieres()
-  }
-  loadMatieres(){
-    //ecole classe
-    let donnees = [
-      this.user.administrateur.ecole.idEcole,this.idclasse
-    ]
-    this.enseignerservice.getMatiereEcoleClasse(donnees).subscribe({
-      next: (data) => { this.matieres = data },
-      error: () => {},
-      complete: () => {}
-    })
+    this.user = this.authservice.getAdminData();
+    this.loadMatieres();
   }
 
+  loadMatieres() {
+    // ecole + classe
+    const donnees = [this.user.administrateur.ecole.idEcole, this.idclasse];
+    this.enseignerservice.getMatiereEcoleClasse(donnees).subscribe({
+      next: (data) => { this.matieres = data; },
+      error: () => {},
+    });
+  }
 }

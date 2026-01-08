@@ -1,5 +1,6 @@
 <div>
-    <h5>Liste des supports</h5>
+    <h5 class="mb-3">Liste des supports</h5>
+
     <table class="table table-striped">
         <thead>
             <tr>
@@ -11,8 +12,8 @@
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody>
-            <tr *ngFor="let s of supports; let i = index">
+        <tbody cdkDropList (cdkDropListDropped)="drop($event)">
+            <tr *ngFor="let s of supports; let i = index" cdkDrag>
                 <td>{{ i + 1 }}</td>
                 <td>{{ s.nom }}</td>
                 <td>{{ s.typeSupport }}</td>
@@ -31,12 +32,14 @@
                     </div>
                 </td>
                 <td>
-                    <button class="btn btn-danger btn-sm" (click)="delete(s.id!)">Suppr</button>
+                    <button class="btn btn-danger btn-sm me-1" (click)="delete(s.id)">Suppr</button>
+                    <button class="btn btn-primary btn-sm" [routerLink]="['/supports/edit', s.id]">Modifier</button>
                 </td>
-                <button class="btn btn-primary btn-sm" [routerLink]="['/supports/edit', s.id]">Modifier</button>
-
-
             </tr>
         </tbody>
     </table>
+
+    <div *ngIf="supports.length === 0" class="text-muted mt-3">
+        Aucun support disponible pour cette matière.
+    </div>
 </div>
