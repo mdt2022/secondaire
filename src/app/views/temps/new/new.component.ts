@@ -57,7 +57,6 @@ export class NewComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    //this.loadEmplois();
     this.user = this.authService.getAdminData();
     this.loadDonnees()
     this.emploiForm = this.fb.group({
@@ -71,7 +70,6 @@ export class NewComponent implements OnInit {
       anneeuv: ['', Validators.required]
     });
   }
-  //les enseignants
   loadDonnees() {
     const idecole = this.user.administrateur.ecole.idEcole
     this.enseignantService.getEnseignantEcole(idecole).subscribe(data => this.enseignants = data);
