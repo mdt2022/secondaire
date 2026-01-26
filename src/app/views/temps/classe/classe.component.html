@@ -1,1 +1,84 @@
-<p>classe works!</p>
+<div class="card mb-4">
+    <div class="card-header">
+        <strong>Gestion des emplois du temps</strong>
+    </div>
+
+    <div class="card-body">
+        <form [formGroup]="emploiForm" (ngSubmit)="rechercher()">
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <select class="form-select" formControlName="classe">
+                        <option [ngValue]="null">-- Sélectionner la Classe --</option>
+                        <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.nom }}</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <select class="form-select" formControlName="anneeuv">
+                        <option [ngValue]="null">-- Sélectionner une Année --</option>
+                        <option *ngFor="let a of annees" [ngValue]="a.id">{{ a.nom }}</option>
+                    </select>
+                </div>
+
+
+                <!-- Boutons -->
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary" [disabled]="emploiForm.invalid">
+                        Rechercher
+                    </button>
+
+                    <button type="button" class="btn btn-secondary ms-2" (click)="reset()">
+                        Annuler
+                    </button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Spinner -->
+<div *ngIf="loading" class="text-center my-4">
+    <div class="spinner-border text-primary"></div>
+    <p>Chargement des données...</p>
+</div>
+
+<!-- Résultat -->
+<div class="card" *ngIf="resultat">
+    <div class="card-body">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Jour</th>
+                    <th>Horaire</th>
+                    <th>Matière</th>
+                    <th>Professeur</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr *ngFor="let e of emplois">
+                    <td>{{ e.jour }}</td>
+                    <td>{{ e.heuredebut }} - {{ e.heurefin }}</td>
+                    <td>{{ e.matiere?.libelle }}</td>
+                    <td>
+                        {{ e.professeur?.nom }} {{ e.professeur?.prenom }}
+                    </td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" (click)="supprimer(e.id)">
+                            🗑️
+                        </button>
+                    </td>
+                </tr>
+
+                <tr *ngIf="emplois.length === 0">
+                    <td colspan="5" class="text-center text-muted">
+                        Aucun emploi du temps trouvé
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
