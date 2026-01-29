@@ -7,7 +7,6 @@
         <form [formGroup]="emploiForm" (ngSubmit)="onSubmit()">
             <div class="row g-3">
 
-                <!-- Classe -->
                 <div class="col-md-3">
                     <select class="form-select" formControlName="classe">
                         <option [ngValue]="null">-- Sélectionner la classe --</option>
@@ -17,7 +16,6 @@
                     </select>
                 </div>
 
-                <!-- Année universitaire -->
                 <div class="col-md-3">
                     <select class="form-select" formControlName="anneeuv">
                         <option [ngValue]="null">-- Sélectionner l’année --</option>
@@ -27,7 +25,6 @@
                     </select>
                 </div>
 
-                <!-- Boutons -->
                 <div class="col-md-3">
                     <button class="btn btn-primary" type="submit">
                         Rechercher
@@ -42,13 +39,11 @@
     </div>
 </div>
 
-<!-- Loader -->
 <div *ngIf="loading" class="text-center my-4">
     <div class="spinner-border text-primary"></div>
     <p>Chargement...</p>
 </div>
 
-<!-- Tableau -->
 <div class="card">
     <div class="card-body">
         <table class="table table-striped table-hover">
@@ -77,11 +72,19 @@
                     <td>{{ row.Samedi?.matiere?.libelle || '' }}</td>
 
                     <td>
-                        <a *ngIf="row.Lundi" class="btn btn-warning btn-sm"
-                            [routerLink]="['/temps/edit', row.Lundi.id]">
-                            ✏️
-                        </a>
+                        <ng-container *ngIf="getEmploi(row) as emploi">
+
+                            <a class="btn btn-warning btn-sm me-1" [routerLink]="['/temps/edit', emploi.id]">
+                                ✏️
+                            </a>
+
+                            <button class="btn btn-danger btn-sm" (click)="deleteEmploi(emploi.id)">
+                                🗑️
+                            </button>
+
+                        </ng-container>
                     </td>
+
                 </tr>
             </tbody>
         </table>

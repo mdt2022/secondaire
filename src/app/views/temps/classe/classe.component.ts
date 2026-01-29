@@ -47,26 +47,33 @@ export class ClasseComponent implements OnInit {
     this.loadClassesByEcole();
   }
 
-  /** Années universitaires */
   loadAnnees(): void {
     this.anneeService.getAll().subscribe(res => {
       this.annees = res;
     });
   }
 
-  /** Classes selon l'école de l'admin connecté */
   loadClassesByEcole(): void {
-    const admin = this.authService.getAdminData();
-    const ecoleId = admin?.ecole?.id || admin?.ecoleId;
+    const data = this.authService.getAdminData();
 
-    if (!ecoleId) return;
+    console.log('ADMIN CONNECTÉ ', data);
+
+    const ecoleId = data?.administrateur?.ecole?.idEcole;
+
+    console.log('ECOLE ID ', ecoleId);
+
+    if (!ecoleId) {
+      console.error(' Aucun idEcole trouvé');
+      return;
+    }
 
     this.classeService.getAllClasseParEcole(ecoleId).subscribe(res => {
+      console.log('CLASSES ', res);
       this.classes = res;
     });
   }
 
-  /** Recherche */
+
   onSubmit(): void {
     const { classe, anneeuv } = this.emploiForm.value;
 
@@ -79,8 +86,11 @@ export class ClasseComponent implements OnInit {
 
     this.emploiService.getAll().subscribe({
       next: (res) => {
-        const filtres = res.filter(
-          e => e.classe.id === classe && e.anneeuv.id === anneeuv
+        const filtres = res.filter(e =>
+          e.classe !== null &&
+          e.anneeuv !== null &&
+          e.classe.id === classe &&
+          e.anneeuv.id === anneeuv
         );
 
         this.emploisTable = this.buildTable(filtres);
@@ -90,7 +100,6 @@ export class ClasseComponent implements OnInit {
     });
   }
 
-  /** Construction tableau semaine */
   buildTable(emplois: Emploidutemps[]) {
     const map = new Map<string, any>();
 
@@ -119,4 +128,18 @@ export class ClasseComponent implements OnInit {
     this.emploiForm.reset();
     this.emploisTable = [];
   }
+  getEmploi(row: any): any {
+    return row.Lundi || row.Mardi || row.Mercredi || row.Jeudi || row.Vendredi || row.Samedi;
+  }
+
+  deleteEmploi(id: number): void {
+    if (!confirm('Voulez-vous vraiment supprimer cet emploi du temps ?')) {
+      return;
+    }
+
+    this.emploiService.delete(id).subscribe(() => {
+      this.onSubmit(); 
+    });
+  }
+
 }

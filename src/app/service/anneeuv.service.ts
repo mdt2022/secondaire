@@ -8,6 +8,9 @@ import { Anneeuv } from '../model/anneeuv';
   providedIn: 'root'
 })
 export class AnneeuvService {
+  getEnseignantEcole() {
+    throw new Error('Method not implemented.');
+  }
   private apiUrl = environment.apiURL+"/annees";
 
   constructor(private http: HttpClient) {}
