@@ -9,10 +9,10 @@ import { Anneeuv } from '../../../model/anneeuv';
 
 @Component({
   selector: 'app-jour',
-  standalone: true, // ✅ OBLIGATOIRE
+  standalone: true, 
   imports: [
-    CommonModule,          // *ngFor, *ngIf
-    ReactiveFormsModule    // formGroup, formControlName
+    CommonModule,          
+    ReactiveFormsModule   
   ],
   templateUrl: './jour.component.html',
   styleUrl: './jour.component.scss'
