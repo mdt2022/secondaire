@@ -28,26 +28,30 @@ import { User } from '../../../model/user';
     ButtonModule,
     TableModule
   ],
-  templateUrl: './new.component.html',
-  styleUrl: './new.component.scss'
+  templateUrl: './new.component.html'
 })
 export class NewComponent implements OnInit {
 
   emploiForm!: FormGroup;
+
   emplois: Emploidutemps[] = [];
+  filteredEmplois: Emploidutemps[] = [];
+  pagedEmplois: Emploidutemps[] = [];
 
   enseignes: Enseigner[] = [];
   enseignants: Enseignant[] = [];
   classes: Classe[] = [];
   anneeuvs: Anneeuv[] = [];
 
+  page = 1;
+  pageSize = 10;
+  searchTerm = '';
+
   editMode = false;
   currentId?: number;
   user!: User;
 
-  jours: string[] = [
-    'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'
-  ];
+  jours: string[] = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
   constructor(
     private fb: FormBuilder,
@@ -67,7 +71,7 @@ export class NewComponent implements OnInit {
       heuredebut: ['', Validators.required],
       heurefin: ['', Validators.required],
       matiere: ['', Validators.required],
-      professeur: ['', Validators.required],
+      enseignant: ['', Validators.required],
       classe: ['', Validators.required],
       anneeuv: ['', Validators.required]
     });
@@ -80,49 +84,83 @@ export class NewComponent implements OnInit {
     const idEcole = this.user.administrateur.ecole.idEcole;
 
     this.enseignantService.getEnseignantEcole(idEcole)
-      .subscribe(data => this.enseignants = data);
+      .subscribe(d => this.enseignants = d);
 
     this.enseignerService.getAllForEcole(idEcole)
-      .subscribe(data => this.enseignes = data);
+      .subscribe(d => this.enseignes = d);
 
     this.classeService.getAllClasseParEcole(idEcole)
-      .subscribe(data => this.classes = data);
+      .subscribe(d => this.classes = d);
 
     this.anneeuvService.getAll()
-      .subscribe(data => this.anneeuvs = data);
+      .subscribe(d => this.anneeuvs = d);
   }
 
   loadEmplois(): void {
-    this.emploiService.getAll()
-      .subscribe(data => this.emplois = data);
+    const idEcole = this.user.administrateur.ecole.idEcole;
+
+    this.emploiService.getAll().subscribe(data => {
+      this.emplois = data
+        .filter(e => e.ecole?.idEcole === idEcole)
+        .sort((a, b) => (b.id ?? 0) - (a.id ?? 0)); // dernier en haut
+
+      this.applyFilter();
+    });
+  }
+
+  applyFilter(): void {
+    const term = (this.searchTerm || '').toLowerCase();
+
+    this.filteredEmplois = this.emplois.filter(e =>
+      (e.matiere?.libelle || '').toLowerCase().includes(term) ||
+      (e.classe?.nom || '').toLowerCase().includes(term) ||
+      (e.enseignant?.nom || '').toLowerCase().includes(term)
+    );
+
+    this.page = 1;
+    this.updatePage();
+  }
+
+
+  updatePage(): void {
+    const start = (this.page - 1) * this.pageSize;
+    this.pagedEmplois = this.filteredEmplois.slice(start, start + this.pageSize);
+  }
+
+  nextPage(): void {
+    if (this.page * this.pageSize < this.filteredEmplois.length) {
+      this.page++;
+      this.updatePage();
+    }
+  }
+
+  prevPage(): void {
+    if (this.page > 1) {
+      this.page--;
+      this.updatePage();
+    }
   }
 
   onSubmit(): void {
     if (this.emploiForm.invalid) return;
 
-    const payload: any = {
-      jour: this.emploiForm.value.jour,
-      heuredebut: this.emploiForm.value.heuredebut,
-      heurefin: this.emploiForm.value.heurefin,
-      matiere: { id: this.emploiForm.value.matiere },
-      professeur: { id: this.emploiForm.value.professeur },
-      classe: { id: this.emploiForm.value.classe },
-      anneeuv: { id: this.emploiForm.value.anneeuv },
-      ecole: { id: this.user.administrateur.ecole.idEcole }
+    const payload: Partial<Emploidutemps> = {
+      ...this.emploiForm.value,
+      matiere: { id: this.emploiForm.value.matiere } as any,
+      enseignant: { id: this.emploiForm.value.enseignant } as any,
+      classe: { id: this.emploiForm.value.classe } as any,
+      anneeuv: { id: this.emploiForm.value.anneeuv } as any,
+      ecole: { idEcole: this.user.administrateur.ecole.idEcole } as any
     };
 
+    const req = this.editMode && this.currentId
+      ? this.emploiService.update(this.currentId, payload as Emploidutemps)
+      : this.emploiService.create(payload as Emploidutemps);
 
-    if (this.editMode && this.currentId) {
-      this.emploiService.update(this.currentId, payload).subscribe(() => {
-        this.loadEmplois();
-        this.resetForm();
-      });
-    } else {
-      this.emploiService.create(payload).subscribe(() => {
-        this.loadEmplois();
-        this.resetForm();
-      });
-    }
+    req.subscribe(() => {
+      this.loadEmplois();
+      this.resetForm();
+    });
   }
 
   edit(e: Emploidutemps): void {
@@ -134,7 +172,7 @@ export class NewComponent implements OnInit {
       heuredebut: e.heuredebut,
       heurefin: e.heurefin,
       matiere: e.matiere?.id,
-      professeur: e.professeur?.id,
+      enseignant: e.enseignant?.id,
       classe: e.classe?.id,
       anneeuv: e.anneeuv?.id
     });
@@ -142,7 +180,6 @@ export class NewComponent implements OnInit {
 
   delete(id: number): void {
     if (!confirm('Supprimer cet emploi du temps ?')) return;
-
     this.emploiService.delete(id).subscribe(() => this.loadEmplois());
   }
 
@@ -151,4 +188,9 @@ export class NewComponent implements OnInit {
     this.editMode = false;
     this.currentId = undefined;
   }
+  onSearch(event: any): void {
+    this.searchTerm = event.target.value || '';
+    this.applyFilter();
+  }
+
 }

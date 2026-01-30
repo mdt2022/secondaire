@@ -1,11 +1,8 @@
 <c-card class="mb-4">
-  <c-card-header>
-    <strong>Gestion des emplois du temps</strong>
-  </c-card-header>
+  <c-card-header><strong>Création emploi du temps</strong></c-card-header>
 
   <c-card-body>
     <form [formGroup]="emploiForm" (ngSubmit)="onSubmit()">
-
       <div class="row g-3">
 
         <div class="col-md-3">
@@ -31,17 +28,17 @@
           <select class="form-control" formControlName="matiere">
             <option value="">-- Choisir --</option>
             <option *ngFor="let e of enseignes" [value]="e.matiere.id">
-              {{ e.matiere.libelle }} (coef {{ e.matiere.coefficient }})
+              {{ e.matiere.libelle }} | Coef {{ e.matiere.coefficient }} | Horaire {{ e.matiere.horaire }} h
             </option>
           </select>
         </div>
 
         <div class="col-md-4">
           <label>Enseignant</label>
-          <select class="form-control" formControlName="professeur">
+          <select class="form-control" formControlName="enseignant">
             <option value="">-- Choisir --</option>
-            <option *ngFor="let p of enseignants" [value]="p.id">
-              {{ p.prenom }} {{ p.nom }}
+            <option *ngFor="let ens of enseignants" [value]="ens.id">
+              {{ ens.prenom }} {{ ens.nom }}
             </option>
           </select>
         </div>
@@ -50,9 +47,7 @@
           <label>Classe</label>
           <select class="form-control" formControlName="classe">
             <option value="">-- Choisir --</option>
-            <option *ngFor="let c of classes" [value]="c.id">
-              {{ c.nom }}
-            </option>
+            <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
           </select>
         </div>
 
@@ -60,48 +55,44 @@
           <label>Année universitaire</label>
           <select class="form-control" formControlName="anneeuv">
             <option value="">-- Choisir --</option>
-            <option *ngFor="let a of anneeuvs" [value]="a.id">
-              {{ a.nom }}
-            </option>
+            <option *ngFor="let a of anneeuvs" [value]="a.id">{{ a.nom }}</option>
           </select>
         </div>
-
       </div>
 
       <div class="mt-3">
-        <button class="btn btn-primary" type="submit">
-          {{ editMode ? 'Modifier' : 'Enregistrer' }}
-        </button>
-        <button class="btn btn-secondary ms-2" type="button" (click)="resetForm()">
-          Annuler
-        </button>
+        <button class="btn btn-primary">{{ editMode ? 'Modifier' : 'Enregistrer' }}</button>
+        <button type="button" class="btn btn-secondary ms-2" (click)="resetForm()">Annuler</button>
       </div>
-
     </form>
   </c-card-body>
 </c-card>
 
 <c-card>
+  <c-card-header>
+    <input type="text" class="form-control" placeholder="Recherche..." (input)="onSearch($event)" />
+  </c-card-header>
+
   <c-card-body>
     <table class="table table-bordered table-striped">
       <thead>
         <tr>
           <th>Jour</th>
-          <th>Heure</th>
           <th>Matière</th>
-          <th>Professeur</th>
           <th>Classe</th>
+          <th>Heure de debut</th>
+          <th>Heure de fin</th>
           <th>Actions</th>
         </tr>
       </thead>
 
       <tbody>
-        <tr *ngFor="let e of emplois">
+        <tr *ngFor="let e of pagedEmplois">
           <td>{{ e.jour }}</td>
-          <td>{{ e.heuredebut }} - {{ e.heurefin }}</td>
           <td>{{ e.matiere?.libelle }}</td>
-          <td>{{ e.professeur?.prenom }} {{ e.professeur?.nom }}</td>
           <td>{{ e.classe?.nom }}</td>
+          <td>{{ e.heuredebut }}</td>
+          <td> {{ e.heurefin }}</td>
           <td>
             <button class="btn btn-warning btn-sm" (click)="edit(e)">✏️</button>
             <button class="btn btn-danger btn-sm ms-2" (click)="delete(e.id!)">🗑️</button>
@@ -109,5 +100,11 @@
         </tr>
       </tbody>
     </table>
+
+    <div class="d-flex justify-content-between">
+      <button class="btn btn-secondary" (click)="prevPage()">⬅</button>
+      <span>Page {{ page }}</span>
+      <button class="btn btn-secondary" (click)="nextPage()">➡</button>
+    </div>
   </c-card-body>
 </c-card>

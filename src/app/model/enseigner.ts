@@ -5,6 +5,7 @@ import { Ecole } from './ecole';
 import { Anneeuv } from './anneeuv';
 
 export interface Enseigner {
+nbreheure: any;
   id?: number;
   matiere: Matiere;
   classe: Classe;
