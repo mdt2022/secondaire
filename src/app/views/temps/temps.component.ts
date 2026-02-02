@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
   selector: 'app-temps',
   standalone: true,
   imports: [
-    RouterModule
+    RouterModule,
   ],
   templateUrl: './temps.component.html',
   styleUrl: './temps.component.scss'

@@ -1,0 +1,45 @@
+<div class="card">
+
+    <div class="card-body" *ngIf="!loading">
+
+        <form [formGroup]="form" (ngSubmit)="submit()">
+
+            <div class="mb-3">
+                <label class="form-label">Jour</label>
+                <select class="form-select" formControlName="jour">
+                    <option value="">-- Sélectionner --</option>
+                    <option value="Lundi">Lundi</option>
+                    <option value="Mardi">Mardi</option>
+                    <option value="Mercredi">Mercredi</option>
+                    <option value="Jeudi">Jeudi</option>
+                    <option value="Vendredi">Vendredi</option>
+                    <option value="Samedi">Samedi</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Heure début</label>
+                <input type="time" class="form-control" formControlName="heuredebut">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Heure fin</label>
+                <input type="time" class="form-control" formControlName="heurefin">
+            </div>
+
+            <button class="btn btn-primary" type="submit" [disabled]="form.invalid">
+                💾 Enregistrer
+            </button>
+
+            <button class="btn btn-secondary ms-2" type="button" (click)="cancel()">
+                Annuler
+            </button>
+
+        </form>
+    </div>
+
+    <div *ngIf="loading" class="text-center my-4">
+        <div class="spinner-border text-primary"></div>
+        <p>Chargement...</p>
+    </div>
+</div>
