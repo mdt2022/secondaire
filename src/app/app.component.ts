@@ -5,6 +5,7 @@ import { Title } from '@angular/platform-browser';
 import { IconSetService } from '@coreui/icons-angular';
 import { iconSubset } from './icons/icon-subset';
 
+
 @Component({
   selector: 'app-root',
   template: '<router-outlet />',

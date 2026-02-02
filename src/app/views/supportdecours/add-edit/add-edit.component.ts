@@ -159,7 +159,8 @@ submit() {
       id: c.id,
       titre: c.titre,
       numero: c.numero,
-      contenu: c.contenu
+      contenu: c.contenu,
+      
     }))
   };
 

@@ -1,0 +1,187 @@
+/* Styles DataTable */
+
+/* Carte principale */
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+  
+  .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  }
+}
+
+/* Tableau */
+.table {
+  th {
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+    background-color: #f8f9fa;
+    
+    &.cursor-pointer {
+      cursor: pointer;
+      user-select: none;
+      
+      &:hover {
+        background-color: #e9ecef;
+      }
+    }
+  }
+  
+  td {
+    vertical-align: middle;
+    padding: 1rem 0.75rem;
+  }
+  
+  tfoot {
+    th, td {
+      background-color: #f1f3f4;
+      font-weight: 600;
+      border-top: 2px solid #dee2e6;
+    }
+  }
+}
+
+/* Lignes avec hover */
+.hover-highlight {
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: rgba(13, 110, 253, 0.05) !important;
+    transform: translateY(-1px);
+  }
+}
+
+/* Avatar */
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  &.avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+  }
+}
+
+/* Badges */
+.badge {
+  padding: 0.35em 0.65em;
+  font-weight: 500;
+  border-radius: 6px;
+  
+  &.bg-opacity-10 {
+    background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+  }
+}
+
+/* Pagination */
+.pagination {
+  .page-item {
+    .page-link {
+      border-radius: 6px;
+      margin: 0 2px;
+      border: 1px solid #dee2e6;
+      
+      &:hover {
+        background-color: #f8f9fa;
+      }
+    }
+    
+    &.active .page-link {
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+    }
+    
+    &.disabled .page-link {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+/* État vide */
+.empty-state {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+  
+  i {
+    font-size: 4rem;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .table-responsive {
+    border: 0;
+    font-size: 0.875rem;
+    
+    th, td {
+      padding: 0.5rem;
+    }
+  }
+  
+  .card-header h3 {
+    font-size: 1.25rem;
+  }
+  
+  .pagination {
+    font-size: 0.875rem;
+    
+    .page-link {
+      padding: 0.375rem 0.75rem;
+    }
+  }
+}
+
+/* Animation de chargement */
+.spinner-border {
+  animation: spinner-border 0.75s linear infinite;
+}
+
+@keyframes spinner-border {
+  to { transform: rotate(360deg); }
+}
+
+/* Styles spécifiques pour les montants */
+.text-success {
+  color: #198754 !important;
+}
+
+.text-warning {
+  color: #ffc107 !important;
+}
+
+.text-primary {
+  color: #0d6efd !important;
+}
+
+/* Input group pour recherche */
+.input-group-sm {
+  .input-group-text {
+    background-color: #f8f9fa;
+  }
+  
+  .form-control {
+    border-left: none;
+    
+    &:focus {
+      box-shadow: none;
+      border-color: #dee2e6;
+    }
+  }
+}
+
+/* Bouton d'impression */
+.btn-success {
+  background: linear-gradient(135deg, #198754 0%, #157347 100%);
+  border: none;
+  
+  &:hover {
+    background: linear-gradient(135deg, #157347 0%, #12603c 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(25, 135, 84, 0.2);
+  }
+}

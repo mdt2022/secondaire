@@ -1,0 +1,158 @@
+container {
+    max-width: 1300px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.card {
+    border-radius: 12px;
+}
+
+.card-header {
+    border-radius: 12px 12px 0 0;
+}
+
+
+/* =============================
+   TABLE
+============================= */
+
+.table {
+    font-size: 14px;
+}
+
+.table thead th {
+    background: #f8f9fa;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: .05em;
+    vertical-align: middle;
+}
+
+.table tbody tr {
+    transition: all .2s ease;
+}
+
+.table tbody tr:hover {
+    background: rgba(13, 110, 253, .04);
+    transform: scale(1.002);
+}
+
+.table td,
+.table th {
+    vertical-align: middle;
+}
+
+.hover-highlight td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.badge {
+    font-weight: 500;
+    padding: 6px 10px;
+}
+
+.form-control,
+.form-select {
+    border-radius: 8px;
+}
+
+.input-group-text {
+    border-radius: 8px 0 0 8px;
+}
+
+.pagination .page-item.active .page-link {
+    background: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.page-link {
+    border-radius: 6px;
+    margin: 0 3px;
+}
+
+.empty-state {
+    animation: fadeIn .4s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card.border-success {
+    background: linear-gradient(180deg, #ffffff, #f9fdfb);
+}
+
+.card.border-success .p-3 {
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .03);
+}
+
+.btn {
+    border-radius: 8px;
+}
+
+.btn-primary {
+    box-shadow: 0 4px 10px rgba(13, 110, 253, .25);
+}
+
+.spinner-border {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+/*PDF et impression*/
+
+@media print {
+    body {
+        background: white !important;
+    }
+    .btn,
+    .pagination,
+    .input-group,
+    .form-select,
+    .card-header,
+    .empty-state {
+        display: none !important;
+    }
+    table {
+        font-size: 11px;
+    }
+    thead th {
+        background: #eee !important;
+    }
+    .table-bordered td,
+    .table-bordered th {
+        border: 1px solid #000 !important;
+    }
+}
+
+
+/*MOBILE*/
+
+@media(max-width:768px) {
+    .table {
+        font-size: 12px;
+    }
+    .card-body {
+        padding: 15px;
+    }
+}

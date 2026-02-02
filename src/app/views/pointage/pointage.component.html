@@ -1,1 +1,70 @@
-<p>pointage works!</p>
+<div class="container mt-4">
+    <!-- Titre simple -->
+    <h2 class="mb-4">Fiche de pointage</h2>
+
+    <!-- Panneau principal -->
+    <div class="card">
+        <!-- En-tête -->
+        <div class="card-header bg-light">
+            <div class="row align-items-center">
+                <!-- École -->
+                <div class="col-md-3 mb-2">
+                    <label class="form-label small">École</label>
+                    <select class="form-control" [(ngModel)]="selectedEcoleId" (change)="onEcoleChange()">
+                        <option value="">-- Choisir une école --</option>
+                        <option *ngFor="let ecole of ecoles" 
+                                [value]="ecole.idEcole">
+                            {{ ecole.nomEcole }}
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Enseignant -->
+                <div class="col-md-3 mb-2">
+                    <label class="form-label small">Enseignant</label>
+                    <select class="form-control" [(ngModel)]="selectedEnseignantId" required>
+                        <option value="">-- Choisir un enseignant --</option>
+                        <option *ngFor="let enseignant of enseignants" 
+                                [value]="enseignant.id">
+                            {{ enseignant.prenom }} {{ enseignant.nom }}
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Dates -->
+                <div class="col-md-3 mb-2">
+                    <label class="form-label small">Période</label>
+                    <div class="row g-1">
+                        <div class="col-6">
+                            <input type="text" class="form-control" [(ngModel)]="dateDebut" placeholder="Début">
+                        </div>
+                        <div class="col-6">
+                            <input type="text" class="form-control" [(ngModel)]="dateFin" placeholder="Fin">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Boutons -->
+                <div class="col-md-3 mb-2">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary flex-fill" (click)="simuler()">
+                            Simuler
+                        </button>
+                        <button class="btn btn-success flex-fill" (click)="goToPaiement()">
+                            Paiement
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message d'information -->
+        <div class="card-body">
+            <div class="alert alert-light border">
+                <p class="mb-0">
+                    Pour simuler l'état de paiement d'un enseignant avant d'imprimer sa fiche, choisissez l'enseignant et cliquez sur "Simuler".
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,123 @@
+<div class="container mt-4">
+    <div class="card border-light shadow-sm">
+
+
+        <div class="card-header bg-white border-bottom">
+            <h4 class="mb-0">Fiche de pointage des enseignants</h4>
+        </div>
+
+
+        <div class="card-body border-bottom">
+            <div class="row align-items-center">
+                <div class="col-md-4 mb-2">
+                    <input type="text" class="form-control" [(ngModel)]="dateDebut" placeholder="Date début">
+                </div>
+                <div class="col-md-4 mb-2">
+                    <input type="text" class="form-control" [(ngModel)]="dateFin" placeholder="Date fin">
+                </div>
+                <div class="col-md-4 mb-2">
+                    <button class="btn btn-primary w-100" (click)="onCalculateClick()" [disabled]="isLoading">
+            <span *ngIf="!isLoading">Simuler le paiement</span>
+            <span *ngIf="isLoading">
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Recherche en cours...
+            </span>
+          </button>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card-body position-relative">
+
+
+            <div *ngIf="isLoading" class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" style="background: rgba(255,255,255,0.7); z-index:10;">
+                <div class="text-center">
+                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+                    <div class="mt-2 fw-bold">Chargement des données...</div>
+                </div>
+            </div>
+
+
+            <div *ngIf="!isLoading && honoraires?.details?.length > 0">
+
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th (click)="sort('dateValider')" style="cursor:pointer">Date
+                                    <span *ngIf="sortColumn==='dateValider'">{{ sortDirection==='asc' }}</span>
+                                </th>
+                                <th (click)="sort('enseignantPrenom')" style="cursor:pointer">Prénom
+                                    <span *ngIf="sortColumn==='enseignantPrenom'">{{ sortDirection==='asc'}}</span>
+                                </th>
+                                <th (click)="sort('enseignantNom')" style="cursor:pointer">Nom
+                                    <span *ngIf="sortColumn==='enseignantNom'">{{ sortDirection==='asc' }}</span>
+                                </th>
+                                <th (click)="sort('totalHeures')" class="text-end" style="cursor:pointer">Total Heure
+                                    <span *ngIf="sortColumn==='totalHeures'">{{ sortDirection==='asc' }}</span>
+                                </th>
+                                <th (click)="sort('tauxHeure')" class="text-end" style="cursor:pointer">Taux/Heure
+                                    <span *ngIf="sortColumn==='tauxHeure'">{{ sortDirection==='asc'}}</span>
+                                </th>
+                                <th (click)="sort('montantBrut')" class="text-end" style="cursor:pointer">Montant Brut
+                                    <span *ngIf="sortColumn==='montantBrut'">{{ sortDirection==='asc'}}</span>
+                                </th>
+                                <th (click)="sort('avance')" class="text-end" style="cursor:pointer">Avance
+                                    <span *ngIf="sortColumn==='avance'">{{ sortDirection==='asc' }}</span>
+                                </th>
+                                <th (click)="sort('montantNet')" class="text-end" style="cursor:pointer">Montant Net
+                                    <span *ngIf="sortColumn==='montantNet'">{{ sortDirection==='asc' }}</span>
+                                </th>
+                                <th class="text-center">Emargement</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let detail of paginatedDetails">
+                                <td>{{ detail.dateValider }}</td>
+                                <td>{{ detail.enseignantPrenom }}</td>
+                                <td>{{ detail.enseignantNom }}</td>
+                                <td class="text-end">{{ detail.totalHeures }}</td>
+                                <td class="text-end">{{ detail.tauxHeure | number:'1.0-0' }}</td>
+                                <td class="text-end">{{ detail.montantBrut | number:'1.0-0' }}</td>
+                                <td class="text-end">{{ detail.avance | number:'1.0-0' }}</td>
+                                <td class="text-end fw-bold">{{ detail.montantNet | number:'1.0-0' }}</td>
+                                <td class="text-center"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                    <div>Page {{ page }} / {{ totalPages }}</div>
+                    <div>
+                        <button class="btn btn-outline-primary btn-sm me-1" (click)="changePage(-1)" [disabled]="page===1">Précédent</button>
+                        <button class="btn btn-outline-primary btn-sm" (click)="changePage(1)" [disabled]="page===totalPages">Suivant</button>
+                    </div>
+                </div>
+
+
+                <div class="alert alert-light border mt-4">
+                    <p class="mb-0">
+                        <strong>Montant total de l'établissement :</strong>
+                        <span class="float-end">{{ totalMontant | number:'1.0-0' }} CFA</span><br>
+
+                        <strong>Montant des avances :</strong>
+                        <span class="float-end">{{ totalAvances | number:'1.0-0' }} CFA</span><br>
+
+                        <strong>Montant Net :</strong>
+                        <span class="float-end fw-bold">{{ totalMontant - totalAvances | number:'1.0-0' }} CFA</span>
+                    </p>
+                </div>
+
+
+                <div class="text-end">
+                    <button class="btn btn-success" (click)="imprimerPDF()">IMPRIMER L'ETAT DES HONORAIRES</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -16,8 +16,8 @@
             <tr *ngFor="let s of supports; let i = index" cdkDrag>
                 <td>{{ i + 1 }}</td>
                 <td>{{ s.nom }}</td>
-                <td>{{ s.typeSupport }}</td>
-                <td>{{ s.structureSupport }}</td>
+                <td>{{ s.type }}</td>
+                <td>{{ s.structure }}</td>
                 <td>
                     <!-- Fichier principal -->
                     <div *ngIf="s.nomfichier">
