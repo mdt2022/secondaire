@@ -1,10 +1,5 @@
-/* export const environment = {
-    production: false,
-    apiURL: 'http://localhost:8080'
-    apiURL: 'https://groupeintec-gestionplus.org'
-}; */
 export const environment = {
     production: true,
-    apiURL: 'http://localhost:8081',
+    apiURL: 'http://localhost:8080',
     //apiURL: 'https://groupeintec-gestionplus.org'
 };
