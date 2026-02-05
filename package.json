@@ -40,7 +40,7 @@
         "@fortawesome/fontawesome-free": "^7.1.0",
         "@swimlane/ngx-datatable": "^20.0.0",
         "chart.js": "^4.4.3",
-        "jspdf": "^4.0.0",
+        "jspdf": "^4.1.0",
         "jspdf-autotable": "^5.0.7",
         "lodash-es": "^4.17.21",
         "ng2-search-filter": "^0.5.1",

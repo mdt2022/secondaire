@@ -56,9 +56,9 @@
 
         <tbody>
             <tr *ngFor="let emploi of bloc.emplois">
-                <td>{{ emploi.enseignant?.nom }}</td>
+                <td>{{ emploi.enseignant.nom }}</td>
                 <td>{{ emploi.heuredebut }} -- {{ emploi.heurefin }}</td>
-                <td>{{ emploi.matiere?.libelle }}</td>
+                <td>{{ emploi.matiere.libelle }}</td>
                 <td>{{ emploi.nbreheure }}</td>
                 <td></td>
             </tr>

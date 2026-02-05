@@ -19,14 +19,14 @@
                 <tbody>
                     <tr *ngFor="let pointage of pointages">
                         <td>{{ pointage.id }}</td>
-                        <td>{{ pointage.emploidutemps?.jour }}</td>
-                        <td>{{ pointage.emploidutemps?.matiere?.libelle }}</td>
-                        <td>{{ pointage.emploidutemps?.classe?.nom }}</td>
+                        <td>{{ pointage.emploidutemps.jour }}</td>
+                        <td>{{ pointage.emploidutemps.matiere.libelle }}</td>
+                        <td>{{ pointage.emploidutemps.classe.nom }}</td>
                         <td>
-                            {{ pointage.emploidutemps?.heuredebut }} - {{ pointage.emploidutemps?.heurefin }}
+                            {{ pointage.emploidutemps.heuredebut }} - {{ pointage.emploidutemps.heurefin }}
                         </td>
-                        <td>{{ pointage.emploidutemps?.matiere?.horaire }}</td>
-                        <td>{{ getEnseignantNom(pointage.enseignant?.id) }}</td>
+                        <td>{{ pointage.emploidutemps.matiere.horaire }}</td>
+                        <td>{{ getEnseignantNom(pointage.enseignant.id) }}</td>
                         <td>
                             <input type="checkbox" [checked]="selectedIds.includes(pointage.id)" (change)="toggleSelection(pointage.id)">
                         </td>

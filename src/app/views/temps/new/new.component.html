@@ -89,8 +89,8 @@
       <tbody>
         <tr *ngFor="let e of pagedEmplois">
           <td>{{ e.jour }}</td>
-          <td>{{ e.matiere?.libelle }}</td>
-          <td>{{ e.classe?.nom }}</td>
+          <td>{{ e.matiere.libelle }}</td>
+          <td>{{ e.classe.nom }}</td>
           <td>{{ e.heuredebut }}</td>
           <td> {{ e.heurefin }}</td>
           <td>
