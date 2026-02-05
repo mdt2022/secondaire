@@ -57,8 +57,8 @@
                 <tr *ngFor="let row of emploisTable; let i = index">
                     <td>{{ i + 1 }}</td>
                     <td>{{ row.jour }}</td>
-                    <td>{{ row.classe?.nom }}</td>
-                    <td>{{ row.matiere?.libelle }}</td>
+                    <td>{{ row.classe.nom }}</td>
+                    <td>{{ row.matiere.libelle }}</td>
                     <td>{{ row.heuredebut }}</td>
                     <td>{{ row.heurefin }}</td>
                     <td>{{ calculHeures(row.heuredebut, row.heurefin) }}</td>
