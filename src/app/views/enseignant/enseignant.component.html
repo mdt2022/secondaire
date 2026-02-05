@@ -8,44 +8,45 @@
       <div class="row g-3">
         <div class="col-md-4">
           <label>Matricule</label>
-          <input class="form-control" formControlName="matricule"/>
+          <input class="form-control" formControlName="matricule" />
         </div>
         <div class="col-md-4">
           <label>Nom</label>
-          <input class="form-control" formControlName="nom"/>
+          <input class="form-control" formControlName="nom" />
         </div>
         <div class="col-md-4">
           <label>Prénom</label>
-          <input class="form-control" formControlName="prenom"/>
+          <input class="form-control" formControlName="prenom" />
         </div>
         <div class="col-md-4">
           <label>Adresse</label>
-          <input class="form-control" formControlName="adresse"/>
+          <input class="form-control" formControlName="adresse" />
         </div>
         <div class="col-md-4">
           <label>Téléphone</label>
-          <input class="form-control" formControlName="telephone"/>
+          <input class="form-control" formControlName="telephone" />
         </div>
         <div class="col-md-4">
           <label>Email</label>
-          <input class="form-control" type="email" formControlName="email"/>
+          <input class="form-control" type="email" formControlName="email" />
         </div>
         <div class="col-md-4">
           <label>Lieu de naissance</label>
-          <input class="form-control" formControlName="lieun"/>
+          <input class="form-control" formControlName="lieun" />
         </div>
         <div class="col-md-4">
           <label>Date de naissance</label>
-          <input class="form-control" type="date" formControlName="datedn"/>
+          <input class="form-control" type="date" formControlName="datedn" />
         </div>
         <div class="col-md-4">
           <label>Tarif</label>
-          <input class="form-control" type="number" formControlName="tarif"/>
+          <input class="form-control" type="number" formControlName="tarif" />
         </div>
         <div class="col-md-4">
           <label>Photo</label>
-          <input type="file" (change)="onPhotoSelected($event)" class="form-control"/>
-          <img *ngIf="selectedPhoto" [src]="selectedPhoto" alt="photo" class="img-thumbnail mt-2" style="max-height:100px;">
+          <input type="file" (change)="onPhotoSelected($event)" class="form-control" />
+          <img *ngIf="selectedPhoto" [src]="selectedPhoto" alt="photo" class="img-thumbnail mt-2"
+            style="max-height:100px;">
         </div>
       </div>
 
@@ -57,9 +58,13 @@
   </c-card-body>
 </c-card>
 
-<hr/>
+<hr />
 
 <c-card>
+
+  <c-card-header>
+    <input type="text" class="form-control" placeholder="Recherche..." (input)="onSearch($event)" />
+  </c-card-header>
   <c-card-body>
     <table class="table table-striped">
       <thead>
@@ -74,7 +79,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let e of enseignants">
+        <tr *ngFor="let e of pagedEnseignants">
           <td>{{ e.matricule }}</td>
           <td>{{ e.nom }}</td>
           <td>{{ e.prenom }}</td>
@@ -88,5 +93,10 @@
         </tr>
       </tbody>
     </table>
+    <div class="d-flex justify-content-between">
+      <button class="btn btn-secondary" (click)="prevPage()">⬅</button>
+      <span>Page {{ page }}</span>
+      <button class="btn btn-secondary" (click)="nextPage()">➡</button>
+    </div>
   </c-card-body>
 </c-card>
