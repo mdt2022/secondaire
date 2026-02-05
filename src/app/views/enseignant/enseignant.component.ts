@@ -59,7 +59,7 @@ export class EnseignantComponent implements OnInit {
       tarif: [0, Validators.required]
     });
   }
-
+//recuperation des enseignant par ecoele 
   loadEnseignants(): void {
     this.enseignantService.getAll().subscribe(data => {
       this.enseignants = data;
