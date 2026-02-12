@@ -41,6 +41,9 @@ export class EnseignantComponent implements OnInit {
 
   currentEcoleId?: number;
 
+  selectedEnseignant: Enseignant | null = null;
+  viewMode: 'list' | 'form' | 'details' = 'list';
+
   constructor(
     private fb: FormBuilder,
     private enseignantService: EnseignantService,
@@ -49,21 +52,18 @@ export class EnseignantComponent implements OnInit {
 
   ngOnInit(): void {
     const user = this.authService.getAdminData();
-    console.log('🟢 getAdminData() retourne :', user);
 
     if (!user?.administrateur?.ecole?.idEcole) {
-      console.error('🔴 Impossible de récupérer l’ID de l’école de l’utilisateur connecté.');
+      console.error('❌ École introuvable');
       return;
     }
 
     this.currentEcoleId = user.administrateur.ecole.idEcole;
-    console.log('🟢 ID école détecté :', this.currentEcoleId);
-
     this.initForm();
     this.loadEnseignants();
   }
 
-  private initForm(): void {
+  initForm(): void {
     this.enseignantForm = this.fb.group({
       matricule: ['', Validators.required],
       nom: ['', Validators.required],
@@ -74,24 +74,15 @@ export class EnseignantComponent implements OnInit {
       lieun: ['', Validators.required],
       datedn: ['', Validators.required],
       photo: [''],
-      ecole: [null],
       tarif: [0, Validators.required]
     });
   }
 
   loadEnseignants(): void {
-    if (!this.currentEcoleId) return;
-
-    console.log('🟢 Chargement des enseignants pour l’école id=', this.currentEcoleId);
-
-    this.enseignantService.getEnseignantEcole(this.currentEcoleId).subscribe(
-      data => {
-        console.log('🟢 Enseignants reçus :', data);
-        this.enseignants = data.sort((a, b) => b.id - a.id);
-        this.applyFilter();
-      },
-      error => console.error('🔴 Erreur lors de la récupération des enseignants :', error)
-    );
+    this.enseignantService.getEnseignantEcole(this.currentEcoleId!).subscribe(data => {
+      this.enseignants = data.sort((a, b) => b.id - a.id);
+      this.applyFilter();
+    });
   }
 
   onSearch(event: any): void {
@@ -101,13 +92,11 @@ export class EnseignantComponent implements OnInit {
 
   applyFilter(): void {
     const term = this.searchTerm.toLowerCase();
-    this.filteredEnseignants = this.enseignants.filter(e => {
-      const nom = e.nom?.toLowerCase() || '';
-      const prenom = e.prenom?.toLowerCase() || '';
-      const matricule = e.matricule?.toLowerCase() || '';
-      const telephone = e.telephone?.toLowerCase() || '';
-      return nom.includes(term) || prenom.includes(term) || matricule.includes(term) || telephone.includes(term);
-    });
+    this.filteredEnseignants = this.enseignants.filter(e =>
+      e.nom.toLowerCase().includes(term) ||
+      e.prenom.toLowerCase().includes(term) ||
+      e.matricule.toLowerCase().includes(term)
+    );
 
     this.page = 1;
     this.totalPages = Math.ceil(this.filteredEnseignants.length / this.pageSize) || 1;
@@ -133,60 +122,56 @@ export class EnseignantComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
-    if (this.enseignantForm.invalid) {
-      console.warn('⚠️ Formulaire invalide, création/modification annulée');
-      console.log(this.enseignantForm.value);
-      return;
-    }
-
-    const data = { ...this.enseignantForm.value, photo: this.selectedPhoto, ecole: { idEcole: this.currentEcoleId } };
-    console.log(this.editMode ? '✏️ Modification enseignant :' : '➕ Création enseignant :', data);
-
-    if (this.editMode && this.currentId) {
-      this.enseignantService.update(this.currentId, data).subscribe(
-        res => {
-          console.log('✅ Enseignant modifié avec succès :', res);
-          this.loadEnseignants();
-          this.resetForm();
-        },
-        err => console.error('❌ Erreur modification enseignant :', err)
-      );
-    } else {
-      this.enseignantService.create(data).subscribe(
-        res => {
-          console.log('✅ Enseignant créé avec succès :', res);
-          this.loadEnseignants();
-          this.resetForm();
-        },
-        err => console.error('❌ Erreur création enseignant :', err)
-      );
-    }
+  show(e: Enseignant): void {
+    this.selectedEnseignant = e;
+    this.viewMode = 'details';
   }
 
-  edit(enseignant: Enseignant): void {
-    console.log('✏️ Edition de l’enseignant :', enseignant);
+  backToList(): void {
+    this.selectedEnseignant = null;
+    this.viewMode = 'list';
+  }
+
+  addNew(): void {
+    this.resetForm();
+    this.viewMode = 'form';
+  }
+
+  edit(e: Enseignant): void {
     this.editMode = true;
-    this.currentId = enseignant.id;
-    this.selectedPhoto = enseignant.photo || null;
-    this.enseignantForm.patchValue({ ...enseignant });
+    this.currentId = e.id;
+    this.selectedPhoto = e.photo;
+    this.enseignantForm.patchValue(e);
+    this.viewMode = 'form';
+  }
+
+  onSubmit(): void {
+    if (this.enseignantForm.invalid) return;
+
+    const data = {
+      ...this.enseignantForm.value,
+      photo: this.selectedPhoto,
+      ecole: { idEcole: this.currentEcoleId }
+    };
+
+    const action = this.editMode
+      ? this.enseignantService.update(this.currentId!, data)
+      : this.enseignantService.create(data);
+
+    action.subscribe(() => {
+      this.loadEnseignants();
+      this.resetForm();
+      this.viewMode = 'list';
+    });
   }
 
   delete(id: number): void {
     if (!confirm('Supprimer cet enseignant ?')) return;
 
-    console.log('🗑️ Suppression enseignant id=', id);
-    this.enseignantService.delete(id).subscribe(
-      () => {
-        console.log('✅ Enseignant supprimé avec succès id=', id);
-        this.loadEnseignants();
-      },
-      err => console.error('❌ Erreur suppression enseignant :', err)
-    );
+    this.enseignantService.delete(id).subscribe(() => this.loadEnseignants());
   }
 
   resetForm(): void {
-    console.log('♻️ Réinitialisation du formulaire');
     this.enseignantForm.reset();
     this.editMode = false;
     this.currentId = undefined;
@@ -195,11 +180,10 @@ export class EnseignantComponent implements OnInit {
 
   onPhotoSelected(event: any): void {
     const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => this.selectedPhoto = reader.result;
-      reader.readAsDataURL(file);
-      console.log('🖼️ Photo sélectionnée');
-    }
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => this.selectedPhoto = reader.result;
+    reader.readAsDataURL(file);
   }
 }
