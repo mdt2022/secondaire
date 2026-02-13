@@ -6,7 +6,7 @@ import { Paiement } from '../model/paiement';
 
 @Injectable({ providedIn: 'root' })
 export class PaiementService {
-  private apiUrl = 'http://localhost:8080/api/paiements'; // adapter l'URL
+  private apiUrl = 'http://localhost:8080/paiementsecondaires'; // adapter l'URL
 
   constructor(private http: HttpClient) {}
 
