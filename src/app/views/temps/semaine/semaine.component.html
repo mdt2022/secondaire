@@ -6,10 +6,13 @@
     <div class="card-body">
         <form [formGroup]="emploiForm" (ngSubmit)="onSubmit()">
             <div class="row g-3">
+
                 <div class="col-md-3">
-                    <select name="professeur" id="" class="form-select" formControlName="professeur">
+                    <select class="form-select" formControlName="professeur">
                         <option [ngValue]="null">-- Sélectionner l’enseignant --</option>
-                        <option *ngFor="let e of enseignants" [value]="e.id">{{ e.prenom }} {{ e.nom }}</option>
+                        <option *ngFor="let e of enseignants" [ngValue]="e.id">
+                            {{ e.prenom }} {{ e.nom }}
+                        </option>
                     </select>
                 </div>
 
@@ -40,6 +43,7 @@
 
 <div class="card">
     <div class="card-body">
+
         <table class="table table-striped table-hover">
             <thead class="table-light">
                 <tr>
@@ -48,30 +52,56 @@
                     <th>Classe</th>
                     <th>Matière</th>
                     <th>Arrivé</th>
-                    <th>Depart</th>
-                    <th>Nmb heure</th>
+                    <th>Départ</th>
+                    <th>Nb Heure</th>
                 </tr>
             </thead>
 
             <tbody>
-                <tr *ngFor="let row of emploisTable; let i = index">
-                    <td>{{ i + 1 }}</td>
-                    <td>{{ row.jour }}</td>
-                    <td>{{ row.classe.nom }}</td>
-                    <td>{{ row.matiere.libelle }}</td>
-                    <td>{{ row.heuredebut }}</td>
-                    <td>{{ row.heurefin }}</td>
-                    <td>{{ calculHeures(row.heuredebut, row.heurefin) }}</td>
+                <tr *ngFor="let row of paginatedData; let i = index">
+                    <td>{{ (page - 1) * pageSize + i + 1 }}</td>
+                    <td>{{ row?.jour ?? '—' }}</td>
+                    <td>{{ row?.classe?.nom ?? '—' }}</td>
+                    <td>{{ row?.matiere?.libelle ?? '—' }}</td>
+                    <td>{{ row?.heuredebut ?? '—' }}</td>
+                    <td>{{ row?.heurefin ?? '—' }}</td>
+                    <td>{{ calculHeures(row?.heuredebut, row?.heurefin) }}</td>
                 </tr>
 
                 <tr *ngIf="emploisTable.length === 0 && !loading">
-                    <td colspan="9" class="text-center text-muted">
+                    <td colspan="7" class="text-center text-muted">
                         Aucun emploi du temps trouvé
                     </td>
                 </tr>
             </tbody>
-
-
         </table>
+
+        <!-- ✅ Pagination en bas -->
+        <div class="d-flex justify-content-center mt-3" *ngIf="totalPages > 1">
+            <nav>
+                <ul class="pagination">
+
+                    <li class="page-item" [class.disabled]="page === 1">
+                        <button class="page-link" (click)="changePage(page - 1)">
+                            Précédent
+                        </button>
+                    </li>
+
+                    <li *ngFor="let p of getPages()" class="page-item" [class.active]="page === p">
+                        <button class="page-link" (click)="changePage(p)">
+                            {{ p }}
+                        </button>
+                    </li>
+
+                    <li class="page-item" [class.disabled]="page === totalPages">
+                        <button class="page-link" (click)="changePage(page + 1)">
+                            Suivant
+                        </button>
+                    </li>
+
+                </ul>
+            </nav>
+        </div>
+
     </div>
 </div>
