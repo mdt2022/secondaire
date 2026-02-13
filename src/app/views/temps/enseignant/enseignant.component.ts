@@ -25,12 +25,16 @@ export class EnseignantComponent implements OnInit {
   enseignants: Enseignant[] = [];
   annees: Anneeuv[] = [];
 
-  // tableau sécurisé avec booléen pour présence et calcul d'heures
   emploisTable: (Emploidutemps & { present: boolean; nbreheure: number })[] = [];
+  pagedEmplois: (Emploidutemps & { present: boolean; nbreheure: number })[] = [];
 
   loading = false;
   idEcole!: number;
   selectedDate: Date = new Date();
+
+  page = 1;
+  pageSize = 10;
+  totalPages = 1;
 
   constructor(
     private fb: FormBuilder,
@@ -44,17 +48,19 @@ export class EnseignantComponent implements OnInit {
     this.initForm();
     this.loadEnseignantsParEcole();
     this.loadAnnees();
+    this.loadPresenceCache();
   }
 
+  // ---------------- Récupération école ----------------
   getEcoleFromUser(): void {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     this.idEcole =
       user?.parametre?.ecole?.idEcole ||
       user?.administrateur?.ecole?.idEcole;
-
     if (!this.idEcole) console.error('ID école introuvable', user);
   }
 
+  // ---------------- Formulaire ----------------
   initForm(): void {
     this.emploiForm = this.fb.group({
       jour: [null, Validators.required],
@@ -78,7 +84,7 @@ export class EnseignantComponent implements OnInit {
     });
   }
 
-  // ---------------- Affichage ----------------
+  // ---------------- Affichage et filtrage ----------------
   onSubmit(): void {
     if (this.emploiForm.invalid) {
       this.emploiForm.markAllAsTouched();
@@ -87,7 +93,6 @@ export class EnseignantComponent implements OnInit {
 
     const { jour, professeur, anneeuv } = this.emploiForm.value;
     this.loading = true;
-
     this.selectedDate = this.getDateOfWeek(jour);
 
     this.emploiService.getAll().subscribe({
@@ -99,12 +104,18 @@ export class EnseignantComponent implements OnInit {
             Number(e.anneeuv?.id) === Number(anneeuv) &&
             Number(e.ecole?.idEcole) === Number(this.idEcole)
           )
-          .map(e => ({
-            ...e,
-            present: false,
-            nbreheure: this.calculHeures(e.heuredebut, e.heurefin)
-          }));
+          .map(e => {
+            const cache = this.getCachedPresence(e.id);
+            return {
+              ...e,
+              present: cache ?? false,
+              nbreheure: this.calculHeures(e.heuredebut, e.heurefin)
+            };
+          });
 
+        this.page = 1;
+        this.totalPages = Math.ceil(this.emploisTable.length / this.pageSize);
+        this.updatePage();
         this.loading = false;
       },
       error: err => {
@@ -133,10 +144,48 @@ export class EnseignantComponent implements OnInit {
     return targetDate;
   }
 
-  // ---------------- Enregistrer présences ----------------
+  // ---------------- Pagination ----------------
+  updatePage(): void {
+    const start = (this.page - 1) * this.pageSize;
+    this.pagedEmplois = this.emploisTable.slice(start, start + this.pageSize);
+  }
+  nextPage(): void { if (this.page < this.totalPages) { this.page++; this.updatePage(); } }
+  prevPage(): void { if (this.page > 1) { this.page--; this.updatePage(); } }
+
+  // ---------------- Gestion des présences ----------------
+  togglePresence(row: any): void {
+    row.present = !row.present;
+    this.savePresenceCache(row.id, row.present);
+  }
+
   savePresence(): void {
     const presentes = this.emploisTable.filter(e => e.present);
-    console.log('Présents :', presentes);
     alert(`${presentes.length} présence(s) enregistrée(s) !`);
   }
+
+  // ---------------- Persistance simple via localStorage ----------------
+  savePresenceCache(id: number, present: boolean): void {
+    const cache = JSON.parse(localStorage.getItem('presenceCache') || '{}');
+    cache[id] = present;
+    localStorage.setItem('presenceCache', JSON.stringify(cache));
+  }
+
+  getCachedPresence(id?: number): boolean | undefined {
+    if (!id) return undefined;
+    const cache = JSON.parse(localStorage.getItem('presenceCache') || '{}');
+    return cache[id];
+  }
+
+  loadPresenceCache(): void {
+    const cache = JSON.parse(localStorage.getItem('presenceCache') || '{}');
+
+    if (!cache) return;
+
+    this.emploisTable.forEach(row => {
+      if (row.id !== undefined && cache[row.id] !== undefined) {
+        row.present = cache[row.id];
+      }
+    });
+  }
+
 }
