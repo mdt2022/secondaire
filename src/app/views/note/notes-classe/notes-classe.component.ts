@@ -8,6 +8,7 @@ import { ClasseEcoleService } from '../../../service/classeecole.service';
 import { MatiereService } from '../../../service/matiere.service';
 import { PeriodeService } from '../../../service/periode.service';
 import { AuthService } from '../../../service/auth.service';
+import { EnseignerService } from '../../../service/enseigner.service';
 
 @Component({
   selector: 'app-notes-classe',
@@ -30,6 +31,10 @@ export class NotesClasseComponent implements OnInit {
   doublons: string[] = [];
   loadingEleves = false;
   etablissement = '';
+  ecoleId: number | null = null;
+  classeEcoleId: number | null = null;
+
+
 
   constructor(
     private fb: FormBuilder,
@@ -39,7 +44,8 @@ export class NotesClasseComponent implements OnInit {
     private classeService: ClasseEcoleService,
     private matiereService: MatiereService,
     private periodeService: PeriodeService,
-    private authService: AuthService
+    private authService: AuthService,
+    private enseignerService: EnseignerService
   ) {}
 
   ngOnInit(): void {
@@ -82,9 +88,23 @@ export class NotesClasseComponent implements OnInit {
     });
   }
 
-  loadMatieres() {
-    this.matiereService.getAll().subscribe(data => this.matieres = data);
+ loadMatieres() {
+  if (!this.ecoleId || !this.classeEcoleId) {
+    this.matieres = [];
+    return;
   }
+
+  this.enseignerService
+    .getMatiereEcoleClasse([this.ecoleId, this.classeEcoleId])
+    .subscribe({
+      next: data => this.matieres = data,
+      error: err => {
+        console.error('Erreur chargement matières', err);
+        this.matieres = [];
+      }
+    });
+}
+
 
   loadPeriodes() {
     this.periodeService.getAll().subscribe(data => this.periodes = data);
@@ -123,6 +143,24 @@ export class NotesClasseComponent implements OnInit {
         }
       });
   }
+
+  onAnneeOuClasseChange() {
+  const { anneeId, classeId, ecoleId } = this.form.value;
+
+  this.ecoleId = ecoleId;
+  this.classeEcoleId = classeId;
+
+  // Charger les élèves si toutes les valeurs sont sélectionnées
+  if (anneeId && classeId && ecoleId) {
+    this.chargerEleves();
+    this.loadMatieres();
+  } else {
+    this.eleves = [];
+    this.matieres = [];
+    this.notes.clear();
+  }
+}
+
 
   enregistrer() {
 
