@@ -1,0 +1,67 @@
+<div class="container mt-3">
+
+    <h2 class="mb-4">Enregistrer une note de {{etablissement}}</h2>
+
+    <div class=" row ">
+
+        <div class="col-md-3 mb-2 ">
+            <select [(ngModel)]="periodeId " class="form-control ">
+        <option [ngValue]="null ">-- Période --</option>
+        <option *ngFor="let p of periodes " [ngValue]="p.id ">{{ p.libelle }}</option>
+      </select>
+        </div>
+
+        <div class="col-md-3 mb-2 ">
+            <select [(ngModel)]="anneeId " class="form-control " (change)="chargerEleves() ">
+        <option [ngValue]="null ">-- Année scolaire --</option>
+        <option *ngFor="let a of annees " [ngValue]="a.id ">{{ a.nom }}</option>
+      </select>
+        </div>
+
+        <div class="col-md-3 mb-2 ">
+            <select [(ngModel)]="classeEcoleId " class="form-control " (change)="chargerEleves() ">
+        <option [ngValue]="null ">-- Classe --</option>
+        <option *ngFor="let c of classes " [ngValue]="c.id ">{{ c.nom }}</option>
+      </select>
+        </div>
+
+        <div class="col-md-3 mb-2 ">
+            <select [(ngModel)]="eleveEcoleId " class="form-control ">
+        <option [ngValue]="null ">-- Élève --</option>
+        <option *ngFor="let e of eleves " [ngValue]="e.id ">{{ e.eleve.nom }} {{ e.eleve.prenom }}</option>
+      </select>
+        </div>
+    </div>
+
+    <div class="row mb-2 ">
+        <div class="col-md-3 mb-2 ">
+            <button class="btn btn-warning " (click)="chargerMatieres() ">Clique pour afficher matières</button>
+        </div>
+    </div>
+
+    <div class="row ">
+        <div class="col-md-3 mb-2 ">
+            <select [(ngModel)]="matiereId " class="form-control ">
+        <option [ngValue]="null ">-- Matière --</option>
+        <option *ngFor="let m of matieres " [ngValue]="m.id ">{{ m.libelle }}</option>
+      </select>
+        </div>
+
+        <div class="col-md-3 mb-2 ">
+            <input type="number " class="form-control " placeholder="Note de classe " [(ngModel)]="noteClasse ">
+        </div>
+
+        <div class="col-md-3 mb-2 ">
+            <input type="number " class="form-control " placeholder="Note de compo " [(ngModel)]="noteCompo ">
+        </div>
+
+        <div class="col-md-3 mb-2 ">
+            <button class="btn btn-primary w-100 " (click)="enregistrerNote() ">Enregistre</button>
+        </div>
+    </div>
+
+    <div *ngIf="message " class="alert mt-2 " [ngClass]="{ 'alert-success': success, 'alert-danger': !success} ">
+        {{ message }}
+    </div>
+
+</div>

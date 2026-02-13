@@ -1,0 +1,75 @@
+<div class="container">
+
+    <h2>Les notes d'une classe de {{etablissement}} par matière</h2>
+
+    <div class="form-group row mb-3">
+
+        <div class="col">
+
+            <select class="form-control" [(ngModel)]="form.periodeId">
+        <option value="0">-- Période --</option>
+        <option *ngFor="let p of periodes" [value]="p.id">{{ p.libelle }}</option>
+      </select>
+        </div>
+
+        <div class="col">
+            <select class="form-control" [(ngModel)]="form.anneeId" (change)="loadMatieres()">
+        <option value="0">-- Année --</option>
+        <option *ngFor="let annee of annees" [value]="annee.id">{{ annee.nom }}</option>
+      </select>
+        </div>
+
+        <div class="col">
+            <select class="form-control" [(ngModel)]="form.classeId" (change)="loadMatieres()">
+        <option value="0">-- Classe --</option>
+        <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+      </select>
+        </div>
+
+        <div class="col">
+            <select class="form-control" [(ngModel)]="form.matiereId">
+        <option value="0">-- Matière --</option>
+        <option *ngFor="let m of matieres" [value]="m.id">{{ m.libelle }}</option>
+      </select>
+        </div>
+
+        <div class="col d-flex align-items-end">
+            <button class="btn btn-primary w-100" (click)="rechercher()" [disabled]="loading">
+        {{ loading ? 'Chargement...' : 'Afficher la liste' }}
+      </button>
+        </div>
+    </div>
+
+    <div *ngIf="showTable" class="mt-4">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Matricule</th>
+                    <th>Élève</th>
+                    <th>Note Classe</th>
+                    <th>Note Compo</th>
+                    <!-- <th>Moyenne</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let n of notes">
+                    <td></td>
+                    <td>{{ n.matricule }}</td>
+                    <td>{{ n.nom }} {{ n.prenom }}</td>
+                    <td>
+                        <input type="number" class="form-control" [(ngModel)]="n.noteClasse" [ngModelOptions]="{standalone: true}" min="0" max="20" step="0.01" placeholder="0 - 20" (blur)="n.noteClasse = validateNote(n.noteClasse ?? 0)">
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" [(ngModel)]="n.noteCompo" [ngModelOptions]="{standalone: true}" min="0" max="20" step="0.01" placeholder="0 - 20" (blur)="n.noteCompo = validateNote(n.noteCompo ?? 0)">
+                    </td>
+                    <!-- <td>{{ moyenne(n) }}</td> -->
+                </tr>
+            </tbody>
+        </table>
+
+        <button class="btn btn-success" (click)="save()">Enregistre les modifications</button>
+    </div>
+
+
+</div>

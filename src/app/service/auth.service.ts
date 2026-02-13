@@ -13,14 +13,23 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(username: string, password: string) {
-    return this.http.post<{ token: string, user: User }>(`${this.apiUrl}/administrateurs/loginsecond`, { username, password });
+    return this.http.post<{ token: string, user: User }>(
+      `${this.apiUrl}/administrateurs/loginsecond`,
+      { username, password }
+    );
   }
+
   saveAdminData(admin: any) {
     localStorage.setItem('user', JSON.stringify(admin));
   }
 
   getAdminData() {
     return JSON.parse(localStorage.getItem('user') || '{}');
+  }
+
+  getEcoleId(): number | null {
+    const user = this.getAdminData();
+    return user?.administrateur?.ecole?.idEcole ?? null;
   }
 
   saveToken(token: string) {
@@ -38,5 +47,6 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
   }
 }

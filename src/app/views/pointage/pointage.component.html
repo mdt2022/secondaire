@@ -1,13 +1,9 @@
 <div class="container mt-4">
-    <!-- Titre simple -->
     <h2 class="mb-4">Fiche de pointage</h2>
 
-    <!-- Panneau principal -->
     <div class="card">
-        <!-- En-tête -->
         <div class="card-header bg-light">
             <div class="row align-items-center">
-                <!-- École -->
                 <div class="col-md-3 mb-2">
                     <label class="form-label small">École</label>
                     <select class="form-control" [(ngModel)]="selectedEcoleId" (change)="onEcoleChange()">
@@ -19,7 +15,6 @@
                     </select>
                 </div>
 
-                <!-- Enseignant -->
                 <div class="col-md-3 mb-2">
                     <label class="form-label small">Enseignant</label>
                     <select class="form-control" [(ngModel)]="selectedEnseignantId" required>
@@ -31,7 +26,6 @@
                     </select>
                 </div>
 
-                <!-- Dates -->
                 <div class="col-md-3 mb-2">
                     <label class="form-label small">Période</label>
                     <div class="row g-1">
@@ -44,7 +38,6 @@
                     </div>
                 </div>
 
-                <!-- Boutons -->
                 <div class="col-md-3 mb-2">
                     <div class="d-flex gap-2">
                         <button class="btn btn-primary flex-fill" (click)="simuler()">
@@ -58,7 +51,6 @@
             </div>
         </div>
 
-        <!-- Message d'information -->
         <div class="card-body">
             <div class="alert alert-light border">
                 <p class="mb-0">

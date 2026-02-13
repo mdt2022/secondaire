@@ -33,7 +33,7 @@ export class FicheValideeComponent implements OnInit {
   isLoading = false;
 
   currentPage = 1;
-  pageSize = 3;
+  pageSize = 10;
   totalPages = 1;
 
   sortColumn = '';
