@@ -6,37 +6,38 @@
 
         <div class="col-md-3">
             <label class="form-label">Année scolaire</label>
-            <select class="form-select" formControlName="anneeId">
-        <option value="">-- Choisir --</option>
-        <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
-      </select>
+            <select class="form-select" formControlName="anneeId" (change)="onAnneeOuClasseChange()">
+            <option value="">-- Choisir --</option>
+            <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
+        </select>
         </div>
 
         <div class="col-md-3">
             <label class="form-label">Classe</label>
-            <select class="form-select" formControlName="classeId" (change)="chargerEleves()">
-        <option value="">-- Choisir --</option>
-        <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
-      </select>
+            <select class="form-select" formControlName="classeId" (change)="onAnneeOuClasseChange()">
+            <option value="">-- Choisir --</option>
+            <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+        </select>
         </div>
 
         <div class="col-md-3">
             <label class="form-label">Matière</label>
             <select class="form-select" formControlName="matiereId">
-        <option value="">-- Choisir --</option>
-        <option *ngFor="let m of matieres" [value]="m.id">{{ m.libelle }}</option>
-      </select>
+            <option value="">-- Choisir --</option>
+            <option *ngFor="let m of matieres" [value]="m.id">{{ m.libelle }}</option>
+        </select>
         </div>
 
         <div class="col-md-3">
             <label class="form-label">Période</label>
             <select class="form-select" formControlName="periodeId">
-        <option value="">-- Choisir --</option>
-        <option *ngFor="let p of periodes" [value]="p.id">{{ p.libelle }}</option>
-      </select>
+            <option value="">-- Choisir --</option>
+            <option *ngFor="let p of periodes" [value]="p.id">{{ p.libelle }}</option>
+        </select>
         </div>
 
     </div>
+
 
     <div *ngIf="loadingEleves" class="text-center my-3">
         <div class="spinner-border text-primary"></div>
