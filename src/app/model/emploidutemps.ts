@@ -5,6 +5,7 @@ import { Ecole } from "./ecole";
 import { Anneeuv } from "./anneeuv";
 
 export interface Emploidutemps {
+  date: null;
 nbreheure: any;
   enseignant: any;
   id?: number;

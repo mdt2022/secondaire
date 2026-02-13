@@ -8,6 +8,10 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class EmploidutempsService {
+  createEmploi: any;
+  updateEmploi(id: any, payload: { id: any; jour: any; heuredebut: any; heurefin: any; matiere: { id: any; }; professeur: { id: any; }; classe: { id: any; }; anneeuv: { id: any; }; }) {
+    throw new Error('Method not implemented.');
+  }
   private apiUrl = environment.apiURL + '/emploidutemps';
 
 

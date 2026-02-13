@@ -22,13 +22,15 @@ export class EnseignantComponent implements OnInit {
   emploiForm!: FormGroup;
 
   jours: string[] = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-
   enseignants: Enseignant[] = [];
   annees: Anneeuv[] = [];
-  emploisTable: Emploidutemps[] = [];
+
+  // tableau sécurisé avec booléen pour présence et calcul d'heures
+  emploisTable: (Emploidutemps & { present: boolean; nbreheure: number })[] = [];
 
   loading = false;
   idEcole!: number;
+  selectedDate: Date = new Date();
 
   constructor(
     private fb: FormBuilder,
@@ -46,14 +48,11 @@ export class EnseignantComponent implements OnInit {
 
   getEcoleFromUser(): void {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-
     this.idEcole =
       user?.parametre?.ecole?.idEcole ||
       user?.administrateur?.ecole?.idEcole;
 
-    if (!this.idEcole) {
-      console.error('ID école introuvable', user);
-    }
+    if (!this.idEcole) console.error('ID école introuvable', user);
   }
 
   initForm(): void {
@@ -66,7 +65,6 @@ export class EnseignantComponent implements OnInit {
 
   loadEnseignantsParEcole(): void {
     if (!this.idEcole) return;
-
     this.enseignantService.getEnseignantEcole(this.idEcole).subscribe({
       next: data => this.enseignants = data,
       error: err => console.error(err)
@@ -80,6 +78,7 @@ export class EnseignantComponent implements OnInit {
     });
   }
 
+  // ---------------- Affichage ----------------
   onSubmit(): void {
     if (this.emploiForm.invalid) {
       this.emploiForm.markAllAsTouched();
@@ -89,14 +88,23 @@ export class EnseignantComponent implements OnInit {
     const { jour, professeur, anneeuv } = this.emploiForm.value;
     this.loading = true;
 
+    this.selectedDate = this.getDateOfWeek(jour);
+
     this.emploiService.getAll().subscribe({
       next: data => {
-        this.emploisTable = data.filter(e =>
-          e.jour === jour &&
-          e.professeur?.id === professeur &&
-          e.anneeuv?.id === anneeuv &&
-          e.ecole?.idEcole === this.idEcole
-        );
+        this.emploisTable = data
+          .filter(e =>
+            e.jour?.toLowerCase() === (jour || '').toLowerCase() &&
+            Number(e.professeur?.id) === Number(professeur) &&
+            Number(e.anneeuv?.id) === Number(anneeuv) &&
+            Number(e.ecole?.idEcole) === Number(this.idEcole)
+          )
+          .map(e => ({
+            ...e,
+            present: false,
+            nbreheure: this.calculHeures(e.heuredebut, e.heurefin)
+          }));
+
         this.loading = false;
       },
       error: err => {
@@ -106,12 +114,29 @@ export class EnseignantComponent implements OnInit {
     });
   }
 
+  // ---------------- Calcul heures ----------------
   calculHeures(debut: string, fin: string): number {
     if (!debut || !fin) return 0;
+    const [h1, m1] = debut.split(':').map(Number);
+    const [h2, m2] = fin.split(':').map(Number);
+    let minutes = (h2 * 60 + m2) - (h1 * 60 + m1);
+    if (minutes < 0) minutes = 0;
+    return Math.round((minutes / 60) * 100) / 100;
+  }
 
-    const d1 = new Date(`1970-01-01T${debut}`);
-    const d2 = new Date(`1970-01-01T${fin}`);
+  getDateOfWeek(dayName: string): Date {
+    const dayIndex = this.jours.indexOf(dayName);
+    const today = new Date();
+    const diff = dayIndex - today.getDay() + 1;
+    const targetDate = new Date(today);
+    targetDate.setDate(today.getDate() + diff);
+    return targetDate;
+  }
 
-    return (d2.getTime() - d1.getTime()) / (1000 * 60 * 60);
+  // ---------------- Enregistrer présences ----------------
+  savePresence(): void {
+    const presentes = this.emploisTable.filter(e => e.present);
+    console.log('Présents :', presentes);
+    alert(`${presentes.length} présence(s) enregistrée(s) !`);
   }
 }
