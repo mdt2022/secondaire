@@ -20,15 +20,6 @@ export const routes: Routes = [
         }
       },
 
-      // ✅ ROUTE EDIT (À AJOUTER)
-      {
-        path: 'edit/:id',
-        loadComponent: () => import('./edit/edit.component').then(m => m.EditComponent),
-        data: {
-          title: 'Modifier emploi du temps'
-        }
-      },
-
       {
         path: 'new',
         loadComponent: () => import('./new/new.component').then(m => m.NewComponent),
