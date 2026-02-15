@@ -1,146 +1,263 @@
 import { Component, OnInit } from '@angular/core';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+
+import jsPDF from 'jspdf';
+
+import autoTable from 'jspdf-autotable';
+
 
 import { ClasseEcoleService } from '../../../service/classeecole.service';
+
 import { AnneeuvService } from '../../../service/anneeuv.service';
+
 import { EmploidutempsService } from '../../../service/emploidutemps.service';
-import { EnseignantService } from '../../../service/enseignant.service';
+
 import { AuthService } from '../../../service/auth.service';
 
-import { Classe } from '../../../model/classe';
-import { Anneeuv } from '../../../model/anneeuv';
-import { Emploidutemps } from '../../../model/emploidutemps';
-import { Enseignant } from '../../../model/enseignant';
-import { Matiere } from '../../../model/matiere';
 
 @Component({
+
   selector: 'app-classe',
+
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+
+  imports: [CommonModule, ReactiveFormsModule],
+
   templateUrl: './classe.component.html',
+
   styleUrls: ['./classe.component.scss']
+
 })
+
 export class ClasseComponent implements OnInit {
 
   emploiForm!: FormGroup;
 
-  classes: Classe[] = [];
-  annees: Anneeuv[] = [];
-  enseignants: Enseignant[] = [];
-  matieres: Matiere[] = [];
+  classes: any[] = [];
+
+  annees: any[] = [];
 
   emploisTable: any[] = [];
-  loading = false;
+
+
+  classeNom = '';
+
+  anneeNom = '';
+
   user: any;
 
+
   constructor(
+
     private fb: FormBuilder,
+
     private classeService: ClasseEcoleService,
+
     private anneeService: AnneeuvService,
+
     private emploiService: EmploidutempsService,
-    private enseignantService: EnseignantService,
+
     private authService: AuthService
+
   ) { }
 
-  ngOnInit(): void {
-    this.user = this.authService.getAdminData();
-    console.log('USER RAW:', this.user);
 
-    // Initialisation du formulaire
+  ngOnInit() {
+
+    this.user = this.authService.getAdminData();
+
+
     this.emploiForm = this.fb.group({
-      jour: [''],
-      heuredebut: [''],
-      heurefin: [''],
-      matiere: [''],
-      enseignant: [''],
+
       classe: [''],
+
       anneeuv: ['']
+
     });
 
-    console.log('USER FINAL:', this.user);
+
+    this.loadClasses();
 
     this.loadAnnees();
-    this.loadClassesByEcole();
-    this.loadEnseignantsByEcole();
-  }
 
-  loadAnnees(): void {
-    this.anneeService.getAll().subscribe(res => this.annees = res);
-  }
-
-  loadClassesByEcole(): void {
-    const ecoleId = this.user?.administrateur?.ecole?.idEcole;
-    if (!ecoleId) return console.error('Aucun idEcole trouvé');
-
-    this.classeService.getAllClasseParEcole(ecoleId).subscribe(res => this.classes = res);
-  }
-
-  loadEnseignantsByEcole(): void {
-    const ecoleId = this.user?.administrateur?.ecole?.idEcole;
-    if (!ecoleId) return console.error('Aucun idEcole trouvé');
-
-    this.enseignantService.getEnseignantEcole(ecoleId).subscribe(res => this.enseignants = res);
   }
 
 
-  onSubmit(): void {
-    const { classe, anneeuv } = this.emploiForm.value;
-    if (!classe || !anneeuv) {
-      alert('Veuillez sélectionner la classe et l’année');
-      return;
-    }
+  loadClasses() {
 
-    const payload: any = {
-      jour: this.emploiForm.value.jour,
-      heuredebut: this.emploiForm.value.heuredebut,
-      heurefin: this.emploiForm.value.heurefin,
-      matiere: { id: this.emploiForm.value.matiere },
-      professeur: { id: this.emploiForm.value.enseignant },
-      classe: { id: classe },
-      anneeuv: { id: anneeuv },
-      ecole: { idEcole: this.user.administrateur.ecole.idEcole }
-    };
+    const ecoleId = this.user.administrateur.ecole.idEcole;
 
-    this.loading = true;
-    this.emploiService.getAll().subscribe({
-      next: (res) => {
-        const filtres = res.filter(e => Number(e.classe?.id) === Number(classe) &&
-          Number(e.anneeuv?.id) === Number(anneeuv));
-        this.emploisTable = this.buildTable(filtres);
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Erreur lors du chargement des emplois :', err);
-        this.loading = false;
-      }
+    this.classeService.getAllClasseParEcole(ecoleId)
+
+      .subscribe(res => this.classes = res);
+
+  }
+
+
+  loadAnnees() {
+
+    this.anneeService.getAll()
+
+      .subscribe(res => this.annees = res);
+
+  }
+
+
+
+  onSubmit() {
+
+    const classeId = this.emploiForm.value.classe;
+
+    const anneeId = this.emploiForm.value.anneeuv;
+
+
+    const classe = this.classes.find(c => c.id == classeId);
+
+    const annee = this.annees.find(a => a.id == anneeId);
+
+
+    this.classeNom = classe?.nom;
+
+    this.anneeNom = annee?.nom;
+
+
+    this.emploiService.getAll().subscribe(res => {
+
+      const filtres = res.filter(e =>
+
+        e.classe?.id == classeId &&
+
+        e.anneeuv?.id == anneeId
+
+      );
+
+
+      this.emploisTable = this.buildTable(filtres);
+
     });
+
   }
 
-  buildTable(emplois: Emploidutemps[]) {
-    const map = new Map<string, any>();
-    emplois.forEach(e => {
-      const key = `${e.heuredebut} - ${e.heurefin}`;
-      if (!map.has(key)) {
-        map.set(key, { heure: key, Lundi: null, Mardi: null, Mercredi: null, Jeudi: null, Vendredi: null, Samedi: null });
+
+
+  buildTable(data: any[]) {
+
+    const map = new Map();
+
+
+    data.forEach(e => {
+
+
+      const heure = `${e.heuredebut} - ${e.heurefin}`;
+
+
+      if (!map.has(heure)) {
+
+        map.set(heure, {
+
+          heure: heure,
+
+          Lundi: null,
+
+          Mardi: null,
+
+          Mercredi: null,
+
+          Jeudi: null,
+
+          Vendredi: null,
+
+          Samedi: null
+
+        });
+
       }
-      map.get(key)[e.jour] = e;
+
+
+      map.get(heure)[e.jour] = e;
+
+
     });
+
+
     return Array.from(map.values());
+
   }
 
-  resetForm(): void {
-    this.emploiForm.reset();
-    this.emploisTable = [];
+
+
+  generatePDF() {
+
+
+    const doc = new jsPDF('landscape');
+
+
+    doc.setFontSize(16);
+
+    doc.text('EMPLOI DU TEMPS', 120, 15);
+
+
+    doc.setFontSize(12);
+
+    doc.text(`Classe : ${this.classeNom}`, 14, 25);
+
+    doc.text(`Année scolaire : ${this.anneeNom}`, 14, 32);
+
+
+    const body = this.emploisTable.map(row => [
+
+      row.heure,
+
+      row.Lundi?.matiere?.libelle || '',
+
+      row.Mardi?.matiere?.libelle || '',
+
+      row.Mercredi?.matiere?.libelle || '',
+
+      row.Jeudi?.matiere?.libelle || '',
+
+      row.Vendredi?.matiere?.libelle || '',
+
+      row.Samedi?.matiere?.libelle || ''
+
+    ]);
+
+
+    autoTable(doc, {
+
+      startY: 40,
+
+      head: [['Horaire', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']],
+
+      body: body,
+
+      theme: 'grid',
+
+      styles: {
+
+        halign: 'center',
+
+        minCellHeight: 20
+
+      },
+
+      headStyles: {
+
+        fillColor: [220, 220, 220],
+
+        textColor: 0
+
+      }
+
+    });
+
+
+    doc.save('emploi.pdf');
+
   }
 
-  getEmploi(row: any): any {
-    return row.Lundi || row.Mardi || row.Mercredi || row.Jeudi || row.Vendredi || row.Samedi;
-  }
 
-  deleteEmploi(id: number): void {
-    if (!confirm('Voulez-vous vraiment supprimer cet emploi du temps ?')) return;
-    this.emploiService.delete(id).subscribe(() => this.onSubmit());
-  }
 }

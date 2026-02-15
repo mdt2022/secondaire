@@ -28,7 +28,6 @@ export class SemaineComponent implements OnInit {
   loading = false;
   idEcole!: number;
 
-  // ✅ Pagination
   page = 1;
   pageSize = 5;
   totalPages = 0;
@@ -113,7 +112,6 @@ export class SemaineComponent implements OnInit {
     });
   }
 
-  // ✅ Calcul heures sécurisé
   calculHeures(debut?: string, fin?: string): number {
     if (!debut || !fin) return 0;
 
@@ -123,7 +121,6 @@ export class SemaineComponent implements OnInit {
     return Math.max((d2.getTime() - d1.getTime()) / 3600000, 0);
   }
 
-  // ✅ Pagination logique
   updatePagination(): void {
     this.totalPages = Math.ceil(this.emploisTable.length / this.pageSize);
 
