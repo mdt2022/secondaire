@@ -85,15 +85,14 @@ export class PointageComponent implements OnInit {
     });
   }
 
-  // Validation des dates
   private validateDates(): boolean {
     const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
-    
+
     if (!dateRegex.test(this.dateDebut) || !dateRegex.test(this.dateFin)) {
       alert('Veuillez entrer des dates valides au format JJ/MM/AAAA');
       return false;
     }
-    
+
     return true;
   }
 

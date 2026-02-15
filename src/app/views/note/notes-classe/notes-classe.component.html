@@ -1,0 +1,88 @@
+<h3 class="mb-4 text-primary"> Enregistrer les notes d’une classe de {{etablissement}}</h3>
+
+<form [formGroup]="form" class="card p-4 shadow-sm">
+
+    <div class="row g-3">
+
+        <div class="col-md-3">
+            <label class="form-label">Année scolaire</label>
+            <select class="form-select" formControlName="anneeId" (change)="onAnneeOuClasseChange()">
+            <option value="">-- Choisir --</option>
+            <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
+        </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Classe</label>
+            <select class="form-select" formControlName="classeId" (change)="onAnneeOuClasseChange()">
+            <option value="">-- Choisir --</option>
+            <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+        </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Matière</label>
+            <select class="form-select" formControlName="matiereId">
+            <option value="">-- Choisir --</option>
+            <option *ngFor="let m of matieres" [value]="m.id">{{ m.libelle }}</option>
+        </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Période</label>
+            <select class="form-select" formControlName="periodeId">
+            <option value="">-- Choisir --</option>
+            <option *ngFor="let p of periodes" [value]="p.id">{{ p.libelle }}</option>
+        </select>
+        </div>
+
+    </div>
+
+
+    <div *ngIf="loadingEleves" class="text-center my-3">
+        <div class="spinner-border text-primary"></div>
+        <p>Chargement des élèves...</p>
+    </div>
+
+    <table *ngIf="elevesCharges" class="table table-bordered table-striped mt-4">
+
+        <thead>
+            <tr>
+                <th>Matricule</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Moy Classe</th>
+                <th>Moy Compo</th>
+            </tr>
+        </thead>
+
+        <tbody formArrayName="notes">
+            <tr *ngFor="let n of notes.controls; let i = index" [formGroupName]="i">
+
+                <td>{{ eleves[i].eleve.matricule }}</td>
+                <td>{{ eleves[i].eleve.nom }}</td>
+                <td>{{ eleves[i].eleve.prenom }}</td>
+
+                <td>
+                    <input type="number" class="form-control text-center" formControlName="noteClasse">
+                </td>
+
+                <td>
+                    <input type="number" class="form-control text-center" formControlName="noteCompo">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div *ngIf="doublons?.length" class="alert alert-warning mt-3">
+        Doublons ignorés pour :
+        <strong>{{ doublons.join(', ') }}</strong>
+    </div>
+
+    <div class="text-center mt-3" *ngIf="elevesCharges">
+        <button type="button" class="btn btn-success btn-sm px-3" [disabled]="form.invalid" (click)="enregistrer()">
+    Enregistrer
+  </button>
+    </div>
+
+</form>
