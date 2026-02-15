@@ -50,7 +50,7 @@ export class NewComponent implements OnInit {
   currentId?: number;
   user!: User;
 
-  selectedEmploi?: Emploidutemps; // Pour la vue détails
+  selectedEmploi?: Emploidutemps;
 
   jours: string[] = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
@@ -86,36 +86,25 @@ export class NewComponent implements OnInit {
 
     const f = this.emploiForm.value;
 
-    const matiereId = Number(f.matiere);
-    const professeurId = Number(f.enseignant);
-    const classeId = Number(f.classe);
-    const anneeuvId = Number(f.anneeuv);
-
     const payload = {
       jour: f.jour,
       heuredebut: f.heuredebut,
       heurefin: f.heurefin,
-      matiere: { id: matiereId },
-      professeur: { id: professeurId },
-      classe: { id: classeId },
-      anneeuv: { id: anneeuvId },
+      matiere: { id: Number(f.matiere) },
+      professeur: { id: Number(f.enseignant) },
+      classe: { id: Number(f.classe) },
+      anneeuv: { id: Number(f.anneeuv) },
       ecole: { idEcole: this.user.administrateur.ecole.idEcole }
-    } as Partial<Emploidutemps>;
+    } as Emploidutemps;
 
-    const req = this.editMode && this.currentId
-      ? this.emploiService.update(this.currentId, payload as Emploidutemps)
-      : this.emploiService.create(payload as Emploidutemps);
+    const request = this.editMode && this.currentId
+      ? this.emploiService.update(this.currentId, payload)
+      : this.emploiService.create(payload);
 
-    req.subscribe({
-      next: (res) => {
-        if (this.editMode && this.currentId) {
-          const idx = this.emplois.findIndex(e => e.id === this.currentId);
-          if (idx > -1) this.emplois[idx] = res;
-        } else {
-          this.emplois.unshift(res);
-        }
+    request.subscribe({
+      next: () => {
         this.resetForm();
-        this.applyFilter();
+        this.loadEmplois(); 
       },
       error: (err) => console.error('Erreur API :', err)
     });
@@ -124,29 +113,44 @@ export class NewComponent implements OnInit {
   loadDonnees(): void {
     const idEcole = this.user.administrateur.ecole.idEcole;
 
-    this.enseignantService.getEnseignantEcole(idEcole).subscribe(d => this.enseignants = d);
-    this.enseignerService.getAllForEcole(idEcole).subscribe(d => this.enseignes = d);
-    this.classeService.getAllClasseParEcole(idEcole).subscribe(d => this.classes = d);
-    this.anneeuvService.getAll().subscribe(d => this.anneeuvs = d);
+    this.enseignantService.getEnseignantEcole(idEcole)
+      .subscribe(data => this.enseignants = data);
+
+    this.enseignerService.getAllForEcole(idEcole)
+      .subscribe(data => this.enseignes = data);
+
+    this.classeService.getAllClasseParEcole(idEcole)
+      .subscribe(data => this.classes = data);
+
+    this.anneeuvService.getAll()
+      .subscribe(data => this.anneeuvs = data);
   }
 
   loadEmplois(): void {
     const idEcole = this.user.administrateur.ecole.idEcole;
-    this.emploiService.getAll().subscribe(data => {
-      this.emplois = data.filter(e => e.ecole?.idEcole === idEcole)
-        .sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
-      this.applyFilter();
+
+    this.emploiService.getAll().subscribe({
+      next: (data) => {
+        this.emplois = data
+          .filter(e => e.ecole?.idEcole === idEcole)
+          .sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
+
+        this.applyFilter();
+      },
+      error: (err) => console.error('Erreur chargement :', err)
     });
   }
 
   applyFilter(): void {
     const term = (this.searchTerm || '').toLowerCase();
+
     this.filteredEmplois = this.emplois.filter(e =>
       (e.matiere?.libelle || '').toLowerCase().includes(term) ||
       (e.classe?.nom || '').toLowerCase().includes(term) ||
       (e.professeur?.nom || '').toLowerCase().includes(term) ||
       (e.professeur?.prenom || '').toLowerCase().includes(term)
     );
+
     this.page = 1;
     this.totalPages = Math.ceil(this.filteredEmplois.length / this.pageSize);
     this.updatePage();
@@ -188,11 +192,9 @@ export class NewComponent implements OnInit {
 
   delete(id: number): void {
     if (!confirm('Supprimer cet emploi du temps ?')) return;
+
     this.emploiService.delete(id).subscribe({
-      next: () => {
-        this.emplois = this.emplois.filter(e => e.id !== id);
-        this.applyFilter();
-      },
+      next: () => this.loadEmplois(),
       error: (err) => console.error('Erreur suppression :', err)
     });
   }

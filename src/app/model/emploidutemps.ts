@@ -6,7 +6,7 @@ import { Anneeuv } from "./anneeuv";
 
 export interface Emploidutemps {
   date: null;
-nbreheure: any;
+  nbreheure: any;
   enseignant: any;
   id?: number;
   jour: string;
