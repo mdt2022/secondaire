@@ -5,10 +5,12 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { EnseignantService } from '../../../service/enseignant.service';
 import { AnneeuvService } from '../../../service/anneeuv.service';
 import { EmploidutempsService } from '../../../service/emploidutemps.service';
+import { PointageService } from '../../../service/pointage.service';
 
 import { Enseignant } from '../../../model/enseignant';
 import { Anneeuv } from '../../../model/anneeuv';
 import { Emploidutemps } from '../../../model/emploidutemps';
+import { Pointage } from '../../../model/pointage';
 
 @Component({
   selector: 'app-enseignant',
@@ -30,6 +32,7 @@ export class EnseignantComponent implements OnInit {
 
   loading = false;
   idEcole!: number;
+
   selectedDate: Date = new Date();
 
   page = 1;
@@ -40,7 +43,8 @@ export class EnseignantComponent implements OnInit {
     private fb: FormBuilder,
     private enseignantService: EnseignantService,
     private anneeService: AnneeuvService,
-    private emploiService: EmploidutempsService
+    private emploiService: EmploidutempsService,
+    private pointageService: PointageService
   ) { }
 
   ngOnInit(): void {
@@ -48,144 +52,239 @@ export class EnseignantComponent implements OnInit {
     this.initForm();
     this.loadEnseignantsParEcole();
     this.loadAnnees();
-    this.loadPresenceCache();
   }
 
-  // ---------------- Récupération école ----------------
+  // ================================
+  // RECUP ID ECOLE
+  // ================================
+
   getEcoleFromUser(): void {
+
     const user = JSON.parse(localStorage.getItem('user') || '{}');
+
     this.idEcole =
       user?.parametre?.ecole?.idEcole ||
       user?.administrateur?.ecole?.idEcole;
-    if (!this.idEcole) console.error('ID école introuvable', user);
+
   }
 
-  // ---------------- Formulaire ----------------
+  // ================================
+  // FORM
+  // ================================
+
   initForm(): void {
+
     this.emploiForm = this.fb.group({
+
       jour: [null, Validators.required],
       professeur: [null, Validators.required],
       anneeuv: [null, Validators.required]
+
     });
+
   }
 
+  // ================================
+  // LOAD DATA
+  // ================================
+
   loadEnseignantsParEcole(): void {
-    if (!this.idEcole) return;
+
     this.enseignantService.getEnseignantEcole(this.idEcole).subscribe({
-      next: data => this.enseignants = data,
-      error: err => console.error(err)
+
+      next: data => this.enseignants = data
+
     });
+
   }
 
   loadAnnees(): void {
+
     this.anneeService.getAll().subscribe({
-      next: data => this.annees = data,
-      error: err => console.error(err)
+
+      next: data => this.annees = data
+
     });
+
   }
 
-  // ---------------- Affichage et filtrage ----------------
+  // ================================
+  // AFFICHAGE
+  // ================================
+
   onSubmit(): void {
-    if (this.emploiForm.invalid) {
-      this.emploiForm.markAllAsTouched();
-      return;
-    }
+
+    if (this.emploiForm.invalid) return;
 
     const { jour, professeur, anneeuv } = this.emploiForm.value;
+
     this.loading = true;
-    this.selectedDate = this.getDateOfWeek(jour);
+
+    this.selectedDate = new Date(); // DATE DU JOUR
 
     this.emploiService.getAll().subscribe({
+
       next: data => {
+
         this.emploisTable = data
+
           .filter(e =>
-            e.jour?.toLowerCase() === (jour || '').toLowerCase() &&
-            Number(e.professeur?.id) === Number(professeur) &&
-            Number(e.anneeuv?.id) === Number(anneeuv) &&
-            Number(e.ecole?.idEcole) === Number(this.idEcole)
+
+            e.jour?.toLowerCase() === jour.toLowerCase() &&
+
+            e.professeur?.id == professeur &&
+
+            e.anneeuv?.id == anneeuv &&
+
+            e.ecole?.idEcole == this.idEcole
+
           )
-          .map(e => {
-            const cache = this.getCachedPresence(e.id);
-            return {
-              ...e,
-              present: cache ?? false,
-              nbreheure: this.calculHeures(e.heuredebut, e.heurefin)
-            };
-          });
+
+          .map(e => ({
+
+            ...e,
+
+            present: false,
+
+            nbreheure: this.calculHeures(e.heuredebut, e.heurefin)
+
+          }));
 
         this.page = 1;
+
         this.totalPages = Math.ceil(this.emploisTable.length / this.pageSize);
+
         this.updatePage();
+
         this.loading = false;
-      },
-      error: err => {
-        console.error(err);
-        this.loading = false;
+
       }
+
     });
+
   }
 
-  // ---------------- Calcul heures ----------------
+  // ================================
+  // CALCUL HEURES
+  // ================================
+
   calculHeures(debut: string, fin: string): number {
+
     if (!debut || !fin) return 0;
+
     const [h1, m1] = debut.split(':').map(Number);
+
     const [h2, m2] = fin.split(':').map(Number);
-    let minutes = (h2 * 60 + m2) - (h1 * 60 + m1);
-    if (minutes < 0) minutes = 0;
-    return Math.round((minutes / 60) * 100) / 100;
+
+    const minutes = (h2 * 60 + m2) - (h1 * 60 + m1);
+
+    return minutes / 60;
+
   }
 
-  getDateOfWeek(dayName: string): Date {
-    const dayIndex = this.jours.indexOf(dayName);
-    const today = new Date();
-    const diff = dayIndex - today.getDay() + 1;
-    const targetDate = new Date(today);
-    targetDate.setDate(today.getDate() + diff);
-    return targetDate;
-  }
+  // ================================
+  // PAGINATION
+  // ================================
 
-  // ---------------- Pagination ----------------
   updatePage(): void {
-    const start = (this.page - 1) * this.pageSize;
-    this.pagedEmplois = this.emploisTable.slice(start, start + this.pageSize);
-  }
-  nextPage(): void { if (this.page < this.totalPages) { this.page++; this.updatePage(); } }
-  prevPage(): void { if (this.page > 1) { this.page--; this.updatePage(); } }
 
-  // ---------------- Gestion des présences ----------------
-  togglePresence(row: any): void {
-    row.present = !row.present;
-    this.savePresenceCache(row.id, row.present);
+    const start = (this.page - 1) * this.pageSize;
+
+    this.pagedEmplois = this.emploisTable.slice(start, start + this.pageSize);
+
   }
+
+  nextPage(): void {
+
+    this.page++;
+
+    this.updatePage();
+
+  }
+
+  prevPage(): void {
+
+    this.page--;
+
+    this.updatePage();
+
+  }
+  // ================================
+  // TOGGLE CHECKBOX
+  // ================================
+
+  togglePresence(row: any): void {
+
+    row.present = !row.present;
+
+    console.log("========== CHECKBOX ==========");
+
+    console.log("ID emploi :", row.id);
+
+    console.log("Prof :", row.professeur?.prenom, row.professeur?.nom);
+
+    console.log("Present :", row.present);
+
+    console.log("Date :", new Date());
+
+  }
+
+
+  // ================================
+  // SAVE POINTAGE
+  // ================================
 
   savePresence(): void {
+
     const presentes = this.emploisTable.filter(e => e.present);
-    alert(`${presentes.length} présence(s) enregistrée(s) !`);
-  }
 
-  // ---------------- Persistance simple via localStorage ----------------
-  savePresenceCache(id: number, present: boolean): void {
-    const cache = JSON.parse(localStorage.getItem('presenceCache') || '{}');
-    cache[id] = present;
-    localStorage.setItem('presenceCache', JSON.stringify(cache));
-  }
+    presentes.forEach(row => {
 
-  getCachedPresence(id?: number): boolean | undefined {
-    if (!id) return undefined;
-    const cache = JSON.parse(localStorage.getItem('presenceCache') || '{}');
-    return cache[id];
-  }
+      const today = new Date().toISOString().split('T')[0];
 
-  loadPresenceCache(): void {
-    const cache = JSON.parse(localStorage.getItem('presenceCache') || '{}');
+      this.pointageService.rechercher({
 
-    if (!cache) return;
+        enseignantId: row.professeur.id,
+        dateDebut: today,
+        dateFin: today
 
-    this.emploisTable.forEach(row => {
-      if (row.id !== undefined && cache[row.id] !== undefined) {
-        row.present = cache[row.id];
-      }
+      }).subscribe(existing => {
+
+        if (existing.length > 0) {
+
+          console.warn("DEJA POINTÉ");
+
+          alert(row.professeur.prenom + " déjà pointé aujourd'hui");
+
+          return;
+
+          
+        }
+
+        const pointage = {
+
+          id: 0,
+          emploidutemps: row,
+          enseignant: row.professeur,
+          valider: "OUI",
+          datevalider: today
+
+        };
+
+        this.pointageService.create(pointage).subscribe({
+
+          next: res => {
+
+            console.log("POINTAGE OK", res);
+
+          }
+
+        });
+
+      });
+
     });
+
   }
 
 }

@@ -81,12 +81,14 @@ export class NewComponent implements OnInit {
     this.loadEmplois();
   }
 
+
   onSubmit(): void {
     if (this.emploiForm.invalid) return;
 
     const f = this.emploiForm.value;
 
-    const payload = {
+    const payload: any = {
+      id: this.currentId,
       jour: f.jour,
       heuredebut: f.heuredebut,
       heurefin: f.heurefin,
@@ -95,20 +97,31 @@ export class NewComponent implements OnInit {
       classe: { id: Number(f.classe) },
       anneeuv: { id: Number(f.anneeuv) },
       ecole: { idEcole: this.user.administrateur.ecole.idEcole }
-    } as Emploidutemps;
+    };
 
-    const request = this.editMode && this.currentId
-      ? this.emploiService.update(this.currentId, payload)
-      : this.emploiService.create(payload);
-
-    request.subscribe({
-      next: () => {
-        this.resetForm();
-        this.loadEmplois(); 
-      },
-      error: (err) => console.error('Erreur API :', err)
-    });
+    if (this.editMode && this.currentId) {
+      this.emploiService.update(this.currentId, payload).subscribe({
+        next: () => {
+          this.resetForm();
+          this.loadEmplois();
+        },
+        error: (err) => {
+          console.error('Erreur API :', err);
+        }
+      });
+    } else {
+      this.emploiService.create(payload).subscribe({
+        next: () => {
+          this.resetForm();
+          this.loadEmplois();
+        },
+        error: (err) => {
+          console.error('Erreur API :', err);
+        }
+      });
+    }
   }
+
 
   loadDonnees(): void {
     const idEcole = this.user.administrateur.ecole.idEcole;
