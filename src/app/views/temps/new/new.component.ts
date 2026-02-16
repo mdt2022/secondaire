@@ -68,42 +68,78 @@ export class NewComponent implements OnInit {
     this.loadDonnees();
     this.loadEmplois();
   }
+
   onSubmit(): void {
+
     if (this.emploiForm.invalid) return;
+
     const f = this.emploiForm.value;
-    const payload: any = {
+
+    const payload: Emploidutemps = {
       id: this.currentId,
+
       jour: f.jour,
       heuredebut: f.heuredebut,
       heurefin: f.heurefin,
-      matiere: { id: Number(f.matiere) },
-      professeur: { id: Number(f.enseignant) },
-      classe: { id: Number(f.classe) },
-      anneeuv: { id: Number(f.anneeuv) },
-      ecole: { idEcole: this.user.administrateur.ecole.idEcole }
+
+      matiere: { id: Number(f.matiere) } as any,
+
+      professeur: { id: Number(f.enseignant) } as any,
+
+      classe: { id: Number(f.classe) } as any,
+
+      anneeuv: { id: Number(f.anneeuv) } as any,
+
+      ecole: {
+        idEcole: this.user.administrateur.ecole.idEcole
+      } as any,
+      date: null,
+      nbreheure: undefined,
+      enseignant: undefined
     };
+
+    // UPDATE
     if (this.editMode && this.currentId) {
-      this.emploiService.update(this.currentId, payload).subscribe({
-        next: () => {
-          this.resetForm();
-          this.loadEmplois();
-        },
-        error: (err) => {
-          console.error('Erreur API :', err);
-        }
-      });
-    } else {
-      this.emploiService.create(payload).subscribe({
-        next: () => {
-          this.resetForm();
-          this.loadEmplois();
-        },
-        error: (err) => {
-          console.error('Erreur API :', err);
-        }
-      });
+
+      this.emploiService.update(this.currentId, payload)
+        .subscribe({
+
+          next: (res) => {
+
+            console.log("UPDATE SUCCESS", res);
+
+            this.resetForm();
+
+            this.loadEmplois();
+
+          },
+
+          error: err => console.error(err)
+
+        });
+
     }
+
+    // CREATE
+    else {
+
+      this.emploiService.create(payload)
+        .subscribe({
+
+          next: () => {
+
+            this.resetForm();
+
+            this.loadEmplois();
+
+          }
+
+        });
+
+    }
+
   }
+
   loadDonnees(): void {
     const idEcole = this.user.administrateur.ecole.idEcole;
     this.enseignantService.getEnseignantEcole(idEcole)
@@ -161,18 +197,26 @@ export class NewComponent implements OnInit {
     }
   }
   edit(e: Emploidutemps): void {
+
     this.editMode = true;
-    this.currentId = e.id;
+
+    this.currentId = e.id!; // IMPORTANT
+
     this.emploiForm.patchValue({
+
       jour: e.jour,
       heuredebut: e.heuredebut,
       heurefin: e.heurefin,
+
       matiere: e.matiere?.id,
       enseignant: e.professeur?.id,
       classe: e.classe?.id,
       anneeuv: e.anneeuv?.id
+
     });
+
   }
+
   delete(id: number): void {
     if (!confirm('Supprimer cet emploi du temps ?')) return;
     this.emploiService.delete(id).subscribe({

@@ -74,7 +74,7 @@ export class EnseignantComponent implements OnInit {
     if (this.emploiForm.invalid) return;
     const { jour, professeur, anneeuv } = this.emploiForm.value;
     this.loading = true;
-    this.selectedDate = new Date(); // DATE DU JOUR
+    this.selectedDate = new Date();
     this.emploiService.getAll().subscribe({
       next: data => {
         this.emploisTable = data
@@ -116,52 +116,96 @@ export class EnseignantComponent implements OnInit {
     this.updatePage();
   }
   togglePresence(row: any): void {
-   row.present = !row.present;
-   console.log("========== CHECKBOX ==========");
-   console.log("ID emploi :", row.id);
+    row.present = !row.present;
+    console.log("========== CHECKBOX ==========");
+    console.log("ID emploi :", row.id);
     console.log("Prof :", row.professeur?.prenom, row.professeur?.nom);
     console.log("Present :", row.present);
     console.log("Date :", new Date());
   }
   savePresence(): void {
+
+    console.log("===== SAVE PRESENCE CLICK =====");
+
     const presentes = this.emploisTable.filter(e => e.present);
+
+    console.log("Présences sélectionnées :", presentes);
+
     if (presentes.length === 0) {
+
+      console.warn("Aucune présence sélectionnée");
+
       this.toastMessage = 'Aucune présence sélectionnée';
+
       setTimeout(() => this.toastMessage = '', 3000);
+
       return;
+
     }
+
     presentes.forEach(row => {
+
       const today = new Date().toISOString().split('T')[0];
-      this.pointageService.rechercher({
-        enseignantId: row.professeur.id,
-        dateDebut: today,
-        dateFin: today
-      }).subscribe(existing => {
-        if (existing.length > 0) {
-          this.toastMessage = `${row.professeur.prenom} ${row.professeur.nom} déjà pointé aujourd'hui`;
+
+      console.log("-----------");
+      console.log("Row complet :", row);
+      console.log("ID emploi :", row.id);
+      console.log("ID enseignant :", row.professeur?.id);
+
+      const pointage: any = {
+
+        emploidutemps: {
+          id: row.id
+        },
+
+        enseignant: {
+          id: row.professeur?.id
+        },
+
+        valider: "OUI",
+
+        datevalider: today
+
+      };
+
+      console.log("Objet envoyé au backend :", JSON.stringify(pointage));
+
+      this.pointageService.create(pointage).subscribe({
+
+        next: res => {
+
+          console.log("✅ SUCCÈS BACKEND :", res);
+
+          this.toastMessage =
+            `${row.professeur.prenom} ${row.professeur.nom} pointé avec succès`;
+
           setTimeout(() => this.toastMessage = '', 3000);
-          return;
+
+          row.present = false;
+
+        },
+
+        error: err => {
+
+          console.error("❌ ERREUR BACKEND :", err);
+
+          console.error("Status :", err.status);
+
+          console.error("Message :", err.message);
+
+          console.error("Error body :", err.error);
+
+          this.toastMessage =
+            `Erreur lors du pointage de ${row.professeur.prenom}`;
+
+          setTimeout(() => this.toastMessage = '', 3000);
+
         }
-        const pointage: Pointage = {
-          id: 0,
-          emploidutemps: row,
-          enseignant: row.professeur,
-          valider: "OUI",
-          datevalider: today
-        };
-        this.pointageService.create(pointage).subscribe({
-          next: res => {
-            this.toastMessage = `${row.professeur.prenom} ${row.professeur.nom} pointé avec succès`;
-            setTimeout(() => this.toastMessage = '', 3000);
-            row.present = false;
-          },
-          error: err => {
-            console.error("Erreur pointage :", err);
-            this.toastMessage = `Erreur lors du pointage de ${row.professeur.prenom}`;
-            setTimeout(() => this.toastMessage = '', 3000);
-          }
-        });
+
       });
+
     });
+
   }
+
 }
