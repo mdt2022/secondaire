@@ -2,11 +2,9 @@
     <div class="card-header">
         <strong>Gestion des emplois du temps par classe</strong>
     </div>
-
     <div class="card-body">
         <form [formGroup]="emploiForm" (ngSubmit)="onSubmit()">
             <div class="row g-3">
-
                 <div class="col-md-3">
                     <label>Classe</label>
                     <select class="form-select" formControlName="classe">
@@ -16,7 +14,6 @@
                         </option>
                     </select>
                 </div>
-
                 <div class="col-md-3">
                     <label>Année universitaire</label>
                     <select class="form-select" formControlName="anneeuv">
@@ -26,7 +23,6 @@
                         </option>
                     </select>
                 </div>
-
                 <div class="col-md-3">
                     <button class="btn btn-primary" type="submit">
                         Rechercher
@@ -35,110 +31,58 @@
                         Annuler
                     </button>
                 </div>
-
             </div>
         </form>
     </div>
 </div>
-
 <div *ngIf="loading" class="text-center my-4">
     <div class="spinner-border text-primary"></div>
     <p>Chargement...</p>
 </div>
-
-
 <div class="card shadow">
-
     <div class="card-header bg-primary text-white text-center">
-
         <h4 class="mb-0">
-
             EMPLOI DU TEMPS
-
         </h4>
-
         <div class="mt-2">
-
             <strong>Classe :</strong> {{ classeNom }}
-
             |
-
             <strong>Année scolaire :</strong> {{ anneeNom }}
-
         </div>
-
     </div>
-
-
     <div class="card-body">
-
         <div class="text-end mb-3">
-
             <button class="btn btn-success" (click)="generatePDF()">
-
                 🖨️ Imprimer
-
             </button>
-
         </div>
-
-
         <div id="emploiTable">
-
             <table class="table table-bordered emploi-table">
-
                 <thead>
-
                     <tr>
-
                         <th class="heure">Horaire</th>
-
                         <th>Lundi</th>
-
                         <th>Mardi</th>
-
                         <th>Mercredi</th>
-
                         <th>Jeudi</th>
-
                         <th>Vendredi</th>
-
                         <th>Samedi</th>
-
                     </tr>
-
                 </thead>
-
                 <tbody>
-
                     <tr *ngFor="let row of emploisTable">
-
                         <td class="heure">
-
                             {{ row.heure }}
-
                         </td>
-
                         <td>{{ row.Lundi?.matiere?.libelle }}</td>
-
                         <td>{{ row.Mardi?.matiere?.libelle }}</td>
-
                         <td>{{ row.Mercredi?.matiere?.libelle }}</td>
-
                         <td>{{ row.Jeudi?.matiere?.libelle }}</td>
-
                         <td>{{ row.Vendredi?.matiere?.libelle }}</td>
-
                         <td>{{ row.Samedi?.matiere?.libelle }}</td>
-
                     </tr>
-
                 </tbody>
-
             </table>
-
         </div>
-
     </div>
-
 </div>

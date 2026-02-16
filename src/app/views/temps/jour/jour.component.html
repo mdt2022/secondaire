@@ -5,7 +5,6 @@
     <div class="card-body">
         <form [formGroup]="emploiForm" (ngSubmit)="onSubmit()">
             <div class="row g-3 align-items-end">
-
                 <div class="col-md-3">
                     <label for="jour" class="form-label">Jour</label>
                     <select id="jour" class="form-select" formControlName="jour">
@@ -13,7 +12,6 @@
                         <option *ngFor="let j of jours" [value]="j">{{ j }}</option>
                     </select>
                 </div>
-
                 <div class="col-md-3">
                     <label for="anneeuv" class="form-label">Année universitaire</label>
                     <select id="anneeuv" class="form-select" formControlName="anneeuv">
@@ -21,37 +19,25 @@
                         <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
                     </select>
                 </div>
-
                 <div class="col-md-3">
                     <button class="btn btn-primary w-100" type="submit">Afficher</button>
                 </div>
-
                 <div class="col-md-3">
                     <button class="btn btn-success w-100" type="button" (click)="generatePDF()">🖨️ Imprimer
                         PDF</button>
                 </div>
-
             </div>
         </form>
-
     </div>
 </div>
 <div *ngIf="loading" class="text-center my-4">
-
     <div class="spinner-border text-primary" role="status">
-
         <span class="visually-hidden">Chargement...</span>
-
     </div>
-
     <div class="mt-2 fw-bold text-primary">
-
         Chargement des emplois du temps...
-
     </div>
-
 </div>
-
 <div id="emploiContent">
     <div *ngFor="let bloc of emploisParClasse" class="mb-4">
         <h5 class="mt-3 fw-bold text-secondary">{{ bloc.classe }}</h5>

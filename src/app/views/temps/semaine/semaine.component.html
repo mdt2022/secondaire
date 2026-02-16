@@ -1,110 +1,53 @@
 <div class="container-fluid">
-
-    <!-- HEADER -->
     <div class="card shadow-sm mb-3 border-0">
-
-
         <div class="card-header bg-primary text-white py-2">
-
-
             <h6 class="mb-0 fw-normal">
-
                 📅 Gestion des emplois du temps par semaine
             </h6>
-
         </div>
-
         <div class="card-body">
-
             <form [formGroup]="emploiForm" (ngSubmit)="onSubmit()">
-
                 <div class="row g-3 align-items-end">
-
-                    <!-- PROF -->
                     <div class="col-md-4">
-
                         <label class="form-label fw-bold">
                             Enseignant
                         </label>
-
                         <select class="form-select form-select-sm" formControlName="professeur">
-
                             <option [ngValue]="null">
                                 Choisir enseignant
                             </option>
-
                             <option *ngFor="let e of enseignants" [ngValue]="e.id">
-
                                 {{ e.prenom }} {{ e.nom }}
-
                             </option>
-
                         </select>
-
                     </div>
-
-
-                    <!-- ANNEE -->
                     <div class="col-md-4">
-
                         <label class="form-label fw-bold">
-
                             Année scolaire
-
                         </label>
-
                         <select class="form-select form-select-sm" formControlName="anneeuv">
-
                             <option [ngValue]="null">
-
                                 Choisir année
-
                             </option>
-
                             <option *ngFor="let a of annees" [ngValue]="a.id">
-
                                 {{ a.nom }}
-
                             </option>
-
                         </select>
-
                     </div>
-
-
-                    <!-- BUTTON -->
                     <div class="col-md-4">
-
                         <button class="btn btn-primary btn-sm w-100 shadow-sm">
-
                             🔍 Rechercher
-
                         </button>
-
                     </div>
-
                 </div>
-
             </form>
-
         </div>
-
     </div>
-
-
-    <!-- LOADING -->
     <div *ngIf="loading" class="text-center p-5">
-
         <div class="spinner-border text-primary"></div>
-
         <p class="mt-2">Chargement...</p>
-
     </div>
-
-
-    <!-- TABLE -->
     <div class="card shadow-sm border-0">
-
         <div class="card-body">
             <div class="mb-3">
                 <span class="badge bg-success fw-normal">
@@ -159,7 +102,6 @@
                     </tbody>
                 </table>
             </div>
-
             <nav *ngIf="totalPages>1">
                 <ul class="pagination justify-content-center">
                     <li class="page-item">
