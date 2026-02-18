@@ -8,7 +8,7 @@ import { EnseignerService } from '../../../service/enseigner.service';
 import { PeriodeService } from '../../../service/periode.service';
 import { AnneeuvService } from '../../../service/anneeuv.service';
 import { ClasseEcoleService } from '../../../service/classeecole.service';
-
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-notes-matiere',
   standalone: true,
@@ -59,47 +59,78 @@ this.etablissement = this.admin.administrateur.ecole.nomEcole;
       .subscribe(data => this.classes = data);
   }
 
-  loadMatieres(): void {
-    if (!this.form.anneeId || !this.form.classeId) {
-      this.matieres = [];
-      return;
-    }
+loadMatieres(): void {
+  if (!this.form.anneeId || !this.form.classeId) {
+    this.matieres = [];
+    this.form.matiereId = 0;
+    return;
+  }
 
-    this.enseignerService.getMatiereEcoleClasse([this.ecoleId, this.form.classeId, this.form.anneeId])
-      .subscribe({
-        next: (data: Matiere[]) => this.matieres = data,
-        error: () => alert("Erreur lors du chargement des matières")
+  this.enseignerService.getMatiereEcoleClasse([this.ecoleId, this.form.classeId, this.form.anneeId])
+    .subscribe({
+      next: (data: Matiere[]) => {
+        this.matieres = data;
+
+        if (this.matieres.length > 0) {
+          this.form.matiereId = this.matieres[0].id;
+        } else {
+          this.form.matiereId = 0;
+          Swal.fire({
+            icon: 'info',
+            title: 'Aucune matière',
+            text: 'Aucune matière n’est assignée à cette classe.',
+            confirmButtonText: 'OK'
+          });
+        }
+      },
+      error: () => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Impossible de charger les matières',
+          confirmButtonText: 'OK'
+        });
+      }
+    });
+}
+
+
+rechercher(): void {
+  if (!this.form.anneeId || !this.form.classeId || !this.form.periodeId || !this.form.matiereId) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Champs manquants',
+      text: 'Veuillez sélectionner tous les champs.',
+      confirmButtonText: 'OK'
+    });
+    return;
+  }
+
+  this.loading = true;
+
+  this.noteService.getListeNotesParMatiere(
+    this.ecoleId,
+    this.form.classeId,
+    this.form.anneeId,
+    this.form.periodeId,
+    this.form.matiereId
+  ).subscribe({
+    next: (data: NoteParMatiereDTO[]) => {
+      this.notes = data;
+      this.showTable = true;
+      this.loading = false;
+    },
+    error: () => {
+      this.loading = false;
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: 'Impossible de charger les notes',
+        confirmButtonText: 'OK'
       });
-  }
-
-  rechercher(): void {
-    if (!this.form.anneeId || !this.form.classeId || !this.form.periodeId || !this.form.matiereId) {
-      alert("Veuillez sélectionner tous les champs");
-      return;
     }
-
-    this.loading = true;
-
-this.noteService.getListeNotesParMatiere(
-  this.ecoleId,
-  this.form.classeId,
-  this.form.anneeId,
-  this.form.periodeId,
-  this.form.matiereId
-).subscribe({
-  next: (data: NoteParMatiereDTO[]) => {
-    console.log('Notes reçues', data);
-    this.notes = data;
-    this.showTable = true;
-    this.loading = false;
-  },
-  error: () => {
-    this.loading = false;
-    alert("Erreur lors du chargement des notes");
-  }
-});
-
-  }
+  });
+}
 
 save(): void {
   if (!this.notes.length) return;
@@ -122,15 +153,25 @@ save(): void {
     this.form.matiereId,
     payload
   ).subscribe({
-    next: () => alert("Notes enregistrées avec succès"),
+    next: () => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Succès',
+        text: 'Notes enregistrées avec succès',
+        confirmButtonText: 'OK'
+      });
+    },
     error: (err) => {
       console.error(err);
-      alert("Erreur lors de l'enregistrement");
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: 'Erreur lors de l’enregistrement',
+        confirmButtonText: 'OK'
+      });
     }
   });
 }
-
-
 
   moyenne(note: NoteParMatiereDTO): string {
     const nc = note.noteClasse || 0;

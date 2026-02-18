@@ -1,99 +1,111 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FraiscolaireService } from '../../service/fraiscolaireService';
 import { Fraiscolaire } from '../../model/fraiscolaire';
-import { EcoleService } from '../../service/ecole.service';
-import { ClasseService } from '../../service/classe.service';
-import { EleveService } from '../../service/eleve.service';
+import { ClasseEcole } from '../../model/classeecole';
+import { Anneeuv } from '../../model/anneeuv';
+import { Eleveecole } from '../../model/eleveecole';
+import { ClasseEcoleService } from '../../service/classeecole.service';
+import { EleveecoleService } from '../../service/eleveecole.service';
+import { AuthService } from '../../service/auth.service';
 import { AnneeuvService } from '../../service/anneeuv.service';
-import { CommonModule } from '@angular/common';
+import { Classe } from '../../model/classe';
 
 @Component({
   selector: 'app-frais',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-
-  ],
+  imports: [CommonModule,
+    FormsModule,         
+    ReactiveFormsModule],
   templateUrl: './frais.component.html',
-  styleUrl: './frais.component.scss'
+  styleUrls: ['./frais.component.scss']
 })
 export class FraisComponent implements OnInit {
 
-  fraisForm!: FormGroup;
   fraisList: Fraiscolaire[] = [];
-  editMode = false;
-  currentId?: number;
+  eleves: Eleveecole[] = [];
+  classes: Classe[] = [];
+  annees: Anneeuv[] = [];
 
-  ecoles: any[] = [];
-  classes: any[] = [];
-  eleves: any[] = [];
-  annees: any[] = [];
+  selectedClasse!: number;
+  selectedAnnee!: number;
+  montant!: number;
+  reduction: number = 0;
+  editingFrais?: Fraiscolaire;
 
   constructor(
-    private fb: FormBuilder,
     private fraisService: FraiscolaireService,
-    private ecoleService: EcoleService,
-    private classeService: ClasseService,
-    private eleveService: EleveService,
-    private anneeService: AnneeuvService
+    private classeService: ClasseEcoleService,
+    private anneeService: AnneeuvService,
+    private eleveService: EleveecoleService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.loadFrais();
-    this.loadRelations();
-
-    this.fraisForm = this.fb.group({
-      ecole: [null, Validators.required],
-      classe: [null, Validators.required],
-      eleve: [null, Validators.required],
-      anneeuv: [null, Validators.required],
-      montant: [0, Validators.required],
-      reduction: [0]
-    });
+    this.anneeService.getAll().subscribe(a => this.annees = a);
+    const ecoleId = this.authService.getEcoleId();
+this.classeService.getAllClasseParEcole(ecoleId!).subscribe(c => this.classes = c);
   }
 
-  loadFrais() {
-    this.fraisService.getAll().subscribe(data => this.fraisList = data);
+  loadEleves() {
+    if (!this.selectedClasse || !this.selectedAnnee) {
+      this.eleves = [];
+      return;
+    }
+    const ecoleId = this.authService.getEcoleId();
+    const body = [this.selectedAnnee.toString(), ecoleId!.toString(), this.selectedClasse.toString()];
+    this.eleveService.getByClasseAndAnnee(body).subscribe(e => this.eleves = e);
   }
 
-  loadRelations() {
-    this.ecoleService.getAll().subscribe(d => this.ecoles = d);
-    this.classeService.getAll().subscribe(d => this.classes = d);
-    this.eleveService.getAll().subscribe(d => this.eleves = d);
-    this.anneeService.getAll().subscribe(d => this.annees = d);
+  searchFrais() {
+    if (!this.selectedClasse || !this.selectedAnnee) return;
+    const ecoleId = this.authService.getEcoleId();
+    this.fraisService.search(ecoleId!, this.selectedClasse, this.selectedAnnee)
+      .subscribe(f => this.fraisList = f);
   }
 
-  onSubmit() {
-    if (this.editMode && this.currentId) {
-      this.fraisService.update(this.currentId, this.fraisForm.value).subscribe(() => {
-        this.loadFrais();
-        this.resetForm();
-      });
+  saveFrais(eleveId: number) {
+    const ecoleId = this.authService.getEcoleId();
+    const body: Fraiscolaire = {
+      id: this.editingFrais?.id || 0,
+      ecole: { id: ecoleId } as any,
+      classe: { id: this.selectedClasse } as any,
+      eleve: { id: eleveId } as any,
+      anneeuv: { id: this.selectedAnnee } as any,
+      montant: this.montant,
+      reduction: this.reduction,
+      
+    };
+
+    if (this.editingFrais) {
+      this.fraisService.update(this.editingFrais.id|| 0, body).subscribe(() => this.searchFrais());
+      this.editingFrais = undefined;
     } else {
-      this.fraisService.create(this.fraisForm.value).subscribe(() => {
-        this.loadFrais();
-        this.resetForm();
-      });
+      this.fraisService.create(body).subscribe(() => this.searchFrais());
     }
   }
 
-  edit(frais: Fraiscolaire) {
-    this.editMode = true;
-    this.currentId = frais.id;
-    this.fraisForm.patchValue(frais);
+  editFrais(frais: Fraiscolaire) {
+    this.editingFrais = frais;
+    this.selectedClasse = frais.classe.id|| 0;
+    this.selectedAnnee = frais.anneeuv.id;
+    this.montant = frais.montant;
+    this.reduction = frais.reduction;
+    this.loadEleves();
   }
 
-  delete(id: number) {
-    if(confirm('Supprimer ce frais scolaire ?')) {
-      this.fraisService.delete(id).subscribe(() => this.loadFrais());
+  deleteFrais(frais: Fraiscolaire) {
+    if (confirm('Confirmer la suppression ?')) {
+      this.fraisService.delete(frais.id|| 0).subscribe(() => this.searchFrais());
     }
   }
 
-  resetForm() {
-    this.fraisForm.reset();
-    this.editMode = false;
-    this.currentId = undefined;
+  totalMontant(): number {
+    return this.fraisList.reduce((sum, f) => sum + (f.montant || 0), 0);
+  }
+
+  totalReduction(): number {
+    return this.fraisList.reduce((sum, f) => sum + (f.reduction || 0), 0);
   }
 }

@@ -8,6 +8,8 @@ import { NoteService } from '../../../service/note.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../service/auth.service';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-notes-eleve',
@@ -66,75 +68,107 @@ export class NotesEleveComponent implements OnInit {
 }
 
 
-  chargerEleves() {
-if (this.anneeId == null || this.classeEcoleId == null || this.ecoleId == null) return;
+chargerEleves() {
+  if (this.anneeId == null || this.classeEcoleId == null || this.ecoleId == null) return;
 
-this.eleveService
-  .getByClasseAndAnnee([String(this.anneeId), String(this.ecoleId), String(this.classeEcoleId)])
-  .subscribe(data => this.eleves = data);
+  this.eleveService
+    .getByClasseAndAnnee([String(this.anneeId), String(this.ecoleId), String(this.classeEcoleId)])
+    .subscribe({
+      next: data => {
+        this.eleves = data;
 
+        if (this.eleves.length > 0) {
+          this.eleveEcoleId = this.eleves[0].id;
+        }
+
+        this.chargerMatieres();
+      },
+      error: err => {
+        console.error(err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Impossible de charger les élèves',
+          confirmButtonText: 'OK'
+        });
+      }
+    });
+}
+
+chargerMatieres() {
+  if (this.ecoleId == null || this.classeEcoleId == null) return;
+
+  this.enseignerService
+    .getMatiereEcoleClasse([this.ecoleId, this.classeEcoleId])
+    .subscribe({
+      next: data => {
+        this.matieres = data;
+
+        if (this.matieres.length > 0) {
+          this.matiereId = this.matieres[0].id;
+        }
+      },
+      error: err => {
+        console.error(err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Impossible de charger les matières',
+          confirmButtonText: 'OK'
+        });
+      }
+    });
 }
 
 
- chargerMatieres() {
-  if (this.ecoleId == null || this.classeEcoleId == null) return;
-
-this.enseignerService
-  .getMatiereEcoleClasse([this.ecoleId, this.classeEcoleId])
-  .subscribe(data => this.matieres = data);
- }
-
-  enregistrerNote() {
-    if (!this.eleveEcoleId || !this.matiereId || this.noteClasse === null || this.noteCompo === null
-        || !this.periodeId || !this.anneeId) {
-      this.message = 'Veuillez remplir tous les champs';
-      this.success = false;
-      return;
-    }
-
-    const payload = {
-      periodeId: this.periodeId,
-      anneeId: this.anneeId,
-      classeEcoleId: this.classeEcoleId,
-      eleveEcoleId: this.eleveEcoleId,
-      matiereId: this.matiereId,
-      noteClasse: this.noteClasse,
-      noteCompo: this.noteCompo
-    };
-
-this.noteService.saveNoteEleve(payload).subscribe({
-  next: (res: any) => {
-    console.log("SUCCESS:", res);
-
-    if (res.message) {
-      this.message = res.message;
-    } else {
-      this.message = 'Note enregistrée avec succès';
-    }
-
-    this.success = true;
-    this.noteClasse = null;
-    this.noteCompo = null;
-  },
-
-  error: (err) => {
-    console.log("ERROR:", err);
-
-    if (err.error?.error) {
-      this.message = err.error.error;
-    }
-    else if (err.error?.message) {
-      this.message = err.error.message;
-    }
-    else if (typeof err.error === 'string') {
-      this.message = err.error;
-    }
-    else {
-      this.message = 'Erreur serveur interne';
-    }
-
-    this.success = false;
+enregistrerNote() {
+  if (!this.eleveEcoleId || !this.matiereId || this.noteClasse === null || this.noteCompo === null
+      || !this.periodeId || !this.anneeId) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Champs manquants',
+      text: 'Veuillez remplir tous les champs',
+      confirmButtonText: 'OK'
+    });
+    return;
   }
-});
-  }
+
+  const payload = {
+    periodeId: this.periodeId,
+    anneeId: this.anneeId,
+    classeEcoleId: this.classeEcoleId,
+    eleveEcoleId: this.eleveEcoleId,
+    matiereId: this.matiereId,
+    noteClasse: this.noteClasse,
+    noteCompo: this.noteCompo
+  };
+
+  this.noteService.saveNoteEleve(payload).subscribe({
+    next: (res: any) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Succès',
+        text: res.message || 'Note enregistrée avec succès',
+        confirmButtonText: 'OK'
+      });
+      this.noteClasse = null;
+      this.noteCompo = null;
+    },
+    error: (err) => {
+      console.error(err);
+      let errorMsg = 'Erreur serveur interne';
+      if (err.error?.error) errorMsg = err.error.error;
+      else if (err.error?.message) errorMsg = err.error.message;
+      else if (typeof err.error === 'string') errorMsg = err.error;
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: errorMsg,
+        confirmButtonText: 'OK'
+      });
+    }
+  });
+}
+
 }

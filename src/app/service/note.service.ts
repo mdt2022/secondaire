@@ -99,4 +99,51 @@ export class NoteService {
   });
 }
 
+// BULLETIN ELEVE
+getBulletinEleve(
+  eleveId: number,
+  anneeId: number,
+  periodeId: number,
+  classeId: number,
+  ecoleId: number
+): Observable<any> {
+
+  const body = [
+    eleveId.toString(),
+    anneeId.toString(),
+    periodeId.toString(),
+    classeId.toString(),
+    ecoleId.toString()
+  ];
+
+  return this.http.post<any>(
+    `${this.apiUrl}/noteeleve`,
+    body,
+    { headers: this.getAuthHeaders() }
+  );
+}
+
+getBulletinClasse(
+  ecoleId: number,
+  classeId: number,
+  anneeId: number,
+  periodeId: number
+): Observable<any[]> {
+
+  const params = new HttpParams()
+    .set('ecoleId', ecoleId)
+    .set('classeId', classeId)
+    .set('anneeId', anneeId)
+    .set('periodeId', periodeId);
+
+  return this.http.get<any[]>(
+    `${this.apiUrl}/bulletin-classe`,
+    {
+      params,
+      headers: this.getAuthHeaders()
+    }
+  );
+}
+
+
 }

@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Ecole } from '../../model/ecole';
 import { Enseignant } from '../../model/enseignant';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-pointage',
@@ -37,32 +38,76 @@ export class PointageComponent implements OnInit {
   }
 
   loadEcoles(): void {
-    this.ecoleService.getAll().subscribe(data => {
-      this.ecoles = data;
+    this.ecoleService.getAll().subscribe({
+      next: (data) => {
+        this.ecoles = data;
+
+        const user = JSON.parse(localStorage.getItem('user')!);
+        const adminEcoleId = user.administrateur.ecole.idEcole;
+
+        const adminEcoleExists = this.ecoles.find(e => e.idEcole === adminEcoleId);
+        if (adminEcoleExists) {
+          this.selectedEcoleId = adminEcoleId;
+          this.onEcoleChange(); 
+        }
+      },
+      error: () => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Impossible de charger les écoles',
+          confirmButtonText: 'OK'
+        });
+      }
     });
   }
 
   onEcoleChange(): void {
     if (this.selectedEcoleId) {
-      this.enseignantService.getEnseignantEcole(this.selectedEcoleId).subscribe(data => {
-        this.enseignants = data;
+      this.enseignantService.getEnseignantEcole(this.selectedEcoleId).subscribe({
+        next: (data) => {
+          this.enseignants = data;
+
+          if (this.enseignants.length > 0) {
+            this.selectedEnseignantId = this.enseignants[0].id;
+          } else {
+            this.selectedEnseignantId = undefined;
+            Swal.fire({
+              icon: 'info',
+              title: 'Aucun enseignant',
+              text: 'Aucun enseignant n’est disponible pour cette école.',
+              confirmButtonText: 'OK'
+            });
+          }
+        },
+        error: () => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            text: 'Impossible de charger les enseignants',
+            confirmButtonText: 'OK'
+          });
+        }
       });
     } else {
       this.enseignants = [];
+      this.selectedEnseignantId = undefined;
     }
   }
 
   simuler(): void {
     if (!this.selectedEnseignantId) {
-      alert('Veuillez sélectionner un enseignant');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Sélection obligatoire',
+        text: 'Veuillez sélectionner un enseignant',
+        confirmButtonText: 'OK'
+      });
       return;
     }
 
-    if (!this.validateDates()) {
-      return;
-    }
+    if (!this.validateDates()) return;
 
-    // Naviguer vers la page Fiche Validée avec les paramètres de recherche
     this.router.navigate(['/pointage/fiche-validee'], {
       queryParams: {
         ecoleId: this.selectedEcoleId,
@@ -73,7 +118,6 @@ export class PointageComponent implements OnInit {
     });
   }
 
-  // Méthode pour naviguer vers la page de paiement (honoraires)
   goToPaiement(): void {
     this.router.navigate(['/pointage/honoraires'], {
       queryParams: {
@@ -89,14 +133,18 @@ export class PointageComponent implements OnInit {
     const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
 
     if (!dateRegex.test(this.dateDebut) || !dateRegex.test(this.dateFin)) {
-      alert('Veuillez entrer des dates valides au format JJ/MM/AAAA');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Dates invalides',
+        text: 'Veuillez entrer des dates valides au format JJ/MM/AAAA',
+        confirmButtonText: 'OK'
+      });
       return false;
     }
 
     return true;
   }
 
-  // Méthodes utilitaires pour les dates
   private formatDate(date: Date): string {
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');

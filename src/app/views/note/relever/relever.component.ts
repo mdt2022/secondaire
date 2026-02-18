@@ -87,8 +87,8 @@ imprimer() {
 
   // TITRE
 
-  doc.setFontSize(11);
-  
+  doc.setFontSize(9);
+
   doc.text(this.etabliss.toUpperCase(), pageWidth / 2, 15, { align: 'center' });
 
   doc.setFontSize(10);
@@ -124,7 +124,7 @@ imprimer() {
     theme: 'grid',
     styles: {
       fontSize: 9,
-      
+
       valign: 'middle'
     },
     headStyles: {
@@ -144,7 +144,7 @@ imprimer() {
         pageHeight - 10
       );
 
-     
+
       const pageNumber = doc.getCurrentPageInfo().pageNumber;
       const totalPages = doc.getNumberOfPages();
 

@@ -9,6 +9,8 @@ import { MatiereService } from '../../../service/matiere.service';
 import { PeriodeService } from '../../../service/periode.service';
 import { AuthService } from '../../../service/auth.service';
 import { EnseignerService } from '../../../service/enseigner.service';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-notes-classe',
@@ -150,7 +152,6 @@ export class NotesClasseComponent implements OnInit {
   this.ecoleId = ecoleId;
   this.classeEcoleId = classeId;
 
-  // Charger les élèves si toutes les valeurs sont sélectionnées
   if (anneeId && classeId && ecoleId) {
     this.chargerEleves();
     this.loadMatieres();
@@ -162,30 +163,49 @@ export class NotesClasseComponent implements OnInit {
 }
 
 
-  enregistrer() {
+enregistrer() {
 
-    if (this.form.invalid) {
-      alert('Veuillez remplir correctement toutes les notes.');
-      return;
-    }
-
-    this.noteService.saveNotesClasse(this.form.value).subscribe({
-      next: (res: any) => {
-
-        this.doublons = res.doublons || [];
-        let message = `${res.message || 'Opération réussie'}\nNotes enregistrées : ${res.notesEnregistrees || 0}`;
-
-        if (this.doublons.length) {
-          message += `\nDoublons ignorés pour : ${this.doublons.join(', ')}`;
-        }
-
-        alert(message);
-        this.chargerEleves();
-      },
-      error: err => {
-        console.error(err);
-        alert(err.error?.error || 'Erreur lors de l’enregistrement');
-      }
+  if (this.form.invalid) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Formulaire incomplet',
+      text: 'Veuillez remplir correctement toutes les notes.',
+      confirmButtonText: 'OK'
     });
+    return;
   }
+
+  this.noteService.saveNotesClasse(this.form.value).subscribe({
+    next: (res: any) => {
+
+      this.doublons = res.doublons || [];
+
+      let message = `Notes enregistrées : ${res.notesEnregistrees || 0}`;
+
+      if (this.doublons.length) {
+        message += `\nDoublons ignorés pour : ${this.doublons.join(', ')}`;
+      }
+
+      Swal.fire({
+        icon: 'success',
+        title: res.message || 'Opération réussie',
+        html: message.replace(/\n/g, '<br/>'), // retour à la ligne
+        confirmButtonText: 'OK'
+      });
+
+      // Recharger les élèves pour mise à jour
+      this.chargerEleves();
+    },
+    error: err => {
+      console.error(err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: err.error?.error || 'Erreur lors de l’enregistrement',
+        confirmButtonText: 'OK'
+      });
+    }
+  });
+}
+
 }

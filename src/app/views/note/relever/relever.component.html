@@ -4,7 +4,6 @@
 
 <div class="row mb-3 g-3">
 
-    <!-- Classe -->
     <div class="col-md-2">
         <label class="form-label">Classe</label>
         <select class="form-select" [(ngModel)]="classeecoleId" name="classeecoleId">
@@ -13,7 +12,6 @@
         </select>
     </div>
 
-    <!-- Période -->
     <div class="col-md-2">
         <label class="form-label">Période</label>
         <select class="form-select" [(ngModel)]="periodeId" name="periodeId">
@@ -22,7 +20,6 @@
         </select>
     </div>
 
-    <!-- Année -->
     <div class="col-md-2">
         <label class="form-label">Année</label>
         <select class="form-select" [(ngModel)]="anneeId" name="anneeId">
@@ -48,7 +45,6 @@
     <p>Chargement des élèves...</p>
 </div>
 
-<!-- Tableau des élèves -->
 <table class="table table-bordered table-striped" *ngIf="eleves.length > 0">
     <thead class="table-primary">
         <tr>
