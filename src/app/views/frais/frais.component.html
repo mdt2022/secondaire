@@ -1,57 +1,174 @@
-<h1>Formulaire de Frais Scolaire</h1>
+<!-- RECHERCHE -->
 
-<div class="form-row">
-    <select [(ngModel)]="selectedAnnee" (change)="loadEleves()" required>
-    <option value="">-- Année --</option>
-    <option *ngFor="let a of annees" [value]="a.id">{{a.nom}}</option>
-  </select>
+<div *ngIf="currentView === 'search'" class="view-search">
 
-    <select [(ngModel)]="selectedClasse" (change)="loadEleves()" required>
-    <option value="">-- Classe --</option>
-    <option *ngFor="let c of classes" [value]="c.id">{{c.nom}}</option>
-  </select>
+    <div class="card">
+        <h1>Recherche des frais scolaires</h1>
 
-    <button (click)="searchFrais()">Rechercher</button>
+        <div class="form-row modern-form">
+
+            <div class="form-group">
+                <label>Année scolaire</label>
+                <select [(ngModel)]="selectedAnnee">
+          <option [ngValue]="null">Sélectionner une année</option>
+          <option *ngFor="let a of annees" [ngValue]="a.id">
+            {{ a.nom }}
+          </option>
+        </select>
+            </div>
+
+            <div class="form-group">
+                <label>Classe</label>
+                <select [(ngModel)]="selectedClasse">
+          <option [ngValue]="null">Sélectionner une classe</option>
+          <option *ngFor="let c of classes" [ngValue]="c.id">
+            {{ c.nom }}
+          </option>
+        </select>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn-primary" (click)="searchFrais()">
+          Rechercher
+        </button>
+
+                <button class="btn-success" (click)="goToCreate()">
+          Ajouter un frais scolaire pour un élève
+        </button>
+            </div>
+
+        </div>
+    </div>
 </div>
 
-<table class="table table-bordered" *ngIf="fraisList.length">
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>Élève</th>
-            <th>Date</th>
-            <th>Montant</th>
-            <th>Réduction</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let f of fraisList; let i = index">
-            <td>{{i+1}}</td>
-            <td>{{f.eleve.matricule}} {{f.eleve.prenom}} {{f.eleve.nom}}</td>
-            <td></td>
-            <td>{{f.montant | number}} CFA</td>
-            <td>{{f.reduction | number}} CFA</td>
-            <td>
-                <button (click)="editFrais(f)">Edit</button>
-                <button (click)="deleteFrais(f)">Supprimer</button>
-            </td>
-        </tr>
-    </tbody>
-</table>
+<!--  CREATION / MODIFICATION -->
+<div *ngIf="currentView === 'create'" class="view-create">
 
-<div *ngIf="fraisList.length">
-    <p>Total Montant: {{totalMontant() | number}} CFA</p>
-    <p>Total Réduction: {{totalReduction() | number}} CFA</p>
+    <div class="card">
+        <h2>
+            {{ editingFrais ? 'Modifier un frais scolaire' : 'Enregistrer un frais scolaire' }}
+        </h2>
+
+        <div class="form-row">
+
+            <div class="form-group">
+                <label>Année</label>
+                <select [(ngModel)]="selectedAnnee" (ngModelChange)="loadEleves()">
+          <option [ngValue]="null">-- Année --</option>
+          <option *ngFor="let a of annees" [ngValue]="a.id">
+            {{ a.nom }}
+          </option>
+        </select>
+            </div>
+
+            <div class="form-group">
+                <label>Classe</label>
+                <select [(ngModel)]="selectedClasse" (ngModelChange)="loadEleves()">
+          <option [ngValue]="null">-- Classe --</option>
+          <option *ngFor="let c of classes" [ngValue]="c.id">
+            {{ c.nom }}
+          </option>
+        </select>
+            </div>
+
+        </div>
+
+        <div *ngIf="eleves.length > 0; else noEleves" class="form-row">
+
+            <div class="form-group">
+                <label>Élève</label>
+                <select [(ngModel)]="selectedEleve">
+          <option [ngValue]="null">-- Sélectionner un élève --</option>
+          <option *ngFor="let e of eleves" [ngValue]="e.eleve.id">
+            {{ e.eleve.prenom }} {{ e.eleve.nom }}
+          </option>
+        </select>
+            </div>
+
+            <div class="form-group">
+                <label>Montant</label>
+                <input type="number" [(ngModel)]="montant" placeholder="Montant">
+            </div>
+
+            <div class="form-group">
+                <label>Réduction</label>
+                <input type="number" [(ngModel)]="reduction" placeholder="Réduction">
+            </div>
+
+            <div class="form-group buttons">
+                <button class="btn-success" (click)="saveFrais()">
+          {{ editingFrais ? 'Modifier' : 'Enregistrer' }}
+        </button>
+
+                <button class="btn-secondary" (click)="goToSearch()">
+          Annuler
+        </button>
+            </div>
+
+        </div>
+
+        <ng-template #noEleves>
+            <p class="info-message">
+                Sélectionner l'année et la classe pour afficher la liste des élèves.
+            </p>
+        </ng-template>
+
+    </div>
 </div>
 
-<!-- Formulaire création / édition -->
-<div *ngIf="eleves.length">
-    <h3>{{ editingFrais ? 'Modifier Frais' : 'Ajouter Frais' }}</h3>
-    <select #eleveId required>
-    <option *ngFor="let e of eleves" [value]="e.eleve.id">{{e.eleve.prenom}} {{e.eleve.nom}}</option>
-  </select>
-    <input type="number" [(ngModel)]="montant" placeholder="Montant" required>
-    <input type="number" [(ngModel)]="reduction" placeholder="Réduction" value="0">
-    <button (click)="saveFrais(+eleveId.value)">Enregistrer</button>
+<!-- LISTE -->
+<div *ngIf="currentView === 'result'" class="view-result">
+
+    <div class="top-bar">
+        <button class="btn-secondary" (click)="goToSearch()">Retour</button>
+        <button class="btn-success" (click)="goToCreate()">Nouveau frais</button>
+    </div>
+
+    <div class="card">
+        <h2>Résultat des frais scolaires</h2>
+
+        <p class="subtitle">
+            Classe : <strong>{{ getNomClasse() }}</strong> | Année : <strong>{{ getNomAnnee() }}</strong>
+        </p>
+
+        <div *ngIf="fraisList.length > 0">
+
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Élève</th>
+                        <th>Montant</th>
+                        <th>Réduction</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr *ngFor="let f of fraisList; let i = index">
+                        <td>{{ i + 1 }}</td>
+                        <td>{{ f.eleve.prenom }} {{ f.eleve.nom }}</td>
+                        <td>{{ f.montant | number }} CFA</td>
+                        <td>{{ f.reduction | number }} CFA</td>
+                        <td class="actions">
+                            <button class="btn-edit" (click)="editFrais(f)">Modifier</button>
+                            <button class="btn-delete" (click)="deleteFrais(f)">Supprimer</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="totals">
+                <div>
+                    Total Montant :
+                    <strong>{{ totalMontant() | number }} CFA</strong>
+                </div>
+                <div>
+                    Total Réduction :
+                    <strong>{{ totalReduction() | number }} CFA</strong>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
