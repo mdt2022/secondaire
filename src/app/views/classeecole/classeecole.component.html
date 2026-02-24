@@ -1,45 +1,73 @@
 <div class="container mt-4">
-  <h3>Association Classe - École</h3>
+    <h3>Association Classe - École</h3>
 
-  <form [formGroup]="form" (ngSubmit)="save()" class="row g-3 mt-3">
-    <div class="col-md-5">
-      <select formControlName="classe" class="form-select" required>
+    <!-- Formulaire -->
+    <form [formGroup]="form" (ngSubmit)="save()" class="row g-3 mt-3">
+        <div class="col-md-5">
+            <select formControlName="classe" class="form-select" required>
         <option value="">-- Sélectionner une classe --</option>
         <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
       </select>
-    </div>
+        </div>
 
-    <div class="col-md-5">
-      <select formControlName="ecole" class="form-select" required>
+        <div class="col-md-5">
+            <select formControlName="ecole" class="form-select" required>
         <option value="">-- Sélectionner une école --</option>
         <option *ngFor="let e of ecoles" [value]="e.idEcole">{{ e.nomEcole }}</option>
       </select>
+        </div>
+
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">{{ editMode ? 'Modifier' : 'Ajouter' }}</button>
+        </div>
+    </form>
+
+    <!-- Recherche -->
+    <div class="mt-4 mb-2">
+        <input type="text" class="form-control" placeholder="Rechercher..." [(ngModel)]="filterText">
     </div>
 
-    <div class="col-md-2">
-      <button type="submit" class="btn btn-primary w-100">{{ editMode ? 'Modifier' : 'Ajouter' }}</button>
-    </div>
-  </form>
+    <!-- Tableau -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th (click)="sortBy('classe')" style="cursor:pointer">
+                    Classe
+                    <span *ngIf="sortColumn==='classe'">{{ sortDirection==='asc' ? '↑' : '↓' }}</span>
+                </th>
+                <th (click)="sortBy('ecole')" style="cursor:pointer">
+                    École
+                    <span *ngIf="sortColumn==='ecole'">{{ sortDirection==='asc' ? '↑' : '↓' }}</span>
+                </th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let ce of filteredClasseEcoles().slice((page-1)*pageSize, page*pageSize); let i = index">
+                <td>{{ (page-1)*pageSize + i + 1 }}</td>
+                <td>{{ ce.classe?.nom }}</td>
+                <td>{{ ce.ecole?.nomEcole }}</td>
+                <td>
+                    <button class="btn btn-sm btn-warning me-2" (click)="edit(ce)">Modifier</button>
+                    <button class="btn btn-sm btn-danger" (click)="confirmDelete(ce.id)">Supprimer</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
-  <table class="table table-striped mt-4">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Classe</th>
-        <th>École</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let ce of classeEcoles; index as i">
-        <td>{{ i + 1 }}</td>
-        <td>{{ ce.classe.nom }}</td>
-        <td>{{ ce.ecole.nomEcole }}</td>
-        <td>
-          <button class="btn btn-sm btn-warning me-2" (click)="edit(ce)">Modifier</button>
-          <button class="btn btn-sm btn-danger" (click)="delete(ce.id)">Supprimer</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <!-- Pagination -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" [class.disabled]="page===1">
+                <a class="page-link" (click)="prevPage()">Précédent</a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">Page {{page}} / {{totalPages()}}</span>
+            </li>
+            <li class="page-item" [class.disabled]="page===totalPages()">
+                <a class="page-link" (click)="nextPage()">Suivant</a>
+            </li>
+        </ul>
+    </nav>
 </div>

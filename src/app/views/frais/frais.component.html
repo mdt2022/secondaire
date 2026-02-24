@@ -8,7 +8,6 @@
         <div class="form-row modern-form">
 
             <div class="form-group">
-                <label>Année scolaire</label>
                 <select [(ngModel)]="selectedAnnee">
           <option [ngValue]="null">Sélectionner une année</option>
           <option *ngFor="let a of annees" [ngValue]="a.id">
@@ -18,7 +17,6 @@
             </div>
 
             <div class="form-group">
-                <label>Classe</label>
                 <select [(ngModel)]="selectedClasse">
           <option [ngValue]="null">Sélectionner une classe</option>
           <option *ngFor="let c of classes" [ngValue]="c.id">

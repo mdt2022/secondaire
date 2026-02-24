@@ -1,42 +1,42 @@
 <c-row>
     <c-col xs="12">
         <c-card class="mb-4">
-        <c-card-header>
-            <a class="btn btn-primary" [routerLink]="['../add-edit']">Nouveau administrateur</a>
-        </c-card-header>
-        <c-card-body>            
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Prénom</th>
-                        <th scope="col">Nom</th>
-                        <th scope="col">Role</th>
-                        <th scope="col">Ecole</th>
-                        <th scope="col" colspan="2">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let admin of administrateurs; let i = index">
-                        <th scope="row">{{ i+1 }}</th>
-                        <td>{{ admin.prenom }}</td>
-                        <td>{{ admin.nom }}</td>
-                        <td>{{ admin.role.nom }}</td>
-                        <td>{{ admin.ecole.nomEcole }}</td>
-                        <td>
-                            <a [routerLink]="['../add-edit', admin.id]" class="btn btn-warning">
+            <c-card-header>
+                <a class="btn btn-primary" [routerLink]="['../add-edit']">Nouveau administrateur</a>
+            </c-card-header>
+            <c-card-body>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Prénom</th>
+                            <th scope="col">Nom</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Ecole</th>
+                            <th scope="col" colspan="2">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let admin of administrateurs; let i = index">
+                            <th scope="row">{{ i+1 }}</th>
+                            <td>{{ admin.prenom }}</td>
+                            <td>{{ admin.nom }}</td>
+                            <td>{{ admin.role.nom }}</td>
+                            <td>{{ admin.ecole.nomEcole }}</td>
+                            <td>
+                                <a [routerLink]="['../add-edit', admin.id]" class="btn btn-warning">
                                 Modifier
                             </a>
-                        </td>
-                        <td>
-                            <a (click)="Supprimer()" class="btn btn-danger">
-                                Supprimer
+                            </td>
+                            <td>
+                                <a (click)="Supprimer(admin.id)" class="btn btn-danger">
+    Supprimer
                             </a>
-                        </td>
-                    </tr>                
-                </tbody>
-            </table>
-        </c-card-body>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </c-card-body>
         </c-card>
     </c-col>
 </c-row>

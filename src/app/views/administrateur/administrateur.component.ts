@@ -4,40 +4,75 @@ import { Administrateur } from '../../model/administrateur';
 import { AdministrateurService } from '../../service/admin.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-administrateur',
   standalone: true,
   imports: [
     RowComponent,
     ColComponent,
-    CardComponent, 
-    CardHeaderComponent, 
+    CardComponent,
+    CardHeaderComponent,
     CardBodyComponent,
     CommonModule,
     RouterModule
   ],
   templateUrl: './administrateur.component.html',
-  styleUrl: './administrateur.component.scss'
+  styleUrls: ['./administrateur.component.scss']
 })
-export class AdministrateurComponent implements OnInit{
-  administrateurs: Administrateur[] = []
-  //initiation
-  ngOnInit(): void{
-    this.getAll()
-  }
-  //constructeur
-  constructor(private adminService: AdministrateurService){}
-  //retour des administrateur
-  getAll(){
-    this.adminService.getAll().subscribe({
-      next: (data) =>{
-        this.administrateurs = data
-      }
-    })
-  }
-  //supprission
-  Supprimer(){
-    alert("Supprimer !!")
+export class AdministrateurComponent implements OnInit {
+  administrateurs: Administrateur[] = [];
+
+  constructor(private adminService: AdministrateurService) {}
+
+  ngOnInit(): void {
+    this.getAll();
   }
 
+  getAll(): void {
+    this.adminService.getAll().subscribe({
+      next: (data) => {
+        this.administrateurs = data;
+      },
+      error: () => Swal.fire('Erreur', 'Impossible de charger les administrateurs', 'error')
+    });
+  }
+
+Supprimer(id?: number) {
+  if (!id) return;
+
+  Swal.fire({
+    title: 'Suppression',
+    text: 'Voulez-vous vraiment supprimer cet administrateur ?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'Oui, supprimer',
+    cancelButtonText: 'Annuler'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.adminService.delete(id).subscribe({
+        next: () => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Supprimé',
+            text: 'L’administrateur a été supprimé avec succès',
+            timer: 1500,
+            showConfirmButton: false
+          });
+          this.getAll(); 
+        },
+        error: () => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            text: 'Impossible de supprimer cet administrateur'
+          });
+        }
+      });
+    }
+  });
+}
 }

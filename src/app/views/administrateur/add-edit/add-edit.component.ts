@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Administrateur } from '../../../model/administrateur';
 import { Role } from '../../../model/role';
+import { Ecole } from '../../../model/ecole';
 import { AdministrateurService } from '../../../service/admin.service';
 import { RoleService } from '../../../service/role.service';
-import { Ecole } from '../../../model/ecole';
-import { ActivatedRoute, Router } from '@angular/router';
 import { EcoleService } from '../../../service/ecole.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add-edit',
@@ -17,17 +18,16 @@ import { EcoleService } from '../../../service/ecole.service';
     ReactiveFormsModule,
     RowComponent,
     ColComponent,
-    CardComponent, 
-    CardHeaderComponent, 
+    CardComponent,
+    CardHeaderComponent,
     CardBodyComponent,
     CommonModule,
   ],
   templateUrl: './add-edit.component.html',
-  styleUrl: './add-edit.component.scss'
+  styleUrls: ['./add-edit.component.scss']
 })
-export class AddEditComponent implements OnInit{
+export class AddEditComponent implements OnInit {
   adminForm!: FormGroup;
-  administrateurs: Administrateur[] = [];
   roles: Role[] = [];
   ecoles: Ecole[] = [];
   editMode = false;
@@ -44,10 +44,9 @@ export class AddEditComponent implements OnInit{
 
   ngOnInit(): void {
     this.initForm();
-    // Charger les listes
     this.loadRoles();
     this.loadEcoles();
-    // Vérifier si un id est présent dans l’URL
+
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -57,7 +56,7 @@ export class AddEditComponent implements OnInit{
       }
     });
   }
-// Initialisation du formulaire
+
   private initForm(): void {
     this.adminForm = this.fb.group({
       nom: ['', Validators.required],
@@ -71,7 +70,6 @@ export class AddEditComponent implements OnInit{
     });
   }
 
-  // Charger les informations de l'administrateur
   private loadAdmin(id: number): void {
     this.adminService.getById(id).subscribe({
       next: (admin: Administrateur) => {
@@ -83,30 +81,27 @@ export class AddEditComponent implements OnInit{
           role: admin.role?.id,
           ecole: admin.ecole?.idEcole,
           username: admin.username,
-          password: admin.password, // ne jamais afficher le mot de passe
+          password: '', // ne jamais afficher le mot de passe
         });
       },
-      error: err => console.error('Erreur lors du chargement', err),
+      error: () => Swal.fire('Erreur', 'Impossible de charger l’administrateur', 'error')
     });
   }
 
-  // Charger les rôles
   private loadRoles(): void {
     this.roleService.getAll().subscribe({
-      next: data => (this.roles = data),
-      error: err => console.error('Erreur chargement rôles', err),
+      next: data => this.roles = data,
+      error: () => Swal.fire('Erreur', 'Impossible de charger les rôles', 'error')
     });
   }
 
-  // Charger les écoles
   private loadEcoles(): void {
     this.ecoleService.getAll().subscribe({
-      next: data => (this.ecoles = data),
-      error: err => console.error('Erreur chargement écoles', err),
+      next: data => this.ecoles = data,
+      error: () => Swal.fire('Erreur', 'Impossible de charger les écoles', 'error')
     });
   }
 
-  // Enregistrement
   onSubmit(): void {
     if (this.adminForm.invalid) return;
 
@@ -120,24 +115,32 @@ export class AddEditComponent implements OnInit{
     if (this.editMode && this.currentId) {
       this.adminService.update(this.currentId, payload).subscribe({
         next: () => {
-          alert('Administrateur modifié avec succès');
+          Swal.fire({
+            icon: 'success',
+            title: 'Modifié',
+            text: 'Administrateur mis à jour avec succès',
+            timer: 1500,
+            showConfirmButton: false
+          });
           this.router.navigate(['/administrateurs']);
         },
+        error: () => Swal.fire('Erreur', 'Impossible de modifier cet administrateur', 'error')
       });
     } else {
       this.adminService.create(payload).subscribe({
         next: () => {
-          alert('Administrateur ajouté avec succès');
+          Swal.fire({
+            icon: 'success',
+            title: 'Créé',
+            text: 'Administrateur ajouté avec succès',
+            timer: 1500,
+            showConfirmButton: false
+          });
           this.router.navigate(['/administrateurs']);
         },
+        error: () => Swal.fire('Erreur', 'Impossible de créer cet administrateur', 'error')
       });
     }
-  }
-
-  edit(admin: Administrateur): void {
-    this.editMode = true;
-    this.currentId = admin.id;
-    this.adminForm.patchValue(admin);
   }
 
   resetForm(): void {
