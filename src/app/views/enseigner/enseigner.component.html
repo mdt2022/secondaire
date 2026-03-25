@@ -50,9 +50,9 @@
         <tbody>
             <tr *ngFor="let e of pagedData; let i = index">
                 <td>{{ i + 1 + page * size }}</td>
-                <td>{{ e.classe?.nom }}</td>
-                <td>{{ e.enseignant?.prenom }} {{ e.enseignant?.nom }}</td>
-                <td>{{ e.matiere?.libelle }}</td>
+                <td>{{ e.classe.nom }}</td>
+                <td>{{ e.enseignant.prenom }} {{ e.enseignant.nom }}</td>
+                <td>{{ e.matiere.libelle }}</td>
                 <td>
                     <button class="btn btn-warning btn-sm me-1" (click)="edit(e)">modifier</button>
                     <button class="btn btn-danger btn-sm" (click)="delete(e.id)">supprimer</button>

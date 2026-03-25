@@ -46,8 +46,8 @@
         <tbody>
             <tr *ngFor="let ce of filteredClasseEcoles().slice((page-1)*pageSize, page*pageSize); let i = index">
                 <td>{{ (page-1)*pageSize + i + 1 }}</td>
-                <td>{{ ce.classe?.nom }}</td>
-                <td>{{ ce.ecole?.nomEcole }}</td>
+                <td>{{ ce.classe.nom }}</td>
+                <td>{{ ce.ecole.nomEcole }}</td>
                 <td>
                     <button class="btn btn-sm btn-warning me-2" (click)="edit(ce)">Modifier</button>
                     <button class="btn btn-sm btn-danger" (click)="confirmDelete(ce.id)">Supprimer</button>

@@ -15,7 +15,7 @@ export class AuthService {
 
   login(username: string, password: string) {
     return this.http.post<{ token: string, user: User }>(
-      `${this.apiUrl}/api/auth/login`, 
+      `${this.apiUrl}/api/auth/loginsecond`, 
       { username, password }
     );
   }
