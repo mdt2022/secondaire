@@ -64,17 +64,17 @@
         <tbody>
             <tr *ngFor="let n of bulletin.notes">
                 <td class="text-start">{{n.matiere.libelle}}</td>
-                <td>{{n.noteClasse}}</td>
-                <td>{{n.noteCompo}}</td>
-                <td>{{n.mg}}</td>
+                <td>{{ n.noteClasse | number:'1.2-2' }}</td>
+                <td>{{ n.noteCompo | number:'1.2-2' }}</td>
+                <td>{{ n.mg | number:'1.2-2' }}</td>
                 <td>{{n.matiere.coefficient}}</td>
-                <td>{{n.mgc}}</td>
+                <td>{{ n.mgc | number:'1.2-2' }}</td>
                 <td>{{n.mention}}</td>
             </tr>
         </tbody>
     </table>
 
-    <p><strong>Total:</strong> {{bulletin.total}}</p>
-    <p><strong>Moyenne:</strong> {{bulletin.moyg}}</p>
+    <p><strong>Total:</strong> {{ bulletin.total | number:'1.2-2' }}</p>
+    <p><strong>Moyenne:</strong> {{ bulletin.moyg | number:'1.2-2' }}</p>
     <p><strong>Observation:</strong> {{bulletin.observation}}</p>
 </div>

@@ -73,11 +73,15 @@
             <tbody>
                 <tr *ngFor="let n of eleve.notes">
                     <td>{{ n.matiere?.libelle }}</td>
-                    <td>{{ n.noteClasse }}</td>
-                    <td>{{ n.noteCompo }}</td>
-                    <td>{{ n.mg }}</td>
+
+                    <td>{{ n.noteClasse | number:'1.2-2' }}</td>
+                    <td>{{ n.noteCompo | number:'1.2-2' }}</td>
+                    <td>{{ n.mg | number:'1.2-2' }}</td>
+
                     <td>{{ n.matiere?.coefficient }}</td>
-                    <td>{{ n.mgc }}</td>
+
+                    <td>{{ n.mgc | number:'1.2-2' }}</td>
+
                     <td>{{ n.mention }}</td>
                 </tr>
                 <tr class="total-row">

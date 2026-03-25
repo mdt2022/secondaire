@@ -188,15 +188,14 @@ imprimerPDF(): void {
       y += 10;
 
       const rows = notes.map((n: any) => [
-        n.matiere?.libelle ?? '',
-        n.noteClasse ?? '',
-        n.noteCompo ?? '',
-        n.mg ?? '',
-        n.matiere?.coefficient ?? '',
-        n.mgc ?? '',
-        n.mention ?? ''
-      ]);
-
+  n.matiere?.libelle ?? '',
+  Number(n.noteClasse ?? 0).toFixed(2),
+  Number(n.noteCompo ?? 0).toFixed(2),
+  Number(n.mg ?? 0).toFixed(2),
+  n.matiere?.coefficient ?? '',
+  Number(n.mgc ?? 0).toFixed(2),
+  n.mention ?? ''
+]);
       autoTable(doc, {
         startY: y,
         head: [['MATIERES','MOY CLASSE','MOY COMPO','MOY G','COEFF.','MOY COEFF','Mention']],
@@ -240,12 +239,12 @@ imprimerPDF(): void {
           fillColor: [230,230,230]
         },
         body: [
-          ['TOTAL', eleveData.total ?? ''],
-          ['Moyenne', Number(eleveData.moyg ?? 0).toFixed(2)],
-          ['Observation', eleveData.observation ?? ''],
-          ['Moy. du 1er', moyennePremier],
-          ['Rang', `${eleveData.rang} / ${this.moyennes.length}`]
-        ]
+  ['TOTAL', Number(eleveData.total ?? 0).toFixed(2)],
+  ['Moyenne', Number(eleveData.moyg ?? 0).toFixed(2)],
+  ['Observation', eleveData.observation ?? ''],
+  ['Moy. du 1er', Number(this.moyennes.length ? this.moyennes[0].moyg : 0).toFixed(2)],
+  ['Rang', `${eleveData.rang} / ${this.moyennes.length}`]
+]
       });
 
       const signY = finalY + 30;
