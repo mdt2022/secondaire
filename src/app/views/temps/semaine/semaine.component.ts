@@ -28,6 +28,12 @@ export class SemaineComponent implements OnInit {
   loading = false;
   idEcole!: number;
 
+  // ✅ Pagination
+  page = 1;
+  pageSize = 5;
+  totalPages = 0;
+  paginatedData: Emploidutemps[] = [];
+
   constructor(
     private fb: FormBuilder,
     private enseignantService: EnseignantService,
@@ -50,10 +56,9 @@ export class SemaineComponent implements OnInit {
       user?.administrateur?.ecole?.idEcole;
 
     if (!this.idEcole) {
-      console.error('ID école introuvable', user);
+      console.error('ID école introuvable');
     }
   }
-
 
   initForm(): void {
     this.emploiForm = this.fb.group({
@@ -89,11 +94,16 @@ export class SemaineComponent implements OnInit {
 
     this.emploiService.getAll().subscribe({
       next: data => {
+
         this.emploisTable = data.filter(e =>
           e.professeur?.id === professeur &&
           e.anneeuv?.id === anneeuv &&
           e.ecole?.idEcole === this.idEcole
         );
+
+        this.page = 1;
+        this.updatePagination();
+
         this.loading = false;
       },
       error: err => {
@@ -103,12 +113,34 @@ export class SemaineComponent implements OnInit {
     });
   }
 
-  calculHeures(debut: string, fin: string): number {
+  // ✅ Calcul heures sécurisé
+  calculHeures(debut?: string, fin?: string): number {
     if (!debut || !fin) return 0;
 
     const d1 = new Date(`1970-01-01T${debut}`);
     const d2 = new Date(`1970-01-01T${fin}`);
 
-    return (d2.getTime() - d1.getTime()) / (1000 * 60 * 60);
+    return Math.max((d2.getTime() - d1.getTime()) / 3600000, 0);
+  }
+
+  // ✅ Pagination logique
+  updatePagination(): void {
+    this.totalPages = Math.ceil(this.emploisTable.length / this.pageSize);
+
+    const start = (this.page - 1) * this.pageSize;
+    const end = start + this.pageSize;
+
+    this.paginatedData = this.emploisTable.slice(start, end);
+  }
+
+  changePage(p: number): void {
+    if (p < 1 || p > this.totalPages) return;
+
+    this.page = p;
+    this.updatePagination();
+  }
+
+  getPages(): number[] {
+    return Array(this.totalPages).fill(0).map((x, i) => i + 1);
   }
 }

@@ -23,13 +23,13 @@ import {
   ThemeDirective
 } from '@coreui/angular';
 import { NgStyle, NgTemplateOutlet } from '@angular/common';
-import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { IconDirective } from '@coreui/icons-angular';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { delay, filter, map, tap } from 'rxjs/operators';
 import { AuthService } from '../../../service/auth.service';
 import { User } from '../../../model/user';
-
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-default-header',
   templateUrl: './default-header.component.html',
@@ -58,7 +58,7 @@ export class DefaultHeaderComponent extends HeaderComponent implements OnInit{
     //alert(this.user.administrateur.nom)
   }
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private router: Router) {
     super();
     this.#colorModeService.localStorageItemName.set('coreui-free-angular-admin-template-theme-default');
     this.#colorModeService.eventName.set('ColorSchemeChange');
@@ -152,5 +152,21 @@ export class DefaultHeaderComponent extends HeaderComponent implements OnInit{
     { id: 3, title: 'Add new layouts', value: 75, color: 'info' },
     { id: 4, title: 'Angular Version', value: 100, color: 'success' }
   ];
+  deconnexion(): void {
+    Swal.fire({
+      title: 'Déconnexion',
+      text: 'Voulez-vous vraiment vous déconnecter ?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Oui',
+      cancelButtonText: 'Annuler'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.authService.logout();
+        this.router.navigate(['/login']); // vers la page de connexion
+        Swal.fire('Déconnecté !', '', 'success');
+      }
+    });  
+  }
 
 }

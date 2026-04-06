@@ -30,5 +30,7 @@ export class AdministrateurService{
     getById(id: number): Observable<Administrateur>{
         return this.http.get<Administrateur>(this.apiUrl+"/administrateurs/"+id)
     }
-
+delete(id: number): Observable<any> {
+  return this.http.delete(`${this.apiUrl}/administrateurs/${id}`);
+}
 }

@@ -1,7 +1,5 @@
 <div class="card mb-4">
-    <div class="card-header">
-        <strong>Gestion des emplois du temps journalier</strong>
-    </div>
+    <div class="card-header"><strong>Gestion des emplois du temps journalier</strong></div>
 
     <div class="card-body">
         <form [formGroup]="emploiForm" (ngSubmit)="onSubmit()">
@@ -10,59 +8,59 @@
                 <div class="col-md-3">
                     <select class="form-select" formControlName="jour">
                         <option value="">-- Sélectionner le jour --</option>
-                        <option *ngFor="let j of jours" [value]="j">
-                            {{ j }}
-                        </option>
+                        <option *ngFor="let j of jours" [value]="j">{{ j }}</option>
                     </select>
                 </div>
 
                 <div class="col-md-3">
                     <select class="form-select" formControlName="anneeuv">
                         <option value="">-- Sélectionner l’année --</option>
-                        <option *ngFor="let a of annees" [value]="a.id">
-                            {{ a.nom }}
-                        </option>
+                        <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
                     </select>
                 </div>
 
                 <div class="col-md-3">
-                    <button class="btn btn-primary" type="submit">
-                        Afficher
-                    </button>
+                    <button class="btn btn-primary" type="submit">Afficher</button>
+                </div>
+
+                <div class="col-md-3 text-end">
+                    <button class="btn btn-success" type="button" (click)="printEmploi()">🖨️ Imprimer</button>
                 </div>
 
             </div>
         </form>
-
     </div>
 </div>
 
-<div *ngFor="let bloc of emploisParClasse" class="mb-4">
+<!-- EMPLOIS -->
+<div id="emploiPrint">
+    <div *ngFor="let bloc of emploisParClasse" class="mb-4">
+        <h5 class="mt-3 fw-bold">{{ bloc.classe }}</h5>
 
-    <h5 class="mt-3 fw-bold">
-        {{ bloc.classe }}
-    </h5>
+        <table class="table table-bordered table-sm">
+            <thead class="table-light">
+                <tr>
+                    <th>Professeur</th>
+                    <th>Horaires</th>
+                    <th>Matière</th>
+                    <th>Coefficient</th>
+                    <th>Horaire h</th>
+                    <th>Nombre d’heures</th>
+                    <th>Emargement</th>
+                </tr>
+            </thead>
 
-    <table class="table table-bordered table-sm">
-        <thead class="table-light">
-            <tr>
-                <th>Professeurs</th>
-                <th>Horaires</th>
-                <th>Matières</th>
-                <th>NBRE Heure</th>
-                <th>Emargement</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            <tr *ngFor="let emploi of bloc.emplois">
-                <td>{{ emploi.enseignant?.nom }}</td>
-                <td>{{ emploi.heuredebut }} -- {{ emploi.heurefin }}</td>
-                <td>{{ emploi.matiere?.libelle }}</td>
-                <td>{{ emploi.nbreheure }}</td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>
-
+            <tbody>
+                <tr *ngFor="let emploi of bloc.emplois">
+                    <td>{{ emploi.professeur.prenom }} {{ emploi.professeur.nom }}</td>
+                    <td>{{ emploi.heuredebut }} -- {{ emploi.heurefin }}</td>
+                    <td>{{ emploi.matiere.libelle }}</td>
+                    <td>{{ emploi.matiere.coefficient }}</td>
+                    <td>{{ emploi.matiere.horaire }}</td>
+                    <td>{{ emploi.nbreheure }}</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>

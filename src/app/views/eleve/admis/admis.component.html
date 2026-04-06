@@ -1,1 +1,102 @@
-<p>admis works!</p>
+<h2>Formulaire de recherche des admins</h2>
+<div class="card p-3">
+    <div class="row">
+        <div class="col-md-3">
+            <label>Classe</label>
+            <select class="form-control" [(ngModel)]="classeId">
+        <option value="">Choisir classe</option>
+        <option *ngFor="let c of classes" [value]="c.id">
+          {{ c.nom }}
+        </option>
+      </select>
+        </div>
+
+        <div class="col-md-3">
+            <label>Année</label>
+            <select class="form-control" [(ngModel)]="anneeId">
+        <option value="">Choisir année</option>
+        <option *ngFor="let a of annees" [value]="a.id">
+          {{ a.nom }}
+        </option>
+      </select>
+        </div>
+
+        <div class="col-md-3">
+            <label>Examen</label>
+            <select class="form-control" [(ngModel)]="examen">
+        <option value="">Choisir examen</option>
+        <option value="BAC">BAC</option>
+        <option value="BT2">BT2</option>
+        <option value="CAP">CAP</option>
+      </select>
+        </div>
+
+        <div class="col-md-3">
+            <label>Session</label>
+            <select class="form-control" [(ngModel)]="sessionId">
+        <option value="">Choisir session</option>
+        <option *ngFor="let a of annees" [value]="a.id">
+          {{ a.nom }}
+        </option>
+      </select>
+        </div>
+
+    </div>
+
+    <button class="btn btn-primary mt-3" (click)="rechercher()">
+    Rechercher
+  </button>
+</div>
+
+<hr>
+<div class="row mt-3" *ngIf="admissions.length > 0">
+    <h2>Liste des admins a l'examen</h2>
+
+    <div class="col-md-6">
+        <input type="text" class="form-control" placeholder="Rechercher par matricule, nom ou prénom..." [(ngModel)]="searchText" (input)="filtrer()" />
+    </div>
+
+    <div class="col-md-6 text-end">
+        <label>Éléments par page :</label>
+        <select [(ngModel)]="pageSize" (change)="changerPage(1)">
+      <option [value]="5">5</option>
+      <option [value]="10">10</option>
+      <option [value]="20">20</option>
+    </select>
+    </div>
+</div>
+<table class="table table-bordered mt-3" *ngIf="admissions.length > 0">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Élève</th>
+            <th>École</th>
+            <th>Classe</th>
+            <th>Examen</th>
+            <th>Session</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let a of admissionsPaged">
+            <td>{{ a.id }}</td>
+            <td>
+                {{ a.eleveecole.eleve.matricule }} {{ a.eleveecole.eleve.nom }} {{ a.eleveecole.eleve.prenom }}
+            </td>
+            <td>{{ a.eleveecole.ecole.nomEcole }}</td>
+            <td>{{ a.eleveecole.classe.nom }}</td>
+            <td>{{ a.examen }}</td>
+            <td>{{ a.session.nom }}</td>
+        </tr>
+    </tbody>
+</table>
+<div class="d-flex justify-content-between align-items-center mt-3" *ngIf="admissions.length > 0">
+    <button class="btn btn-sm btn-secondary" (click)="changerPage(currentPage - 1)" [disabled]="currentPage === 1">
+    Précédent
+  </button>
+
+    <span>Page {{ currentPage }} / {{ totalPages }}</span>
+
+    <button class="btn btn-sm btn-secondary" (click)="changerPage(currentPage + 1)" [disabled]="currentPage === totalPages">
+    Suivant
+  </button>
+</div>

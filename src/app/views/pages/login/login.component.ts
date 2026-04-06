@@ -31,14 +31,11 @@ export class LoginComponent {
     const { username, password } = this.loginForm.value;
     this.loading = true; // démarrer le spinner
     this.authService.login(username, password).subscribe({
-      next: (res) => {
+      next: (response) => {
         this.loading = false; // stop spinner
-        if (res.token) {
-          this.authService.saveAdminData(res.user)
-          this.authService.saveToken(res.token)
+        this.authService.saveUserAndToken(response);
+        if(response.user.administrateur.role.nom == 'AD'){
           this.router.navigate(['/dashboard']);
-        } else {
-          this.errorMessage = 'Identifiants incorrects.';
         }
       },
       error: () => {

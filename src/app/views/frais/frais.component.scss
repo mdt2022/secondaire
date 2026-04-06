@@ -1,0 +1,116 @@
+.card {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+}
+
+.subtitle {
+    color: #6c757d;
+    margin-bottom: 20px;
+}
+
+.modern-form {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+}
+
+select,
+input {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.modern-table th {
+    background: #2c3e50;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+.modern-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.modern-table tr:hover {
+    background: #f8f9fa;
+}
+
+.totals {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding: 15px;
+    background: #f1f3f5;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    background: #fff3cd;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+button {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-success {
+    background: #27ae60;
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-edit {
+    background: #f39c12;
+    color: white;
+    margin-right: 5px;
+}
+
+.btn-delete {
+    background: #e74c3c;
+    color: white;
+}
