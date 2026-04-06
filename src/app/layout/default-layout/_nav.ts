@@ -15,6 +15,11 @@ export const navItems: INavData[] = [
     name: 'Configuration'
   },
   {
+    name: 'Avance',
+    url: '/avance',
+    iconComponent: { name: 'cil-drop' }
+  },
+  {
     name: 'Administrateur',
     url: '/administrateur',
     iconComponent: { name: 'cil-drop' }

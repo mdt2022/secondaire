@@ -1,5 +1,6 @@
 export interface Classe {
-  idClasse: any;
+  //idClasse: any;
+  idClasse: number;
   id?: number;
   nom: string;
   description: string;

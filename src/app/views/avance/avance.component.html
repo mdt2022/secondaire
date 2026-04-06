@@ -1,0 +1,113 @@
+<div *ngIf="mode === 'search'" class="card p-3 shadow">
+    <h5>Recherche d'empreint pour les professeurs</h5>
+    <div class="mb-3">
+        <button class="btn btn-success" (click)="allerFormulaire()">Nouvelle empreint</button>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <select class="form-control" [(ngModel)]="recherche.enseignant">
+        <option value="">-- Professeur --</option>
+        <option *ngFor="let e of enseignants" [ngValue]="e.id">
+          {{e.prenom}} {{e.nom}}
+        </option>
+      </select>
+        </div>
+
+        <div class="col-md-3">
+            <select class="form-control" [(ngModel)]="recherche.mois">
+        <option value="">-- Mois --</option>
+        <option *ngFor="let m of mois" [value]="m.id">{{m.nom}}</option>
+      </select>
+        </div>
+
+        <div class="col-md-3">
+            <select class="form-control" [(ngModel)]="recherche.anneescolaire">
+        <option value="">-- Année --</option>
+        <option *ngFor="let a of annees" [value]="a.nom">{{a.nom}}</option>
+      </select>
+        </div>
+
+        <div class="col-md-3">
+            <button class="btn btn-info w-100" (click)="rechercher()">Recherche</button>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="mode === 'list'">
+
+    <div class="mb-3">
+        <button class="btn btn-secondary me-2" (click)="retourRecherche()">Retour</button>
+        <button class="btn btn-success" (click)="allerFormulaire()">Nouvelle empreint</button>
+    </div>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Professeur</th>
+                <th>Montant</th>
+                <th>Mois</th>
+                <th>Année</th>
+                <th>Date</th>
+                <th>Paie</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let a of avances | paginate:{itemsPerPage:itemsParPage, currentPage:p}; let i=index">
+                <td>{{i+1}}</td>
+                <td>{{a.enseignant.prenom}} {{a.enseignant.nom}}</td>
+                <td>{{a.montant}}</td>
+                <td>{{ getNomMois(a.mois) }}</td>
+                <td>{{a.anneescolaire}}</td>
+                <td>{{a.dateempreint}}</td>
+                <td>{{a.paie==1?'Oui':'Non'}}</td>
+                <td>
+                    <button class="btn btn-success btn-sm me-2" (click)="payer(a.id)">Payer</button>
+                    <button class="btn btn-danger btn-sm" (click)="supprimer(a.id)">Annuler</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <pagination-controls (pageChange)="p=$event"></pagination-controls>
+</div>
+
+<div *ngIf="mode === 'form'" class="card p-3 shadow">
+    <h5>Enregistrer un empreint</h5>
+
+    <div class="mb-3">
+        <button class="btn btn-secondary" (click)="retourListe()">Retour</button>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2">
+            <input type="number" class="form-control" placeholder="Montant" [(ngModel)]="nouvelleAvance.montant">
+        </div>
+
+        <div class="col-md-2">
+            <select class="form-control" [(ngModel)]="nouvelleAvance.mois">
+        <option *ngFor="let m of mois" [value]="m.id">{{m.nom}}</option>
+      </select>
+        </div>
+
+        <div class="col-md-3">
+            <select class="form-control" [(ngModel)]="nouvelleAvance.anneescolaire">
+        <option *ngFor="let a of annees" [value]="a.nom">{{a.nom}}</option>
+      </select>
+        </div>
+
+        <div class="col-md-3">
+            <select class="form-control" [(ngModel)]="nouvelleAvance.enseignant">
+                <option *ngFor="let e of enseignants" [ngValue]="{id: e.id}">
+                    {{e.prenom}} {{e.nom}}
+                </option>
+                </select>
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-info w-100" (click)="enregistrer()">Enregistrer</button>
+        </div>
+    </div>
+</div>
