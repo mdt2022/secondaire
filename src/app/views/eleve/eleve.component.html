@@ -75,27 +75,27 @@
                 </div>
 
                 <div class="card-body p-2">
+                    <div class="table-container" style="max-height: 350px; overflow-y: auto;">
+                        <table class="table table-sm table-hover text-center mb-2">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Classe</th>
+                                    <th>Effectif</th>
+                                </tr>
+                            </thead>
 
-                    <table class="table table-sm table-hover text-center mb-2">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Classe</th>
-                                <th>Effectif</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr *ngFor="let c of stats">
-                                <td class="fw-semibold">{{ c.nom }}</td>
-                                <td>
-                                    <span class="badge bg-success px-3 py-1">
-                    {{ c.nombre }}
-                  </span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
+                            <tbody>
+                                <tr *ngFor="let c of stats">
+                                    <td class="fw-semibold">{{ c.nom }}</td>
+                                    <td>
+                                        <span class="badge bg-success px-3 py-1">
+                        {{ c.nombre }}
+                    </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="text-center mt-2">
                         <span class="badge bg-danger px-3 py-2">
               Total : {{ totalEleves }}

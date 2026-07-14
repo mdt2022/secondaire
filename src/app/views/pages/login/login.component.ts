@@ -10,13 +10,31 @@ import { AuthService } from '../../../service/auth.service';
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss'],
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, ContainerComponent, RowComponent, ColComponent, CardModule, CardGroupComponent, TextColorDirective, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, InputGroupTextDirective, IconDirective, FormControlDirective, ButtonDirective, NgStyle]
+    imports: [
+      CommonModule, 
+      ReactiveFormsModule, 
+      ContainerComponent, 
+      RowComponent, 
+      ColComponent, 
+      CardModule, 
+      CardGroupComponent, 
+      TextColorDirective, 
+      CardComponent, 
+      CardBodyComponent, 
+      FormDirective, 
+      InputGroupComponent, 
+      InputGroupTextDirective, 
+      IconDirective, 
+      FormControlDirective, 
+      ButtonDirective, 
+      NgStyle
+    ]
 })
 export class LoginComponent {
 
- loginForm: FormGroup;
- errorMessage = '';
- loading = false;
+  loginForm: FormGroup;
+  errorMessage = '';
+  loading = false;
 
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
@@ -32,9 +50,14 @@ export class LoginComponent {
     this.loading = true; // démarrer le spinner
     this.authService.login(username, password).subscribe({
       next: (response) => {
+        console.log(response.user.administrateur.role.nom+"123test123")
         this.loading = false; // stop spinner
         this.authService.saveUserAndToken(response);
-        if(response.user.administrateur.role.nom == 'AD'){
+        if(
+          response.user.administrateur.role.nom == 'AD' ||
+          response.user.administrateur.role.nom == 'AE2C' ||
+          response.user.administrateur.role.nom == 'DEV'
+        ){
           this.router.navigate(['/dashboard']);
         }
       },

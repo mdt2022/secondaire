@@ -1,47 +1,61 @@
-
-
-<div class="container mt-5">
+<div class="container py-5">
   <div class="text-center mb-5">
-    <h2 class="fw-bold text-primary">Gestion des Programmes</h2>
-    <p class="text-muted">Choisissez une option pour consulter ou gérer les programmes d’enseignement</p>
+    <h2 class="fw-extrabold display-6 text-dark mb-2">Gestion des Programmes</h2>
+    <div class="mx-auto bg-primary mb-3" style="height: 4px; width: 60px; border-radius: 2px;"></div>
+    <p class="text-secondary lead">Sélectionnez un module pour administrer vos emplois du temps</p>
   </div>
 
   <div class="row g-4 justify-content-center">
     
-    <div class="col-md-4 col-lg-3">
-      <a [routerLink]="['../enseignant']" class="menu-card">
-        <i class="fas fa-home icon"></i>
-        <span>PAR ENSEIGNANT</span>
+    <!-- Carte 1 -->
+    <div class="col-6 col-md-4 col-lg-2-5">
+      <a [routerLink]="['../enseignant']" class="menu-card-modern">
+        <div class="icon-wrapper bg-soft-primary">
+          <i class="fas fa-user-tie"></i>
+        </div>
+        <span>Enseignants</span>
       </a>
     </div>
 
-    <div class="col-md-4 col-lg-3">
-      <a [routerLink]="['../semaine']" class="menu-card">
-        <i class="fas fa-calendar icon"></i>
-        <span>PAR SEMAINE</span>
+    <!-- Carte 2 -->
+    <div class="col-6 col-md-4 col-lg-2-5">
+      <a [routerLink]="['../semaine']" class="menu-card-modern">
+        <div class="icon-wrapper bg-soft-success">
+          <i class="fas fa-calendar-alt"></i>
+        </div>
+        <span>Par Semaine</span>
       </a>
     </div>
 
-    <div class="col-md-4 col-lg-3">
-      <a [routerLink]="['../jour']" class="menu-card">
-        <i class="fas fa-users icon"></i>
-        <span>JOURNALIER</span>
+    <!-- Carte 3 -->
+    <div class="col-6 col-md-4 col-lg-2-5">
+      <a [routerLink]="['../jour']" class="menu-card-modern">
+        <div class="icon-wrapper bg-soft-info">
+          <i class="fas fa-clock"></i>
+        </div>
+        <span>Journalier</span>
       </a>
     </div>
 
-    <div class="col-md-4 col-lg-3">
-      <a [routerLink]="['../classe']" class="menu-card">
-        <i class="fas fa-chalkboard-teacher icon"></i>
-        <span>PAR CLASSE</span>
+    <!-- Carte 4 -->
+    <div class="col-6 col-md-4 col-lg-2-5">
+      <a [routerLink]="['../classe']" class="menu-card-modern">
+        <div class="icon-wrapper bg-soft-warning">
+          <i class="fas fa-chalkboard"></i>
+        </div>
+        <span>Par Classe</span>
       </a>
     </div>
 
-    
-    <div class="col-md-4 col-lg-3">
-      <a [routerLink]="['../new']" class="menu-card">
-        <i class="fas fa-book icon"></i>
-        <span>AJOUTER UN PROGRAMME</span>
+    <!-- Carte 5 (Spéciale : Ajout) -->
+    <div class="col-6 col-md-4 col-lg-2-5">
+      <a [routerLink]="['../new']" class="menu-card-modern highlight">
+        <div class="icon-wrapper bg-primary text-white">
+          <i class="fas fa-plus-circle"></i>
+        </div>
+        <span>Nouveau</span>
       </a>
     </div>
+
   </div>
 </div>
