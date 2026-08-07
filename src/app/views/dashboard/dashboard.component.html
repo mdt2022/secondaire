@@ -77,20 +77,16 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>#1</td>
-                <td>admin_root</td>
-                <td>root-entreprise.com</td>
-                <td><span class="badge bg-danger">SuperAdmin</span></td>
-                <td><span class="badge bg-success">Actif</span></td>
-                <td><button class="btn btn-sm btn-outline-primary">Gérer</button></td>
-              </tr>
-              <tr>
-                <td>#2</td>
-                <td>jean_dev</td>
-                <td>jean-entreprise.com</td>
-                <td><span class="badge bg-primary">Administrateur</span></td>
-                <td><span class="badge bg-secondary">Expiré</span></td>
+              <tr *ngFor="let a of administrateurs">
+                <td>{{ a.id }}</td>
+                <td>{{ a.nom }} {{ a.prenom }}</td>
+                <td>{{ a.ecole.nomEcole }}</td>
+                <td><span class="badge bg-danger">{{ a.role.nom }}</span></td>
+                <td>
+                  <span class="badge" [ngClass]="a.online ? 'bg-success' : 'bg-secondary'">
+                    {{ a.online ? 'En ligne' : 'Hors ligne' }}
+                  </span>
+                </td>
                 <td><button class="btn btn-sm btn-outline-primary">Gérer</button></td>
               </tr>
             </tbody>

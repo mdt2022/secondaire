@@ -50,7 +50,7 @@ export class LoginComponent {
     this.loading = true; // démarrer le spinner
     this.authService.login(username, password).subscribe({
       next: (response) => {
-        console.log(response.user.administrateur.role.nom+"123test123")
+        //console.log(response.user.administrateur.role.nom+"123test123")
         this.loading = false; // stop spinner
         this.authService.saveUserAndToken(response);
         if(
