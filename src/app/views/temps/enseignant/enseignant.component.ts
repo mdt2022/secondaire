@@ -95,7 +95,7 @@ export class EnseignantComponent implements OnInit {
     this.loading = true;
     this.selectedDate = this.getDateOfWeek(jour);
 
-    this.emploiService.getAll().subscribe({
+    this.emploiService.parEnseigant(jour,professeur,anneeuv,this.idEcole).subscribe({
       next: data => {
         this.emploisTable = data
           .filter(e =>

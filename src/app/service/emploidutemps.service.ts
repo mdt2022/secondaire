@@ -20,7 +20,14 @@ export class EmploidutempsService {
   getAll(): Observable<Emploidutemps[]> {
     return this.http.get<Emploidutemps[]>(this.apiUrl);
   }
-
+  //EMPLOIS DU TEMPS PAR JOUR
+  parJour(jour:any,anneeuvId:any,ecoleId:any): Observable<Emploidutemps[]>{
+    return this.http.get<Emploidutemps[]>(`${this.apiUrl}/jour/${jour}/annee/${anneeuvId}/ecole/${ecoleId}`);
+  }
+  //Emplois du temps par enseignant
+  parEnseigant(jour:any,professeur:any,anneeuv:any,ecoleId:any): Observable<Emploidutemps[]>{
+    return this.http.get<Emploidutemps[]>(`${this.apiUrl}/jour/${jour}/professeur/${professeur}/annee/${anneeuv}/ecole/${ecoleId}`);
+  }
   getById(id: number): Observable<Emploidutemps> {
     return this.http.get<Emploidutemps>(`${this.apiUrl}/${id}`);
   }

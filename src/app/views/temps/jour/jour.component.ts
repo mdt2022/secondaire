@@ -22,7 +22,7 @@ import { Enseigner } from '../../../model/enseigner';
 export class JourComponent implements OnInit {
 
   emploiForm!: FormGroup;
-
+  idEcole!: number;
   emplois: Emploidutemps[] = [];
   emploisParClasse: { classe: string; emplois: Emploidutemps[] }[] = [];
 
@@ -49,8 +49,16 @@ export class JourComponent implements OnInit {
     this.loadAnnees();
     this.loadEnseignants();
     this.loadEnseignes();
+    this.getEcoleFromUser();
   }
-
+ // ---------------- Récupération école ----------------
+  getEcoleFromUser(): void {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    this.idEcole =
+      user?.parametre?.ecole?.idEcole ||
+      user?.administrateur?.ecole?.idEcole;
+    if (!this.idEcole) console.error('ID école introuvable', user);
+  }
   loadAnnees(): void {
     this.anneeService.getAll().subscribe({
       next: data => this.annees = data,
@@ -77,7 +85,7 @@ export class JourComponent implements OnInit {
 
     const { jour, anneeuv } = this.emploiForm.value;
 
-    this.emploiService.getAll().subscribe({
+    this.emploiService.parJour(jour,anneeuv,this.idEcole).subscribe({
       next: data => {
         this.emplois = data
           .filter(e => e.jour === jour && e.anneeuv?.id == anneeuv)
