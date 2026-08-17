@@ -111,40 +111,47 @@ async imprimer() {
     const img = new Image();
     img.src = logoUrl;
     img.onload = () => {
-      doc.addImage(img, 'PNG', 15, 15, 35, 35); 
+      doc.addImage(img, 'PNG', 15, 15, 25, 25); 
       resolve();
     };
   });
 
+const maxWidth = 155; // Largeur maximale autorisée pour le texte
+
+doc.setFont('times', 'bold'); 
+doc.setFontSize(20); 
+// Force le retour à la ligne si la description est trop longue
+const descLignes = doc.splitTextToSize(descriptionEcole.toUpperCase(), maxWidth);
+doc.text(descLignes, 110, 20, { align: 'center' }); 
+
+// Calcul dynamique de la hauteur pour ne pas chevaucher les pointillés
+const descriptionHeight = descLignes.length * 6; 
+const pointilleY = 20 + descriptionHeight;
+
+doc.setFont('times', 'normal'); 
+doc.setFontSize(9); 
+doc.text('......................................................', 105, pointilleY, { align: 'center' }); 
+
+// Force le retour à la ligne pour chaque ligne d'adresse trop longue
+const adresseAjustee = doc.splitTextToSize(adresseEcole, maxWidth);
+doc.text(adresseAjustee, 105, pointilleY + 5, { align: 'center' });
+
   doc.setFont('times', 'bold');
-  doc.setFontSize(9);
-  doc.text(descriptionEcole.toUpperCase(), 105, 25, { align: 'center' });
+  doc.setFontSize(16);
+  doc.text(`BULLETIN DE LA ${nomPeriode}`, 105, 45, { align: 'center' });
 
   doc.setFont('times', 'normal');
-  doc.setFontSize(9);
-  doc.text('......................................................', 105, 30, { align: 'center' });
+  doc.setFontSize(12);
+  doc.text(`Année Scolaire : ${nomAnnee}`, 105, 52, { align: 'center' });
 
-  const adresseLignes = adresseEcole.split('\n');
-  adresseLignes.forEach((line: string | string[], i: number) => {
-    doc.text(line, 105, 35 + i * 5, { align: 'center' });
-  });
-
-  doc.setFont('times', 'bold');
-  doc.setFontSize(13);
-  doc.text(`BULLETIN DE LA ${nomPeriode}`, 105, 50, { align: 'center' });
-
-  doc.setFont('times', 'normal');
-  doc.setFontSize(11);
-  doc.text(`Année Scolaire : ${nomAnnee}`, 105, 57, { align: 'center' });
-
-  let y = 75;
-  doc.setFontSize(10);
+  let y = 60;
+  doc.setFontSize(12);
   doc.text(`Nom : ${this.bulletin.eleve.nom}`, 20, y);
   y += 6;
   doc.text(`Prénom : ${this.bulletin.eleve.prenom}`, 20, y);
   y += 6;
   doc.text(`Classe : ${nomClasse}`, 20, y);
-  y += 10;
+  y += 5;
 
   const rows = this.bulletin.notes.map((n: any) => [
     n.matiere.libelle,
@@ -163,10 +170,11 @@ async imprimer() {
     theme: 'grid',
     styles: {
       font: 'times',
-      fontSize: 9,
+      fontSize: 12,
       halign: 'center',
       lineColor: [0, 0, 0],
-      lineWidth: 0.2
+      lineWidth: 0.2,
+      fontStyle: 'bold'
     },
     headStyles: {
       fillColor: [230, 230, 230],
@@ -178,7 +186,7 @@ async imprimer() {
 
   const finalY = (doc as any).lastAutoTable.finalY + 5;
 
-  doc.setFontSize(10);
+  doc.setFontSize(12);
   doc.text(`TOTAL : ${this.bulletin.total?.toFixed(2)}`, 20, finalY);
   doc.text(`Moyenne : ${this.bulletin.moyg?.toFixed(2)}`, 20, finalY + 6);
   doc.text(`Observation : ${this.bulletin.observation}`, 20, finalY + 12);
@@ -186,9 +194,9 @@ async imprimer() {
   if (this.bulletin.moy1er != null) doc.text(`Moy. du 1er : ${this.bulletin.moy1er.toFixed(2)}`, 20, finalY + 18);
   if (this.bulletin.rang != null) doc.text(`Rang : ${this.bulletin.rang}`, 20, finalY + 24);
 
-  const signY = finalY + 40;
+  const signY = finalY + 20;
   doc.text(`Fait, le _________________`, 140, signY);
-  doc.text("Le Proviseur", 160, signY + 15);
+  doc.text("Le Proviseur", 160, signY + 30);
 
   doc.setFontSize(8);
   doc.setFont('times', 'italic');

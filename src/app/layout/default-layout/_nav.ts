@@ -1,6 +1,12 @@
 import { INavData } from '@coreui/angular';
 
-export const navItems: INavData[] = [
+
+export interface INavDataExtended extends INavData {
+  role?: string[]; // Ajoute la propriété "role"
+}
+
+
+export const navItems: INavDataExtended[] = [
   {
     name: 'Tableau de bord',
     url: '/dashboard',
@@ -12,41 +18,48 @@ export const navItems: INavData[] = [
   }, 
   {
     title: true,
-    name: 'Configuration'
+    name: 'Configuration',
+    role: ['DEV']
   },
   {
     name: 'Avance',
     url: '/avance',
-    iconComponent: { name: 'cil-drop' }
+    iconComponent: { name: 'cil-drop' },
+    role: ['DEV']
   },
   {
     name: 'Administrateur',
     url: '/administrateur',
-    iconComponent: { name: 'cil-drop' }
+    iconComponent: { name: 'cil-drop' },
+    role: ['DEV']
   },
   {
     name: 'Rôle',
     url: '/administrateur/role',
     linkProps: { fragment: 'headings' },
-    iconComponent: { name: 'cil-pencil' }
+    iconComponent: { name: 'cil-pencil' },
+    role: ['DEV']
   },
   {
     name: 'Gestion des Classe',
     url: '/classe',
     linkProps: { fragment: 'headings' },
-    iconComponent: { name: 'cil-pencil' }
+    iconComponent: { name: 'cil-pencil' },
+    role: ['DEV']
   },
   {
     name: 'Affecter une Classe',
     url: '/classeecole',
     linkProps: { fragment: 'headings' },
-    iconComponent: { name: 'cil-pencil' }
+    iconComponent: { name: 'cil-pencil' },
+    role: ['DEV']
   },
   {
     name: 'Matière',
     url: '/matiere',
     linkProps: { fragment: 'headings' },
-    iconComponent: { name: 'cil-pencil' }
+    iconComponent: { name: 'cil-pencil' },
+    role: ['DEV']
   },
   {
     name: 'Gestions',
@@ -103,12 +116,14 @@ export const navItems: INavData[] = [
   },
   {
     title: true,
-    name: 'Extras'
+    name: 'Extras',
+    role: ['DEV']
   },
   {
     name: 'Pages',
     url: '/login',
     iconComponent: { name: 'cil-star' },
+    role: ['DEV'],
     children: [
       {
         name: 'Login',

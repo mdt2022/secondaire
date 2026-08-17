@@ -3,45 +3,44 @@
     <div class="row g-2">
 
         <div class="col-md-3">
-            <select class="form-select" [(ngModel)]="selectedAnnee" style="height: 40px;">
-        <option value="" disabled selected>Année</option>
-        <option *ngFor="let a of annees" [ngValue]="a.id">{{ a.nom }}</option>
-      </select>
+            <label for="" class="form-label">Année</label>
+            <select class="form-select" [(ngModel)]="selectedAnnee" style="height: 40px;">                
+                <option *ngFor="let a of annees" [ngValue]="a.id">{{ a.nom }}</option>
+            </select>
         </div>
 
         <div class="col-md-3">
+            <label for="" class="form-label">Classe</label>
             <select class="form-select" [(ngModel)]="selectedClasse" (change)="chargerEleves()" style="height: 40px;">
-        <option value="" disabled selected>Classe</option>
-        <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.nom }}</option>
-      </select>
+                <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.nom }}</option>
+            </select>
         </div>
 
         <div class="col-md-3">
-            <select class="form-select" [(ngModel)]="selectedEleve" style="height: 40px;">
-        <option value="" disabled selected>Élève</option>
-        <option *ngFor="let e of eleves" [ngValue]="e.eleve.id">
-          {{ e.eleve.matricule }} {{ e.eleve.prenom }} {{ e.eleve.nom }}
-        </option>
-      </select>
+            <label for="" class="form-label">Élève</label>
+            <select class="form-select" [(ngModel)]="selectedEleve" style="height: 40px;">                
+                <option *ngFor="let e of eleves" [ngValue]="e.eleve.id">
+                {{ e.eleve.matricule }} {{ e.eleve.prenom }} {{ e.eleve.nom }}
+                </option>
+            </select>
         </div>
 
         <div class="col-md-3">
-            <select class="form-select" [(ngModel)]="selectedPeriode" style="height: 40px;">
-        <option value="" disabled selected>Période</option>
-        <option *ngFor="let p of periodes" [ngValue]="p.id">{{ p.libelle }}</option>
-      </select>
+            <label for="" class="form-label">Période</label>
+            <select class="form-select" [(ngModel)]="selectedPeriode" style="height: 40px;">                
+                <option *ngFor="let p of periodes" [ngValue]="p.id">{{ p.libelle }}</option>
+            </select>
         </div>
 
     </div>
 
     <div class="mt-3 d-flex flex-wrap gap-2">
         <button class="btn btn-primary" (click)="afficherBulletin()" [disabled]="!selectedEleve || !selectedAnnee || !selectedClasse || !selectedPeriode" style="min-width: 120px;">
-      Afficher
-    </button>
-
+            Afficher
+        </button>
         <button class="btn btn-success" (click)="imprimer()" *ngIf="bulletin" style="min-width: 120px;">
-      Imprimer
-    </button>
+            Imprimer
+        </button>
     </div>
 
 </div>

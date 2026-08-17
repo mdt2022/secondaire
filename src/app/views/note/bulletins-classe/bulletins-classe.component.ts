@@ -151,19 +151,25 @@ imprimerPDF(): void {
 
       doc.setFont('times', 'normal');
 
-      doc.addImage(img, 'PNG', 15, y, 35, 35);
-
-      doc.setFontSize(9);
+      doc.addImage(img, 'PNG', 15, y, 25, 25);
+      const maxWidth = 155; // Largeur maximale autorisée pour le texte
+      doc.setFontSize(20);
       doc.setFont('times', 'bold');
-      doc.text(descriptionEcole.toUpperCase(), 105, y + 8, { align: 'center' });
+      // Force le retour à la ligne si la description est trop longue
+      const descLignes = doc.splitTextToSize(descriptionEcole.toUpperCase(), maxWidth);
+      doc.text(descLignes, 110, y + 5, { align: 'center' });
 
-      doc.setFontSize(8);
+      // Calcul dynamique de la hauteur pour ne pas chevaucher les pointillés
+      const descriptionHeight = descLignes.length * 6; 
+      const pointilleY = 20 + descriptionHeight;
+      doc.setFontSize(9);
       doc.setFont('times', 'normal');
-      doc.text('......................................................', 105, y + 13, { align: 'center' });
+      doc.text('......................................................', 105, pointilleY, { align: 'center' });
 
-      doc.text(adresseEcole, 105, y + 18, { align: 'center' });
-
-      y += 40;
+      // Force le retour à la ligne pour chaque ligne d'adresse trop longue
+      const adresseAjustee = doc.splitTextToSize(adresseEcole, maxWidth);
+      doc.text(adresseAjustee, 105, pointilleY + 5, { align: 'center' });
+      y += 35;
 
       doc.setFontSize(12);
       doc.setFont('times', 'bold');
@@ -175,9 +181,9 @@ imprimerPDF(): void {
       doc.setFont('times', 'normal');
       doc.text(`Année Scolaire : ${nomAnnee}`, 105, y, { align: 'center' });
 
-      y += 12;
+      y += 4;
 
-      doc.setFontSize(11);
+      doc.setFontSize(12);
       doc.text(`Nom : ${eleve.nom || ''}`, 20, y);
       y += 6;
 
@@ -185,17 +191,17 @@ imprimerPDF(): void {
       y += 6;
 
       doc.text(`Classe : ${nomClasse}`, 20, y);
-      y += 10;
+      y += 5;
 
       const rows = notes.map((n: any) => [
-  n.matiere?.libelle ?? '',
-  Number(n.noteClasse ?? 0).toFixed(2),
-  Number(n.noteCompo ?? 0).toFixed(2),
-  Number(n.mg ?? 0).toFixed(2),
-  n.matiere?.coefficient ?? '',
-  Number(n.mgc ?? 0).toFixed(2),
-  n.mention ?? ''
-]);
+        n.matiere?.libelle ?? '',
+        Number(n.noteClasse ?? 0).toFixed(2),
+        Number(n.noteCompo ?? 0).toFixed(2),
+        Number(n.mg ?? 0).toFixed(2),
+        n.matiere?.coefficient ?? '',
+        Number(n.mgc ?? 0).toFixed(2),
+        n.mention ?? ''
+      ]);
       autoTable(doc, {
         startY: y,
         head: [['MATIERES','MOY CLASSE','MOY COMPO','MOY G','COEFF.','MOY COEFF','Mention']],
@@ -203,10 +209,11 @@ imprimerPDF(): void {
         theme: 'grid',
         styles: {
           font: 'times',
-          fontSize: 9,
+          fontSize: 12,
           lineColor: [0,0,0],
           lineWidth: 0.2,
-          halign: 'center'
+          halign: 'center',
+          fontStyle: 'bold'
         },
         headStyles: {
           fillColor: [255,255,255],
@@ -218,7 +225,7 @@ imprimerPDF(): void {
         }
       });
 
-      const finalY = (doc as any).lastAutoTable.finalY + 10;
+      const finalY = (doc as any).lastAutoTable.finalY + 3;
 
       const moyennePremier = this.moyennes.length
         ? Number(this.moyennes[0].moyg ?? 0).toFixed(2)
@@ -226,31 +233,32 @@ imprimerPDF(): void {
 
       autoTable(doc, {
         startY: finalY,
-        margin: { left: 20 },
+        //margin: { left: 20 },
         tableWidth: 80,
         theme: 'grid',
         styles: {
           font: 'times',
-          fontSize: 10,
+          fontSize: 12,
           lineColor: [0,0,0],
-          lineWidth: 0.2
+          lineWidth: 0.2,
+          fontStyle: 'bold'
         },
         headStyles: {
           fillColor: [230,230,230]
         },
         body: [
-  ['TOTAL', Number(eleveData.total ?? 0).toFixed(2)],
-  ['Moyenne', Number(eleveData.moyg ?? 0).toFixed(2)],
-  ['Observation', eleveData.observation ?? ''],
-  ['Moy. du 1er', Number(this.moyennes.length ? this.moyennes[0].moyg : 0).toFixed(2)],
-  ['Rang', `${eleveData.rang} / ${this.moyennes.length}`]
-]
+          ['TOTAL', Number(eleveData.total ?? 0).toFixed(2)],
+          ['Moyenne', Number(eleveData.moyg ?? 0).toFixed(2)],
+          ['Observation', eleveData.observation ?? ''],
+          ['Moy. du 1er', Number(this.moyennes.length ? this.moyennes[0].moyg : 0).toFixed(2)],
+          ['Rang', `${eleveData.rang} / ${this.moyennes.length}`]
+        ]
       });
 
       const signY = finalY + 30;
 
       doc.text(`Fait, le __________________`, 140, signY);
-      doc.text("Le Proviseur", 160, signY + 15);
+      doc.text("Le Proviseur", 160, signY + 30);
 
       doc.setFontSize(8);
       doc.setFont('times', 'italic');
