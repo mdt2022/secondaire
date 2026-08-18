@@ -119,7 +119,6 @@ chargerBulletin(): void {
   }
 
 imprimerPDF(): void {
-
   if (!this.moyennes.length) return;
 
   const doc = new jsPDF('p', 'mm', 'a4');
@@ -133,7 +132,6 @@ imprimerPDF(): void {
   img.src = logoUrl;
 
   img.onload = () => {
-
     const anneeObj = this.annees.find(a => a.id == this.selectedAnnee);
     const nomAnnee = anneeObj ? anneeObj.nom : '';
 
@@ -144,52 +142,46 @@ imprimerPDF(): void {
     const nomClasse = classeObj ? classeObj.nom : '';
 
     this.moyennes.forEach((eleveData, index) => {
-
       let y = 15;
       const eleve = eleveData.eleve ?? {};
       const notes = eleveData.notes ?? [];
 
       doc.setFont('times', 'normal');
-
       doc.addImage(img, 'PNG', 15, y, 25, 25);
-      const maxWidth = 155; // Largeur maximale autorisée pour le texte
-      doc.setFontSize(20);
+      
+      const maxWidth = 155; 
+      doc.setFontSize(18); // Légèrement réduit (20 -> 18) pour gagner de la place en haut
       doc.setFont('times', 'bold');
-      // Force le retour à la ligne si la description est trop longue
+      
       const descLignes = doc.splitTextToSize(descriptionEcole.toUpperCase(), maxWidth);
-      doc.text(descLignes, 110, y + 5, { align: 'center' });
+      doc.text(descLignes, 110, y + 4, { align: 'center' });
 
-      // Calcul dynamique de la hauteur pour ne pas chevaucher les pointillés
-      const descriptionHeight = descLignes.length * 6; 
-      const pointilleY = 20 + descriptionHeight;
+      const descriptionHeight = descLignes.length * 5; 
+      const pointilleY = 18 + descriptionHeight;
       doc.setFontSize(9);
       doc.setFont('times', 'normal');
       doc.text('......................................................', 105, pointilleY, { align: 'center' });
 
-      // Force le retour à la ligne pour chaque ligne d'adresse trop longue
       const adresseAjustee = doc.splitTextToSize(adresseEcole, maxWidth);
       doc.text(adresseAjustee, 105, pointilleY + 5, { align: 'center' });
-      y += 35;
+      
+      y = pointilleY + 5 + (adresseAjustee.length * 4) + 5;
 
-      doc.setFontSize(12);
+      doc.setFontSize(14); // Légèrement compacté (12 -> 14 pour le titre principal)
       doc.setFont('times', 'bold');
       doc.text(`BULLETIN DE LA ${nomPeriode}`, 105, y, { align: 'center' });
 
       y += 6;
-
       doc.setFontSize(11);
       doc.setFont('times', 'normal');
       doc.text(`Année Scolaire : ${nomAnnee}`, 105, y, { align: 'center' });
 
-      y += 4;
-
-      doc.setFontSize(12);
+      y += 6;
+      doc.setFontSize(11); // Police uniforme pour les infos de l'élève
       doc.text(`Nom : ${eleve.nom || ''}`, 20, y);
-      y += 6;
-
+      y += 5;
       doc.text(`Prénom : ${eleve.prenom || ''}`, 20, y);
-      y += 6;
-
+      y += 5;
       doc.text(`Classe : ${nomClasse}`, 20, y);
       y += 5;
 
@@ -202,6 +194,8 @@ imprimerPDF(): void {
         Number(n.mgc ?? 0).toFixed(2),
         n.mention ?? ''
       ]);
+
+      // 1. Optimisation du tableau principal des matières
       autoTable(doc, {
         startY: y,
         head: [['MATIERES','MOY CLASSE','MOY COMPO','MOY G','COEFF.','MOY COEFF','Mention']],
@@ -209,14 +203,14 @@ imprimerPDF(): void {
         theme: 'grid',
         styles: {
           font: 'times',
-          fontSize: 12,
-          lineColor: [0,0,0],
-          lineWidth: 0.2,
+          fontSize: 10, // Réduit de 12 à 10 pour compacter globalement la hauteur
+          lineColor:[0,0,0],
+          lineWidth: 0.1,
           halign: 'center',
-          fontStyle: 'bold'
+          cellPadding: 1.5 // Réduction de l'espace interne pour économiser des lignes
         },
         headStyles: {
-          fillColor: [255,255,255],
+          fillColor:[230,230,230], // Gris très clair pour le rendu propre
           textColor: 0,
           fontStyle: 'bold'
         },
@@ -225,26 +219,26 @@ imprimerPDF(): void {
         }
       });
 
-      const finalY = (doc as any).lastAutoTable.finalY + 3;
+      let finalY = (doc as any).lastAutoTable.finalY + 4;
 
-      const moyennePremier = this.moyennes.length
-        ? Number(this.moyennes[0].moyg ?? 0).toFixed(2)
-        : '0.00';
+      // 2. Gestion stricte anti-débordement avant d'afficher le bloc de fin
+      // Si l'espace restant sur la page est insuffisant pour accueillir les totaux + signatures (besoin d'environ 65mm)
+      if (finalY + 65 > 275) {
+        doc.addPage();
+        finalY = 20; // Réinitialise sur la nouvelle page uniquement pour ce cas extrême
+      }
 
+      // 3. Rendu compact du tableau de résumé
       autoTable(doc, {
         startY: finalY,
-        //margin: { left: 20 },
         tableWidth: 80,
         theme: 'grid',
         styles: {
           font: 'times',
-          fontSize: 12,
-          lineColor: [0,0,0],
-          lineWidth: 0.2,
-          fontStyle: 'bold'
-        },
-        headStyles: {
-          fillColor: [230,230,230]
+          fontSize: 10, // Cohérence à 10 avec le tableau principal
+          lineColor:[0,0,0],
+          lineWidth: 0.1,
+          cellPadding: 1.5
         },
         body: [
           ['TOTAL', Number(eleveData.total ?? 0).toFixed(2)],
@@ -255,31 +249,40 @@ imprimerPDF(): void {
         ]
       });
 
-      const signY = finalY + 30;
+      // 4. Calcul dynamique pour la signature juste en dessous du bloc résumé
+      const endOfSummaryTable = (doc as any).lastAutoTable.finalY;
+      const signY = endOfSummaryTable + 10; 
 
+      doc.setFontSize(11);
+      doc.setFont('times', 'normal');
       doc.text(`Fait, le __________________`, 140, signY);
-      doc.text("Le Proviseur", 160, signY + 30);
+      doc.setFont('times', 'bold');
+      doc.text("Le Proviseur", 155, signY + 30); // Rapprochement vertical pour éviter le hors-page
 
+      // 5. Rendu propre du pied de page
       doc.setFontSize(8);
       doc.setFont('times', 'italic');
-      doc.text(adresseEcole, 105, 285, { align: 'center' });
+      
+      // Force l'affichage dynamique multi-ligne si l'adresse de l'école comporte des sauts de ligne
+      const footerLignes = adresseEcole.split('\n');
+      footerLignes.forEach((line: string, indexLine: number) => {
+        doc.text(line, 105, 283 + (indexLine * 3.5), { align: 'center' });
+      });
 
+      // Ajout d'une nouvelle page uniquement s'il reste des élèves à traiter
       if (index < this.moyennes.length - 1) {
         doc.addPage();
       }
-
     });
 
     doc.save("Bulletins.pdf");
   };
 }
 
-
-  imprimerListePDF(): void {
-
+imprimerListePDF(): void {
   if (!this.moyennes.length) return;
 
-  const doc = new jsPDF('l', 'mm', 'a4'); // paysage pour grande liste
+  const doc = new jsPDF('l', 'mm', 'a4'); 
 
   doc.setFontSize(14);
   doc.text(`LISTE GÉNÉRALE DES MOYENNES`, 14, 15);
