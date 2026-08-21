@@ -1,77 +1,120 @@
-<div class="card p-3 shadow">
+<div class="container py-4">
 
-    <h3 class="mb-3 text-danger">Afficher la liste des élèves de {{nomEcole}} par classe et par année pour exclusion</h3>
-
-    <!-- Recherche -->
-    <div class="row mb-3">
-        <div class="col-md-4">
-
-            <select [(ngModel)]="classeId" class="form-control">
-              
-        <option value="">-- Classe --</option>
-        <option *ngFor="let c of classes" [value]="c.id">
-          {{ c.nom }}
-        </option>
-      </select>
-        </div>
-
-        <div class="col-md-4">
-            <select [(ngModel)]="anneeId" class="form-control">
-        <option value="">-- Année --</option>
-        <option *ngFor="let a of annees" [value]="a.id">
-          {{ a.nom }}
-        </option>
-      </select>
-        </div>
-
-        <div class="col-md-4">
-            <button class="btn btn-info w-100" (click)="rechercher()">
-        Rechercher
-      </button>
-        </div>
+  <!-- EN-TÊTE DE LA PAGE -->
+  <div class="page-header mb-4 bg-white p-4 rounded-4 shadow-sm border-start border-danger border-4 animate-fade-in">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h1 class="h3 fw-extrabold text-dark mb-1">Procédure d'exclusion</h1>
+        <p class="text-muted mb-0 small text-uppercase tracking-wider fw-semibold">{{ nomEcole }}</p>
+      </div>
+      <span class="badge bg-light-danger text-danger p-3 rounded-circle fs-4 shadow-2xs">
+        <i class="fas fa-user-slash"></i>
+      </span>
     </div>
+  </div>
 
-    <!-- Tableau -->
-    <table class="table table-bordered" *ngIf="eleves.length">
-        <thead>
+  <!-- BLOC DE RECHERCHE ET FILTRES -->
+  <div class="card border-0 shadow-sm p-4 rounded-4 bg-white mb-4 animate-fade-in">
+    <div class="row g-3 align-items-end">
+      <div class="col-12 col-sm-6 col-md-4">
+        <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Classe</label>
+        <select class="form-select border-2 custom-select shadow-2xs" [(ngModel)]="classeId">
+          <option value="">Sélectionner une classe...</option>
+          <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-sm-6 col-md-4">
+        <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Année scolaire</label>
+        <select class="form-select border-2 custom-select shadow-2xs" [(ngModel)]="anneeId">
+          <option value="">Sélectionner une année...</option>
+          <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <button class="btn btn-primary fw-bold w-100 custom-btn shadow-sm" (click)="rechercher()">
+          <i class="fas fa-search me-2"></i>Rechercher
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION DES RÉSULTATS -->
+  <div *ngIf="eleves.length > 0" class="animate-fade-in">
+    
+    <!-- TABLEAU DES ÉLÈVES -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-4 shadow-2xs">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 custom-table text-center">
+          <thead class="table-light border-bottom-0">
             <tr>
-                <th>#</th>
-                <th>
-                    <input type="checkbox" (change)="toggleAll($event)">
-                </th>
-                <th>Matricule</th>
-                <th>Prénom</th>
-                <th>Nom</th>
+              <th style="width: 70px;" class="text-center">#</th>
+              <th style="width: 60px;">
+                <div class="form-check d-flex justify-content-center">
+                  <input type="checkbox" class="form-check-input border-2 custom-checkbox" (change)="toggleAll($event)">
+                </div>
+              </th>
+              <th style="width: 150px;">Matricule</th>
+              <th class="text-start">Nom & Prénom</th>
             </tr>
-        </thead>
-
-        <tbody>
+          </thead>
+          <tbody>
             <tr *ngFor="let e of eleves; let i = index">
-                <td>{{ i + 1 }}</td>
-                <td>
-                    <input type="checkbox" (change)="toggleEleve(e.id, $event)">
-                </td>
-                <td>{{ e.eleve.matricule }}</td>
-                <td>{{ e.eleve.prenom }}</td>
-                <td>{{ e.eleve.nom }}</td>
+              <td class="text-center text-muted fw-semibold">{{ i + 1 }}</td>
+              <td>
+                <div class="form-check d-flex justify-content-center">
+                  <input type="checkbox" class="form-check-input border-2 custom-checkbox shadow-2xs" (change)="toggleEleve(e.id, $event)">
+                </div>
+              </td>
+              <td>
+                <span class="badge bg-light text-secondary border px-2 py-1.5 fw-mono fs-7">
+                  {{ e.eleve.matricule }}
+                </span>
+              </td>
+              <td class="text-start fw-bold text-dark text-uppercase">
+                {{ e.eleve.nom }} <span class="fw-semibold text-capitalize text-secondary">{{ e.eleve.prenom }}</span>
+              </td>
             </tr>
-        </tbody>
-    </table>
-
-    <!-- Motif -->
-    <div class="mt-3" *ngIf="eleves.length">
-        <p class="alert alert-warning h5 text-center">
-            Selectionner ou choisir l'ensemble des élèves pour leurs exclusion
-        </p>
-        <label>Motif</label>
-        <textarea [(ngModel)]="motif" class="form-control" rows="3" placeholder="Entrer le motif..."></textarea>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- Bouton -->
-    <div class="mt-3 text-end" *ngIf="eleves.length">
-        <button class="btn btn-danger" [disabled]="!selectedEleves.length || !motif" (click)="exclure()">
-      Exclure les élèves sélectionnés
-    </button>
+    <!-- BLOC DE Saisie DU MOTIF ET VALIDATION -->
+    <div class="card border-0 shadow-sm p-4 rounded-4 bg-white mb-4 border-dashed-danger">
+      <div class="d-flex align-items-center mb-3">
+        <span class="badge bg-light-warning text-warning p-2 rounded-3 me-3 fs-5">
+          <i class="fas fa-exclamation-triangle"></i>
+        </span>
+        <div>
+          <h5 class="mb-0 fw-bold text-dark">Dossier d'exclusion administrative</h5>
+          <small class="text-muted">Sélectionnez les élèves concernés ci-dessus et détaillez le motif légal de la sanction</small>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Motif officiel de l'exclusion</label>
+        <textarea [(ngModel)]="motif" class="form-control border-2 custom-textarea shadow-2xs" rows="3" placeholder="Ex: Non-règlement des frais de scolarité après relances, ou décision du conseil de discipline du..."></textarea>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center border-top pt-3">
+        <div class="text-secondary small fw-medium">
+          <i class="fas fa-info-circle me-1"></i> 
+          <span class="fw-bold text-danger">{{ selectedEleves.length }}</span> élève(s) sélectionné(s)
+        </div>
+        <button class="btn btn-danger fw-bold px-4 py-2 custom-btn shadow-sm" [disabled]="!selectedEleves.length || !motif" (click)="exclure()">
+          <i class="fas fa-user-times me-2"></i>Exclure les élèves sélectionnés
+        </button>
+      </div>
     </div>
+
+  </div>
+
+  <!-- SQUELETTE VIDE SI AUCUN ÉLÈVE CHARGÉ -->
+  <div *ngIf="eleves.length === 0" class="text-center p-5 bg-white rounded-4 shadow-sm border border-dashed animate-fade-in">
+    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+    <p class="text-secondary fw-medium mb-0">Aucun élève chargé. Ajustez vos filtres pour afficher l'effectif d'une classe.</p>
+  </div>
 
 </div>

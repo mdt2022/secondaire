@@ -30,6 +30,7 @@ import { delay, filter, map, tap } from 'rxjs/operators';
 import { AuthService } from '../../../service/auth.service';
 import { User } from '../../../model/user';
 import Swal from 'sweetalert2';
+import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-default-header',
   templateUrl: './default-header.component.html',
@@ -38,6 +39,7 @@ import Swal from 'sweetalert2';
 })
 export class DefaultHeaderComponent extends HeaderComponent implements OnInit{
   user!: User;
+  baseUrl = environment.apiURL+"/administrateurs";
   readonly #activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   readonly #colorModeService = inject(ColorModeService);
   readonly colorMode = this.#colorModeService.colorMode;

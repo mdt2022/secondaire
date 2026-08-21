@@ -1,69 +1,95 @@
-<div class="page-header mb-4">
-    <h1>Gestion des relevés de {{ etablissement }}</h1>
+<!-- EN-TÊTE DE LA PAGE -->
+<div class="page-header mb-4 bg-white p-4 rounded-4 shadow-sm border-start border-primary border-4">
+    <h1 class="h3 fw-extrabold text-dark mb-1">Gestion des relevés</h1>
+    <p class="text-muted mb-0 small text-uppercase tracking-wider fw-semibold">{{ etablissement }}</p>
 </div>
 
-<div class="row mb-3 g-3">
+<!-- BARRE DE FILTRES ET D'ACTIONS -->
+<div class="card border-0 shadow-sm p-4 rounded-4 bg-white mb-4">
+    <div class="row g-3 align-items-end">
+        <div class="col-12 col-sm-6 col-md-3">
+            <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Classe</label>
+            <select class="form-select border-2 custom-select shadow-2xs" [(ngModel)]="classeecoleId" name="classeecoleId">
+                <option value="">Sélectionner...</option>
+                <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+            </select>
+        </div>
 
-    <div class="col-md-2">
-        <label class="form-label">Classe</label>
-        <select class="form-select" [(ngModel)]="classeecoleId" name="classeecoleId">
-            <option value="">-- Choisir --</option>
-            <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
-        </select>
+        <div class="col-12 col-sm-6 col-md-3">
+            <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Période</label>
+            <select class="form-select border-2 custom-select shadow-2xs" [(ngModel)]="periodeId" name="periodeId">
+                <option value="">Sélectionner...</option>
+                <option *ngFor="let p of periodes" [value]="p.id">{{ p.libelle }}</option>
+            </select>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-3">
+            <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Année</label>
+            <select class="form-select border-2 custom-select shadow-2xs" [(ngModel)]="anneeId" name="anneeId">
+                <option value="">Sélectionner...</option>
+                <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
+            </select>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary fw-bold flex-grow-1 custom-btn shadow-sm" (click)="produire()">
+                    <i class="fas fa-cog me-2"></i>Produire
+                </button>
+                <button class="btn btn-success fw-bold flex-grow-1 custom-btn shadow-sm" (click)="imprimer()" [disabled]="eleves.length === 0">
+                    <i class="fas fa-print me-2"></i>Imprimer
+                </button>
+            </div>
+        </div>
     </div>
-
-    <div class="col-md-2">
-        <label class="form-label">Période</label>
-        <select class="form-select" [(ngModel)]="periodeId" name="periodeId">
-            <option value="">-- Choisir --</option>
-            <option *ngFor="let p of periodes" [value]="p.id">{{ p.libelle }}</option>
-        </select>
-    </div>
-
-    <div class="col-md-2">
-        <label class="form-label">Année</label>
-        <select class="form-select" [(ngModel)]="anneeId" name="anneeId">
-            <option value="">-- Choisir --</option>
-            <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
-        </select>
-    </div>
-
-    <div class="col-md-2 d-flex align-items-end">
-        <button class="btn btn-info w-100" (click)="produire()">Produire</button>
-    </div>
-
-    <div class="col-md-2 d-flex align-items-end">
-        <button class="btn btn-success w-100" (click)="imprimer()" [disabled]="eleves.length === 0">
-            Imprimer
-        </button>
-    </div>
-
 </div>
 
-<div *ngIf="loading" class="text-center my-3">
-    <div class="spinner-border text-primary"></div>
-    <p>Chargement des élèves...</p>
+<!-- ÉTAT DE CHARGEMENT -->
+<div *ngIf="loading" class="text-center my-5 p-4 bg-white rounded-4 shadow-sm animate-fade-in">
+    <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Chargement...</span>
+    </div>
+    <p class="text-secondary fw-semibold mb-0">Chargement de la liste des élèves...</p>
 </div>
 
-<table class="table table-bordered table-striped" *ngIf="eleves.length > 0">
-    <thead class="table-primary">
-        <tr>
-            <th>N°</th>
-            <th>Matricule</th>
-            <th>Prénom</th>
-            <th>Nom</th>
-            <th>Note de Classe / 40</th>
-            <th>Note de Compo / 20</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let eleve of eleves; let i = index">
-            <td>{{ i + 1 }}</td>
-            <td>{{ eleve.matricule }}</td>
-            <td>{{ eleve.prenom }}</td>
-            <td>{{ eleve.nom }}</td>
-            <td>{{ eleve.noteClasse || '-' }}</td>
-            <td>{{ eleve.noteCompo || '-' }}</td>
-        </tr>
-    </tbody>
-</table>
+<!-- TABLEAU DES ÉLÈVES -->
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white animate-fade-in" *ngIf="!loading && eleves.length > 0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 custom-table">
+            <thead class="table-light border-bottom-0">
+                <tr>
+                    <th style="width: 70px;" class="text-center">N°</th>
+                    <th>Matricule</th>
+                    <th>Nom & Prénom</th>
+                    <th class="text-center bg-light-cell">Note Classe <span class="text-muted fw-normal">/ 40</span></th>
+                    <th class="text-center bg-light-cell">Note Compo <span class="text-muted fw-normal">/ 20</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let eleve of eleves; let i = index">
+                    <td class="text-center text-muted fw-semibold">{{ i + 1 }}</td>
+                    <td>
+                        <span class="badge bg-light text-secondary border px-2 py-1.5 fw-mono fs-7">
+                            {{ eleve.matricule }}
+                        </span>
+                    </td>
+                    <td class="fw-bold text-dark text-uppercase-first">
+                        {{ eleve.nom }} {{ eleve.prenom }}
+                    </td>
+                    <td class="text-center fw-bold text-primary bg-light-cell fs-6">
+                        {{ eleve.noteClasse !== null && eleve.noteClasse !== undefined ? (eleve.noteClasse | number:'1.2-2') : '—' }}
+                    </td>
+                    <td class="text-center fw-bold text-success bg-light-cell fs-6">
+                        {{ eleve.noteCompo !== null && eleve.noteCompo !== undefined ? (eleve.noteCompo | number:'1.2-2' ) : '—' }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- SQUELETTE VIDE SI AUCUN RÉSULTAT -->
+<div *ngIf="!loading && eleves.length === 0" class="text-center p-5 bg-white rounded-4 shadow-sm border border-dashed">
+    <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+    <p class="text-secondary fw-medium mb-0">Aucun élève trouvé. Veuillez ajuster vos filtres et cliquer sur "Produire".</p>
+</div>

@@ -1,53 +1,75 @@
-<div class="container mt-4">
-    <div class="row g-4 justify-content-center">
+<div class="container mt-5">
+  <!-- Titre de la section (Optionnel mais recommandé pour le design) -->
+  <div class="text-center mb-5">
+    <h2 class="fw-extrabold text-dark tracking-tight">Gestion des Notes & Bulletins</h2>
+    <p class="text-muted">Sélectionnez une action pour commencer la configuration</p>
+  </div>
 
-        <!-- NOTES PAR CLASSE -->
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <a routerLink="/note/par-classe" class="btn btn-outline-primary w-100 d-flex flex-column align-items-center justify-content-center p-4 text-decoration-none shadow-sm hover-scale">
-                <i class="fas fa-home fa-3x mb-2 text-primary"></i>
-                <span class="fw-bold">NOTES PAR CLASSE</span>
-            </a>
+  <div class="row g-4 justify-content-center">
+    <!-- NOTES PAR CLASSE -->
+    <div class="col-12 col-sm-6 col-md-4 col-lg-4">
+      <a routerLink="/note/par-classe" class="card h-100 border-0 rounded-4 text-center p-4 text-decoration-none shadow-sm transition-card bg-light-primary text-primary">
+        <div class="icon-wrapper bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+          <i class="fas fa-home fa-2x"></i>
         </div>
-
-        <!-- NOTES POUR UN ELEVE -->
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <a routerLink="/note/eleve" class="btn btn-outline-success w-100 d-flex flex-column align-items-center justify-content-center p-4 text-decoration-none shadow-sm hover-scale">
-                <i class="fas fa-user-graduate fa-3x mb-2 text-success"></i>
-                <span class="fw-bold">NOTES POUR UN ELEVE</span>
-            </a>
-        </div>
-
-        <!-- NOTES PAR MATIERE -->
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <a routerLink="/note/matiere" class="btn btn-outline-warning w-100 d-flex flex-column align-items-center justify-content-center p-4 text-decoration-none shadow-sm hover-scale">
-                <i class="fas fa-book-open fa-3x mb-2 text-warning"></i>
-                <span class="fw-bold">NOTES PAR MATIERE</span>
-            </a>
-        </div>
-
-        <!-- RELEVE -->
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <a routerLink="/note/releve" class="btn btn-outline-info w-100 d-flex flex-column align-items-center justify-content-center p-4 text-decoration-none shadow-sm hover-scale">
-                <i class="fas fa-chalkboard-teacher fa-3x mb-2 text-info"></i>
-                <span class="fw-bold">RELEVER</span>
-            </a>
-        </div>
-
-        <!-- BULLETIN ELEVE -->
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <a routerLink="/note/bulletin-eleve" class="btn btn-outline-danger w-100 d-flex flex-column align-items-center justify-content-center p-4 text-decoration-none shadow-sm hover-scale">
-                <i class="fas fa-file-alt fa-3x mb-2 text-danger"></i>
-                <span class="fw-bold">BULLETIN D'UN ELEVE</span>
-            </a>
-        </div>
-
-        <!-- BULLETIN CLASSE -->
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <a routerLink="/note/bulletin-classe" class="btn btn-outline-secondary w-100 d-flex flex-column align-items-center justify-content-center p-4 text-decoration-none shadow-sm hover-scale">
-                <i class="fas fa-file fa-3x mb-2 text-secondary"></i>
-                <span class="fw-bold">BULLETIN PAR CLASSE</span>
-            </a>
-        </div>
-
+        <span class="fs-5 fw-bold text-dark mb-1">Notes par classe</span>
+        <small class="text-muted">Saisie et consultation par groupe</small>
+      </a>
     </div>
+
+    <!-- NOTES POUR UN ELEVE -->
+    <div class="col-12 col-sm-6 col-md-4 col-lg-4">
+      <a routerLink="/note/eleve" class="card h-100 border-0 rounded-4 text-center p-4 text-decoration-none shadow-sm transition-card bg-light-success text-success">
+        <div class="icon-wrapper bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+          <i class="fas fa-user-graduate fa-2x"></i>
+        </div>
+        <span class="fs-5 fw-bold text-dark mb-1">Notes pour un élève</span>
+        <small class="text-muted">Suivi individuel des évaluations</small>
+      </a>
+    </div>
+
+    <!-- NOTES PAR MATIERE -->
+    <div class="col-12 col-sm-6 col-md-4 col-lg-4">
+      <a routerLink="/note/matiere" class="card h-100 border-0 rounded-4 text-center p-4 text-decoration-none shadow-sm transition-card bg-light-warning text-warning">
+        <div class="icon-wrapper bg-warning text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+          <i class="fas fa-book-open fa-2x"></i>
+        </div>
+        <span class="fs-5 fw-bold text-dark mb-1">Notes par matière</span>
+        <small class="text-muted">Vue d'ensemble par discipline</small>
+      </a>
+    </div>
+
+    <!-- RELEVE -->
+    <div class="col-12 col-sm-6 col-md-4 col-lg-4">
+      <a routerLink="/note/releve" class="card h-100 border-0 rounded-4 text-center p-4 text-decoration-none shadow-sm transition-card bg-light-info text-info">
+        <div class="icon-wrapper bg-info text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+          <i class="fas fa-chalkboard-teacher fa-2x"></i>
+        </div>
+        <span class="fs-5 fw-bold text-dark mb-1">Relevés de notes</span>
+        <small class="text-muted">Générer les états périodiques</small>
+      </a>
+    </div>
+
+    <!-- BULLETIN ELEVE -->
+    <div class="col-12 col-sm-6 col-md-4 col-lg-4">
+      <a routerLink="/note/bulletin-eleve" class="card h-100 border-0 rounded-4 text-center p-4 text-decoration-none shadow-sm transition-card bg-light-danger text-danger">
+        <div class="icon-wrapper bg-danger text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+          <i class="fas fa-file-alt fa-2x"></i>
+        </div>
+        <span class="fs-5 fw-bold text-dark mb-1">Bulletin d'un élève</span>
+        <small class="text-muted">Impression et édition individuelle</small>
+      </a>
+    </div>
+
+    <!-- BULLETIN CLASSE -->
+    <div class="col-12 col-sm-6 col-md-4 col-lg-4">
+      <a routerLink="/note/bulletin-classe" class="card h-100 border-0 rounded-4 text-center p-4 text-decoration-none shadow-sm transition-card bg-light-secondary text-secondary">
+        <div class="icon-wrapper bg-secondary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+          <i class="fas fa-file fa-2x"></i>
+        </div>
+        <span class="fs-5 fw-bold text-dark mb-1">Bulletin par classe</span>
+        <small class="text-muted">Génération globale du trimestre</small>
+      </a>
+    </div>
+  </div>
 </div>

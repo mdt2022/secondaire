@@ -16,9 +16,9 @@ export const routes: Routes = [
     },
     children: [
       {
-  path: 'avance',
-  loadChildren: () => import('./views/avance/routes').then(m => m.routes)
-},
+        path: 'avance',
+        loadChildren: () => import('./views/avance/routes').then(m => m.routes)
+      },
       {
         path: 'supports',
         loadChildren: () => import('./views/supportdecours/routes').then((m) => m.routes)

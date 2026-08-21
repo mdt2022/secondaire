@@ -1,0 +1,93 @@
+/* Customisation générale des sélecteurs */
+.custom-select {
+  height: 46px;
+  border-color: #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.custom-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+/* Boutons d'actions principaux */
+.custom-btn {
+  height: 46px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Espacements étiquettes */
+.tracking-wider {
+  letter-spacing: 0.05em;
+}
+
+/* Structure moderne du tableau */
+.custom-table th {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+  padding: 1.1rem 1rem;
+  background-color: #f8fafc;
+}
+
+.custom-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* Colonnes d'encodage mises en valeur */
+.bg-light-cell {
+  background-color: #f8fafc;
+}
+
+/* Champs de saisie des notes */
+.custom-input-note {
+  height: 38px;
+  font-size: 1rem;
+  color: #1e293b;
+}
+
+.custom-input-note:focus {
+  background-color: #fff;
+  box-shadow: none;
+}
+
+/* Suppression des flèches par défaut des inputs de type number */
+.custom-input-note::-webkit-outer-spin-button,
+.custom-input-note::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.custom-input-note[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Typographie technique pour matricule */
+.fw-mono {
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.fs-7 {
+  font-size: 0.8rem;
+}
+
+.shadow-2xs {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Micro animation d'affichage fluide */
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

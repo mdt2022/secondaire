@@ -6,56 +6,81 @@
           <c-card class="p-4">
             <c-card-body>
               <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" cForm>
-                <h1>Administration</h1>
-                <p *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</p>
-                <p class="text-body-secondary">Espace Administration du secondaire</p>
+                <h1 class="mb-2">Administration</h1>
+                <p class="text-body-secondary mb-4">Espace Administration du secondaire</p>
+
+                <!-- Message d'erreur stylisé -->
+                <div *ngIf="errorMessage" class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+                  <svg cIcon name="cilWarning" class="me-2" size="lg"></svg>
+                  <div>{{ errorMessage }}</div>
+                </div>
+
+                <!-- Champ Identifiant -->
                 <c-input-group class="mb-3">
                   <span cInputGroupText>
                     <svg cIcon name="cilUser"></svg>
                   </span>
                   <input 
-                  autoComplete="username" 
-                  cFormControl 
-                  formControlName = "username"
-                  placeholder="Identifiant" />
+                    cFormControl
+                    autoComplete="username" 
+                    formControlName="username"
+                    placeholder="Identifiant" 
+                  />
                 </c-input-group>
-                <c-input-group class="mb-4">
+
+                <!-- Champ Mot de passe -->
+                <c-input-group class="mb-3">
                   <span cInputGroupText>
                     <svg cIcon name="cilLockLocked"></svg>
                   </span>
                   <input
-                    autoComplete="current-password"
                     cFormControl
-                    placeholder="Mot de passe"
                     type="password"
-                    formControlName = "password"
+                    autoComplete="current-password"
+                    formControlName="password"
+                    placeholder="Mot de passe"
                   />
                 </c-input-group>
-                <c-row>
+
+                <!-- Champ Sélection de l'École (Correction Design) -->
+                <c-input-group class="mb-4">
+                  <span cInputGroupText>
+                    <svg cIcon name="cilHome"></svg> <!-- Icône pro 'Institution/École' -->
+                  </span>
+                  <select cSelect class="form-select" formControlName="ecoleId">
+                    <option value="" disabled selected>Sélectionnez votre établissement</option>
+                    <option *ngFor="let ecole of ecoles" [value]="ecole.idEcole">
+                      {{ ecole.nomEcole }}
+                    </option>
+                  </select>
+                </c-input-group>
+
+                <!-- Boutons d'action -->
+                <c-row class="align-items-center">
                   <c-col xs="6">
                     <button 
                       type="submit" 
                       cButton 
-                      class="px-4 d-flex align-items-center justify-content-center" 
                       color="primary" 
-                      [disabled]="loading">
-
-                      <span *ngIf="!loading">Connexion</span>
-                      <span *ngIf="loading" class="d-flex align-items-center">
+                      class="px-4 w-100 justify-content-center" 
+                      [disabled]="loading || loginForm.invalid"
+                    >
+                      <span *ngIf="!loading">Se connecter</span>
+                      <div *ngIf="loading" class="d-flex align-items-center justify-content-center">
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        Chargement...
-                      </span>
-
+                        <span>Connexion...</span>
+                      </div>
                     </button>
-
                   </c-col>
-                  <c-col class="text-right" xs="6">
-                    <button cButton class="px-0" color="link">
+                  
+                  <c-col xs="6" class="text-end"> <!-- Remplacement de text-right (obsolète) par text-end -->
+                    <button type="button" cButton color="link" class="px-0 text-decoration-none">
                       Mot de passe oublié ?
                     </button>
                   </c-col>
                 </c-row>
               </form>
+
             </c-card-body>
           </c-card>
           <c-card class="imgdes">

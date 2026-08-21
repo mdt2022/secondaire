@@ -1,170 +1,179 @@
-<div *ngIf="mode === 'form'" class="card-box shadow-sm p-4 rounded">
-
-    <h3 class="text-center mb-4 fw-bold text-primary">
-        Gestion des notes de {{ etablissement }}
+<!-- MODE FORMULAIRE : FILTRES -->
+<div *ngIf="mode === 'form'" class="card border-0 shadow-sm p-4 rounded-4 bg-white">
+  <div class="text-center mb-4">
+    <span class="badge bg-light-primary text-primary px-3 py-2 rounded-pill fw-bold mb-2">Configuration</span>
+    <h3 class="fw-extrabold text-dark tracking-tight">
+      Gestion des notes — {{ etablissement }}
     </h3>
+  </div>
 
-    <div class="row">
-
-        <div class="col-sm-3">
-            <select class="form-control" [(ngModel)]="selectedPeriode">
-
-    <option [ngValue]="null" disabled>
-        Période
-    </option>
-
-    <option *ngFor="let p of periodes" [ngValue]="p.id">
-        {{ p.libelle }}
-    </option>
-
-</select>
-
-        </div>
-
-        <div class="col-sm-3">
-            <select class="form-control" [(ngModel)]="selectedAnnee">
-            <option [ngValue]="null" disabled>
-                Année scolaire
-            </option>
-            <option *ngFor="let a of annees" [value]="a.id">
-                {{ a.nom }}
-            </option>
-        </select>
-        </div>
-
-        <div class="col-sm-3">
-            <select class="form-control" [(ngModel)]="selectedClasse">
-            <option [ngValue]="null" disabled>
-                Classe
-            </option>
-            <option *ngFor="let c of classes" [value]="c.id">
-                {{ c.nom }}
-            </option>
-        </select>
-        </div>
-
-        <div class="col-sm-3">
-            <button class="btn btn-primary w-100" (click)="chargerBulletin()">
-            Afficher les bulletins
-        </button>
-        </div>
-
+  <div class="row g-3 align-items-end">
+    <div class="col-12 col-md-4">
+      <label class="form-label small fw-bold text-secondary">Période</label>
+      <select class="form-select form-select-lg border-2" [(ngModel)]="selectedPeriode">
+        <option [ngValue]="null" disabled>Choisir une période</option>
+        <option *ngFor="let p of periodes" [ngValue]="p.id">{{ p.libelle }}</option>
+      </select>
     </div>
 
+    <div class="col-12 col-md-4">
+      <label class="form-label small fw-bold text-secondary">Année scolaire</label>
+      <select class="form-select form-select-lg border-2" [(ngModel)]="selectedAnnee">
+        <option [ngValue]="null" disabled>Choisir une année</option>
+        <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
+      </select>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <label class="form-label small fw-bold text-secondary">Classe</label>
+      <select class="form-select form-select-lg border-2" [(ngModel)]="selectedClasse">
+        <option [ngValue]="null" disabled>Choisir une classe</option>
+        <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+      </select>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <button class="btn btn-primary btn-lg w-100 fw-bold shadow-sm py-2" (click)="chargerBulletin()">
+        <i class="fas fa-search me-2"></i>Afficher les bulletins
+      </button>
+    </div>
+  </div>
 </div>
 
-
-<div *ngIf="mode === 'bulletin'">
-    <div class="mb-3"> <button class="btn btn-primary me-2" (click)="imprimerPDF()"> Imprimer les bulletins </button> <button class="btn btn-success me-2" (click)="mode='liste'"> Liste des notes par élève</button> <button class="btn btn-secondary" (click)="retourForm()"> Retour </button>        </div>
-    <div *ngFor="let eleve of moyennes" class="card-box mb-3">
-        <h5>{{ eleve.eleve.prenom }} {{ eleve.eleve.nom }}</h5>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Matière</th>
-                    <th>Note Classe</th>
-                    <th>Note Compo</th>
-                    <th>Moyenne</th>
-                    <th>Coef</th>
-                    <th>Moy Coef</th>
-                    <th>Mention</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let n of eleve.notes">
-                    <td>{{ n.matiere?.libelle }}</td>
-
-                    <td>{{ n.noteClasse | number:'1.2-2' }}</td>
-                    <td>{{ n.noteCompo | number:'1.2-2' }}</td>
-                    <td>{{ n.mg | number:'1.2-2' }}</td>
-
-                    <td>{{ n.matiere?.coefficient }}</td>
-
-                    <td>{{ n.mgc | number:'1.2-2' }}</td>
-
-                    <td>{{ n.mention }}</td>
-                </tr>
-                <tr class="total-row">
-                    <td colspan="4"></td>
-                    <td><strong>TOTAL</strong></td>
-                    <td><strong>{{ eleve.total | number:'1.2-2' }}</strong></td>
-                    <td></td>
-                </tr>
-                <tr class="moyenne-row">
-                    <td colspan="4"></td>
-                    <td><strong>Moyenne</strong></td>
-                    <td><strong>{{ eleve.moyg | number:'1.2-2' }}</strong></td>
-                    <td></td>
-                </tr>
-                <tr class="moyenne-row">
-                    <td colspan="4"></td>
-                    <td><strong>Observation</strong></td>
-                    <td><strong>{{ eleve.observation }}</strong></td>
-                    <td></td>
-                </tr>
-                <tr class="moyenne-row">
-                    <td colspan="4"></td>
-                    <td><strong>Rang</strong></td>
-                    <td><strong>{{ eleve.rang }} / {{ moyennes.length }}</strong></td>
-                    <td></td>
-                </tr>
-                <tr class="moyenne-row">
-                    <td colspan="4"></td>
-                    <td><strong>Moyenne du 1er</strong></td>
-                    <td> <strong> {{ moyennes.length ? (moyennes[0].moyg | number:'1.2-2') : '0.00' }} </strong> </td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
+<!-- MODE BULLETIN : VUE PAR ÉLÈVE -->
+<div *ngIf="mode === 'bulletin'" class="animate-fade-in">
+  <!-- Barre d'actions -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center bg-white p-3 rounded-4 shadow-sm mb-4 gap-2">
+    <button class="btn btn-light border fw-bold text-secondary" (click)="retourForm()">
+      <i class="fas fa-arrow-left me-2"></i>Retour
+    </button>
+    <div class="d-flex gap-2">
+      <button class="btn btn-success fw-bold" (click)="mode='liste'">
+        <i class="fas fa-list me-2"></i>Vue en liste globale
+      </button>
+      <button class="btn btn-primary fw-bold shadow-sm" (click)="imprimerPDF()">
+        <i class="fas fa-print me-2"></i>Imprimer les bulletins
+      </button>
     </div>
-</div>
+  </div>
 
-<div *ngIf="mode === 'liste'">
-
-    <div class="mb-3 text-center">
-        <button class="btn btn-primary me-2 shadow-sm" (click)="imprimerListePDF()">
-             Imprimer la liste
-        </button>
-
-        <button class="btn btn-secondary shadow-sm" (click)="mode='bulletin'">
-             Retour
-        </button>
+  <!-- Cartes de bulletins individuels -->
+  <div *ngFor="let eleve of moyennes" class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden bg-white">
+    <div class="card-header bg-light border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+      <h5 class="mb-0 fw-bold text-dark">
+        <i class="fas fa-user text-primary me-2"></i>{{ eleve.eleve.prenom }} {{ eleve.eleve.nom }}
+      </h5>
+      <span class="badge bg-primary px-3 py-2 rounded-pill fs-6 fw-bold">Rang : {{ eleve.rang }} / {{ moyennes.length }}</span>
     </div>
 
-    <h4 class="text-center fw-bold mb-3 text-primary">
-        LISTE GÉNÉRALE DES MOYENNES — {{ etablissement }}
-    </h4>
-
-    <table class="table table-bordered table-hover">
-
-        <thead class="table-light text-center">
-            <tr>
-                <th>#</th>
-                <th>Matricule</th>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>Moyenne</th>
-                <th>Observation</th>
-                <th>Rang</th>
-            </tr>
+    <div class="table-responsive px-4 pt-3">
+      <table class="table table-hover align-middle custom-table">
+        <thead class="table-light">
+          <tr>
+            <th>Matière</th>
+            <th class="text-center">Note Classe</th>
+            <th class="text-center">Note Compo</th>
+            <th class="text-center">Moyenne</th>
+            <th class="text-center">Coef</th>
+            <th class="text-center">Moy Coef</th>
+            <th>Mention</th>
+          </tr>
         </thead>
-
-        <tbody class="text-center">
-            <tr *ngFor="let eleve of moyennes; let i = index">
-                <td>{{ i + 1 }}</td>
-                <td>{{ eleve.eleve.matricule }}</td>
-                <td>{{ eleve.eleve.nom }}</td>
-                <td>{{ eleve.eleve.prenom }}</td>
-                <td class="fw-bold text-primary">
-                    {{ eleve.moyg | number:'1.2-2' }}
-                </td>
-                <td>{{ eleve.observation }}</td>
-                <td class="fw-bold">
-                    {{ eleve.rang }}
-                </td>
-            </tr>
+        <tbody>
+          <tr *ngFor="let n of eleve.notes">
+            <td class="fw-semibold text-dark">{{ n.matiere?.libelle }}</td>
+            <td class="text-center text-muted">{{ n.noteClasse | number:'1.2-2' }}</td>
+            <td class="text-center text-muted">{{ n.noteCompo | number:'1.2-2' }}</td>
+            <td class="text-center fw-bold text-dark">{{ n.mg | number:'1.2-2' }}</td>
+            <td class="text-center text-secondary bg-light-cell">{{ n.matiere?.coefficient }}</td>
+            <td class="text-center fw-bold text-primary">{{ n.mgc | number:'1.2-2' }}</td>
+            <td><span class="badge bg-light text-dark border border-muted">{{ n.mention }}</span></td>
+          </tr>
         </tbody>
+      </table>
+    </div>
 
-    </table>
+    <!-- Section de synthèse du bulletin -->
+    <div class="card-footer bg-light-subtle border-top p-4">
+      <div class="row g-3 text-center">
+        <div class="col-6 col-md-3">
+          <div class="p-3 bg-white border rounded-3 shadow-2xs">
+            <small class="text-muted d-block text-uppercase fw-bold mb-1" style="font-size: 0.75rem;">Total Points</small>
+            <span class="fs-5 fw-bold text-dark">{{ eleve.total | number:'1.2-2' }}</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="p-3 bg-white border rounded-3 shadow-2xs border-primary-subtle bg-primary-light">
+            <small class="text-primary d-block text-uppercase fw-bold mb-1" style="font-size: 0.75rem;">Moyenne Générale</small>
+            <span class="fs-5 fw-bold text-primary">{{ eleve.moyg | number:'1.2-2' }}</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="p-3 bg-white border rounded-3 shadow-2xs">
+            <small class="text-muted d-block text-uppercase fw-bold mb-1" style="font-size: 0.75rem;">Moyenne du 1er</small>
+            <span class="fs-5 fw-semibold text-success">{{ moyennes.length ? (moyennes[0].moyg | number:'1.2-2') : '0.00' }}</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="p-3 bg-white border rounded-3 shadow-2xs">
+            <small class="text-muted d-block text-uppercase fw-bold mb-1" style="font-size: 0.75rem;">Observation</small>
+            <span class="fs-6 fw-bold text-uppercase-first d-block text-truncate" [title]="eleve.observation">{{ eleve.observation || '-' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
+<!-- MODE LISTE : TABLEAU DE SYNTHÈSE GLOBALE -->
+<div *ngIf="mode === 'liste'" class="animate-fade-in">
+  <div class="d-flex flex-wrap justify-content-between align-items-center bg-white p-3 rounded-4 shadow-sm mb-4 gap-2">
+    <button class="btn btn-light border fw-bold text-secondary" (click)="mode='bulletin'">
+      <i class="fas fa-arrow-left me-2"></i>Retour aux bulletins
+    </button>
+    <button class="btn btn-primary fw-bold shadow-sm" (click)="imprimerListePDF()">
+      <i class="fas fa-print me-2"></i>Imprimer la liste
+    </button>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+    <div class="card-body p-4">
+      <h4 class="fw-bold mb-4 text-dark text-center">
+        Liste générale des moyennes — <span class="text-primary">{{ etablissement }}</span>
+      </h4>
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle text-center custom-table">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 60px;">#</th>
+              <th>Matricule</th>
+              <th class="text-start">Nom & Prénom</th>
+              <th>Moyenne</th>
+              <th>Observation</th>
+              <th>Rang</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let eleve of moyennes; let i = index">
+              <td><span class="text-muted fw-semibold">{{ i + 1 }}</span></td>
+              <td><span class="badge bg-light text-secondary border px-2 py-1.5 fw-mono">{{ eleve.eleve.matricule }}</span></td>
+              <td class="text-start fw-bold text-dark">{{ eleve.eleve.nom }} {{ eleve.eleve.prenom }}</td>
+              <td>
+                <span class="badge bg-light-primary text-primary px-3 py-2 rounded-pill fw-bold fs-6">
+                  {{ eleve.moyg | number:'1.2-2' }}
+                </span>
+              </td>
+              <td class="text-muted small">{{ eleve.observation }}</td>
+              <td>
+                <span class="fw-extrabold fs-6" [ngClass]="{'text-success': i === 0, 'text-dark': i > 0}">
+                  {{ eleve.rang }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>

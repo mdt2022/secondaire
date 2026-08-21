@@ -146,11 +146,11 @@ imprimerPDF(): void {
       const eleve = eleveData.eleve ?? {};
       const notes = eleveData.notes ?? [];
 
-      doc.setFont('times', 'normal');
+     
       doc.addImage(img, 'PNG', 15, y, 25, 25);
       
-      const maxWidth = 155; 
-      doc.setFontSize(18); // Légèrement réduit (20 -> 18) pour gagner de la place en haut
+      const maxWidth = 145; 
+      doc.setFontSize(16); // Légèrement réduit (20 -> 16) pour gagner de la place en haut
       doc.setFont('times', 'bold');
       
       const descLignes = doc.splitTextToSize(descriptionEcole.toUpperCase(), maxWidth);
@@ -159,11 +159,11 @@ imprimerPDF(): void {
       const descriptionHeight = descLignes.length * 5; 
       const pointilleY = 18 + descriptionHeight;
       doc.setFontSize(9);
-      doc.setFont('times', 'normal');
+      
       doc.text('......................................................', 105, pointilleY, { align: 'center' });
 
       const adresseAjustee = doc.splitTextToSize(adresseEcole, maxWidth);
-      doc.text(adresseAjustee, 105, pointilleY + 5, { align: 'center' });
+      doc.text(adresseAjustee, 110, pointilleY + 5, { align: 'center' });
       
       y = pointilleY + 5 + (adresseAjustee.length * 4) + 5;
 
@@ -173,7 +173,7 @@ imprimerPDF(): void {
 
       y += 6;
       doc.setFontSize(11);
-      doc.setFont('times', 'normal');
+    
       doc.text(`Année Scolaire : ${nomAnnee}`, 105, y, { align: 'center' });
 
       y += 6;
@@ -207,6 +207,7 @@ imprimerPDF(): void {
           lineColor:[0,0,0],
           lineWidth: 0.1,
           halign: 'center',
+          fontStyle: 'bold',
           cellPadding: 1.5 // Réduction de l'espace interne pour économiser des lignes
         },
         headStyles: {
@@ -238,7 +239,8 @@ imprimerPDF(): void {
           fontSize: 10, // Cohérence à 10 avec le tableau principal
           lineColor:[0,0,0],
           lineWidth: 0.1,
-          cellPadding: 1.5
+          cellPadding: 1.5,
+          fontStyle: 'bold'
         },
         body: [
           ['TOTAL', Number(eleveData.total ?? 0).toFixed(2)],
@@ -254,10 +256,16 @@ imprimerPDF(): void {
       const signY = endOfSummaryTable + 10; 
 
       doc.setFontSize(11);
-      doc.setFont('times', 'normal');
-      doc.text(`Fait, le __________________`, 140, signY);
+      
+      doc.text(`Fait, le __________________`, 165, signY, { align: 'center' });
       doc.setFont('times', 'bold');
-      doc.text("Le Proviseur", 155, signY + 30); // Rapprochement vertical pour éviter le hors-page
+      let signateur ;
+      if(this.authService.getEcoleId() === 20){ 
+        signateur = "La Directrice Générale"
+      }else{
+        signateur = "Le Proviseur";
+      }
+      doc.text(signateur, 165, signY + 50, { align: 'center' }); // Rapprochement vertical pour éviter le hors-page
 
       // 5. Rendu propre du pied de page
       doc.setFontSize(8);

@@ -1,114 +1,145 @@
-<div class="card p-4 shadow-sm mx-auto" style="max-width: 1200px;">
-  <h4 class="mb-4 text-primary">
-    <i class="fa fa-user-plus me-2"></i>Enregistrer et affecter un élève
-  </h4>
-
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="row g-4">
-<!-- Informations personnelles et parents -->
-<div formGroupName="eleve" class="col-12">
-
-  <!-- Informations personnelles -->
-  <div class="mb-4">
-    <h5 class="mb-3 text-secondary">
-      <i class="fa fa-id-card me-2"></i>Informations personnelles
-    </h5>
-    <div class="row g-3">
-      <div class="col-md-3">
-        <label class="form-label">Matricule</label>
-        <input type="text" class="form-control" formControlName="matricule">
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">Nom</label>
-        <input type="text" class="form-control" formControlName="nom">
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">Prénom</label>
-        <input type="text" class="form-control" formControlName="prenom">
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">Nationalité</label>
-        <input type="text" class="form-control" formControlName="nationalite">
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Date de naissance</label>
-        <input type="date" class="form-control" formControlName="datedn">
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Lieu de naissance</label>
-        <input type="text" class="form-control" formControlName="lieudn">
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Sexe</label>
-        <select class="form-select" formControlName="sexe">
-          <option value="">-- Sélectionner --</option>
-          <option value="M">Masculin</option>
-          <option value="F">Féminin</option>
-        </select>
-      </div>
-    </div>
+<div class="container py-4">
+  <!-- EN-TÊTE DE LA PAGE -->
+  <div class="page-header mb-4 bg-white p-4 rounded-4 shadow-sm border-start border-primary border-4 animate-fade-in">
+    <h1 class="h3 fw-extrabold text-dark mb-1">
+      <i class="fa fa-user-plus text-primary me-2"></i>Enregistrer et affecter un élève
+    </h1>
+    <p class="text-muted mb-0 small text-uppercase tracking-wider fw-semibold">Saisie d'un nouveau dossier d'inscription</p>
   </div>
 
-  <!-- Informations parents -->
-  <div class="mb-4">
-    <h5 class="mb-3 text-secondary">
-      <i class="fa fa-users me-2"></i>Informations des parents
-    </h5>
-    <div class="row g-3">
-      <div class="col-md-4">
-        <label class="form-label">Prénom père</label>
-        <input type="text" class="form-control" formControlName="prenompere">
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Prénom mère</label>
-        <input type="text" class="form-control" formControlName="prenommere">
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Nom mère</label>
-        <input type="text" class="form-control" formControlName="nommere">
-      </div>
-    </div>
-  </div>
-
-</div>
-
-
-      <!-- Affectation -->
-      <div class="col-12 mt-4">
-        <h5 class="mb-3 text-secondary"><i class="fa fa-map-marker-alt me-2"></i>Affectation</h5>
-        <div class="row g-3">
-          <div class="col-md-4">
-            <label class="form-label">Classe</label>
-            <select class="form-select" formControlName="classe">
-              <option [ngValue]="null">-- Sélectionner une classe --</option>
-              <option *ngFor="let c of classes" [ngValue]="c">{{ c.nom }}</option>
-            </select>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="animate-fade-in">
+    <div class="row g-4" formGroupName="eleve">
+      
+      <!-- SECTION 1 : INFORMATIONS PERSONNELLES -->
+      <div class="col-12">
+        <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
+          <div class="d-flex align-items-center mb-3">
+            <span class="badge bg-light-primary text-primary p-2 rounded-3 me-3 fs-5">
+              <i class="fa fa-id-card"></i>
+            </span>
+            <div>
+              <h5 class="mb-0 fw-bold text-dark">Informations personnelles</h5>
+              <small class="text-muted">Identité officielle et état civil de l'apprenant</small>
+            </div>
           </div>
-          <div class="col-md-4">
-            <label class="form-label">Année</label>
-            <select class="form-select" formControlName="anneeuv">
-              <option [ngValue]="null">-- Sélectionner une année --</option>
-              <option *ngFor="let a of annees" [ngValue]="a">{{ a.nom }}</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Académie</label>
-            <select class="form-select" formControlName="academie">
-              <option [ngValue]="null">-- Sélectionner --</option>
-              <option *ngFor="let ac of academies" [ngValue]="ac">{{ ac.libelle }}</option>
-            </select>
+          
+          <div class="row g-3">
+            <div class="col-12 col-sm-6 col-md-3">
+              <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Matricule</label>
+              <input type="text" class="form-control border-2 custom-input shadow-2xs" formControlName="matricule" placeholder="Ex: MAT-12345">
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+              <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Nom</label>
+              <input type="text" class="form-control border-2 custom-input shadow-2xs" formControlName="nom" placeholder="Ex: DIARRA">
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+              <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Prénom</label>
+              <input type="text" class="form-control border-2 custom-input shadow-2xs" formControlName="prenom" placeholder="Ex: Amadou">
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+              <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Nationalité</label>
+              <input type="text" class="form-control border-2 custom-input shadow-2xs" formControlName="nationalite" placeholder="Ex: Malienne">
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Date de naissance</label>
+              <input type="date" class="form-control border-2 custom-input shadow-2xs" formControlName="datedn">
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Lieu de naissance</label>
+              <input type="text" class="form-control border-2 custom-input shadow-2xs" formControlName="lieudn" placeholder="Ex: Bamako">
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Sexe</label>
+              <select class="form-select border-2 custom-select shadow-2xs" formControlName="sexe">
+                <option value="">Sélectionner...</option>
+                <option value="M">Masculin</option>
+                <option value="F">Féminin</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Bouton -->
-      <div class="col-12 mt-4 text-end">
-        <button type="submit" class="btn btn-primary px-4" [disabled]="loading || form.invalid">
-          <i class="fa" [ngClass]="loading ? 'fa-spinner fa-spin me-2' : 'fa-save me-2'"></i>
-          {{ loading ? 'Enregistrement...' : 'Enregistrer et affecter' }}
-        </button>
+      <!-- SECTION 2 : INFORMATIONS PARENTS -->
+      <div class="col-12">
+        <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
+          <div class="d-flex align-items-center mb-3">
+            <span class="badge bg-light-success text-success p-2 rounded-3 me-3 fs-5">
+              <i class="fa fa-users"></i>
+            </span>
+            <div>
+              <h5 class="mb-0 fw-bold text-dark">Informations des parents</h5>
+              <small class="text-muted">Filiation et contacts d'urgence</small>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-12 col-md-4">
+              <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Prénom du père</label>
+              <input type="text" class="form-control border-2 custom-input shadow-2xs" formControlName="prenompere" placeholder="Ex: Moussa">
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Prénom de la mère</label>
+              <input type="text" class="form-control border-2 custom-input shadow-2xs" formControlName="prenommere" placeholder="Ex: Fatoumata">
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Nom de la mère</label>
+              <input type="text" class="form-control border-2 custom-input shadow-2xs" formControlName="nommere" placeholder="Ex: COULIBALY">
+            </div>
+          </div>
+        </div>
       </div>
 
+    </div> <!-- Fin du formGroupName="eleve" -->
+
+    <!-- SECTION 3 : AFFECTATION SCOLAIRE -->
+    <div class="row g-4 mt-1">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
+          <div class="d-flex align-items-center mb-3">
+            <span class="badge bg-light-warning text-warning p-2 rounded-3 me-3 fs-5">
+              <i class="fa fa-map-marker-alt"></i>
+            </span>
+            <div>
+              <h5 class="mb-0 fw-bold text-dark">Affectation administrative</h5>
+              <small class="text-muted">Positionnement pédagogique au sein du réseau</small>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-12 col-md-4">
+              <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Classe</label>
+              <select class="form-select border-2 custom-select shadow-2xs" formControlName="classe">
+                <option [ngValue]="null">Sélectionner une classe...</option>
+                <option *ngFor="let c of classes" [ngValue]="c">{{ c.nom }}</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Année scolaire</label>
+              <select class="form-select border-2 custom-select shadow-2xs" formControlName="anneeuv">
+                <option [ngValue]="null">Sélectionner une année...</option>
+                <option *ngFor="let a of annees" [ngValue]="a">{{ a.nom }}</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Académie</label>
+              <select class="form-select border-2 custom-select shadow-2xs" formControlName="academie">
+                <option [ngValue]="null">Sélectionner...</option>
+                <option *ngFor="let ac of academies" [ngValue]="ac">{{ ac.libelle }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOUUMISSION ET STRATÉGIE DE BOUTON -->
+      <div class="col-12 text-end mb-4">
+        <button type="submit" class="btn btn-primary fw-bold px-4 py-2 custom-btn shadow-sm" [disabled]="loading || form.invalid">
+          <i class="fa" [ngClass]="loading ? 'fa-spinner fa-spin me-2' : 'fa-save me-2'"></i>
+          {{ loading ? 'Enregistrement...' : 'Enregistrer et affecter l\'élève' }}
+        </button>
+      </div>
     </div>
+
   </form>
 </div>

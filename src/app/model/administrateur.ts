@@ -11,5 +11,6 @@ export interface Administrateur{
     password: string;
     role: Role;
     ecole: Ecole;
+    photo: string;
     online: boolean
 }

@@ -33,7 +33,7 @@ export class EnseignantService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
   //les enseignants de cette ecole
-  getEnseignantEcole(idecole: number): Observable<Enseignant[]>{
+  getEnseignantEcole(idecole: any): Observable<Enseignant[]>{
     return this.http.get<Enseignant[]>(this.apiUrl+"/ecole/"+idecole)
   }
 }

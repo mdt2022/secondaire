@@ -1,0 +1,103 @@
+/* Composants d'entrées et de filtres */
+.custom-select {
+  height: 46px;
+  border-color: #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.custom-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+/* Barre de filtrage textuel groupée */
+.input-group-container {
+  border: 2px solid #e2e8f0;
+  transition: border-color 0.2s ease;
+}
+
+.input-group-container:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.custom-input-search {
+  height: 40px;
+  font-size: 0.95rem;
+}
+
+.custom-input-search:focus {
+  box-shadow: none;
+  background-color: transparent;
+}
+
+/* Boutons adaptatifs */
+.custom-btn {
+  height: 44px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-btn-nav {
+  height: 38px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Structure moderne de la table */
+.custom-table th {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+  padding: 1.1rem 1rem;
+  background-color: #f8fafc;
+}
+
+.custom-table td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* Typographies et utilitaires techniques */
+.tracking-wider {
+  letter-spacing: 0.05em;
+}
+
+.fw-mono {
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.fs-7 {
+  font-size: 0.8rem;
+}
+
+.shadow-2xs {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.border-dashed {
+  border: 2px dashed #e2e8f0 !important;
+}
+
+.bg-light-primary {
+  background-color: #e0f2fe !important;
+}
+
+/* Micro-animation d'affichage fluide */
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

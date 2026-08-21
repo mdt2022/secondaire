@@ -1,75 +1,108 @@
-<div class="container">
+<div class="container py-4">
 
-    <h2>Les notes d'une classe de {{etablissement}} par matière</h2>
+    <!-- EN-TÊTE DE LA PAGE -->
+    <div class="page-header mb-4 bg-white p-4 rounded-4 shadow-sm border-start border-primary border-4 animate-fade-in">
+        <h1 class="h3 fw-extrabold text-dark mb-1">Notes par matière</h1>
+        <p class="text-muted mb-0 small text-uppercase tracking-wider fw-semibold">{{ etablissement }}</p>
+    </div>
 
-    <div class="form-group row mb-3">
+    <!-- BLOC FILTRES ET SÉLECTION -->
+    <div class="card border-0 shadow-sm p-4 rounded-4 bg-white mb-4 animate-fade-in">
+        <div class="row g-3 align-items-end">
+            <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+                <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Période</label>
+                <select class="form-select border-2 custom-select shadow-2xs" [(ngModel)]="form.periodeId">
+                    <option value="0">Sélectionner...</option>
+                    <option *ngFor="let p of periodes" [value]="p.id">{{ p.libelle }}</option>
+                </select>
+            </div>
 
-        <div class="col">
+            <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+                <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Année</label>
+                <select class="form-select border-2 custom-select shadow-2xs" [(ngModel)]="form.anneeId" (change)="loadMatieres()">
+                    <option value="0">Sélectionner...</option>
+                    <option *ngFor="let annee of annees" [value]="annee.id">{{ annee.nom }}</option>
+                </select>
+            </div>
 
-            <select class="form-control" [(ngModel)]="form.periodeId">
-        <option value="0">-- Période --</option>
-        <option *ngFor="let p of periodes" [value]="p.id">{{ p.libelle }}</option>
-      </select>
-        </div>
+            <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+                <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Classe</label>
+                <select class="form-select border-2 custom-select shadow-2xs" [(ngModel)]="form.classeId" (change)="loadMatieres()">
+                    <option value="0">Sélectionner...</option>
+                    <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+                </select>
+            </div>
 
-        <div class="col">
-            <select class="form-control" [(ngModel)]="form.anneeId" (change)="loadMatieres()">
-        <option value="0">-- Année --</option>
-        <option *ngFor="let annee of annees" [value]="annee.id">{{ annee.nom }}</option>
-      </select>
-        </div>
+            <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+                <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Matière</label>
+                <select class="form-select border-2 custom-select shadow-2xs" [(ngModel)]="form.matiereId">
+                    <option value="0">Sélectionner...</option>
+                    <option *ngFor="let m of matieres" [value]="m.id">{{ m.libelle }}</option>
+                </select>
+            </div>
 
-        <div class="col">
-            <select class="form-control" [(ngModel)]="form.classeId" (change)="loadMatieres()">
-        <option value="0">-- Classe --</option>
-        <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
-      </select>
-        </div>
-
-        <div class="col">
-            <select class="form-control" [(ngModel)]="form.matiereId">
-        <option value="0">-- Matière --</option>
-        <option *ngFor="let m of matieres" [value]="m.id">{{ m.libelle }}</option>
-      </select>
-        </div>
-
-        <div class="col d-flex align-items-end">
-            <button class="btn btn-primary w-100" (click)="rechercher()" [disabled]="loading">
-        {{ loading ? 'Chargement...' : 'Afficher la liste' }}
-      </button>
+            <div class="col-12 col-md-12 col-lg-2">
+                <button class="btn btn-primary fw-bold w-100 custom-btn shadow-sm" (click)="rechercher()" [disabled]="loading">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                    {{ loading ? 'Chargement...' : 'Afficher la liste' }}
+                </button>
+            </div>
         </div>
     </div>
 
-    <div *ngIf="showTable" class="mt-4">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>N°</th>
-                    <th>Matricule</th>
-                    <th>Élève</th>
-                    <th>Note Classe</th>
-                    <th>Note Compo</th>
-                    <!-- <th>Moyenne</th> -->
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let n of notes">
-                    <td></td>
-                    <td>{{ n.matricule }}</td>
-                    <td>{{ n.nom }} {{ n.prenom }}</td>
-                    <td>
-                        <input type="number" class="form-control" [(ngModel)]="n.noteClasse" [ngModelOptions]="{standalone: true}" min="0" max="20" step="0.01" placeholder="0 - 20" (blur)="n.noteClasse = validateNote(n.noteClasse ?? 0)">
-                    </td>
-                    <td>
-                        <input type="number" class="form-control" [(ngModel)]="n.noteCompo" [ngModelOptions]="{standalone: true}" min="0" max="20" step="0.01" placeholder="0 - 20" (blur)="n.noteCompo = validateNote(n.noteCompo ?? 0)">
-                    </td>
-                    <!-- <td>{{ moyenne(n) }}</td> -->
-                </tr>
-            </tbody>
-        </table>
+    <!-- TABLEAU DE SAISIE DES NOTES -->
+    <div *ngIf="showTable" class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white animate-fade-in">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 custom-table">
+                <thead class="table-light border-bottom-0">
+                    <tr>
+                        <th style="width: 70px;" class="text-center">N°</th>
+                        <th style="width: 150px;">Matricule</th>
+                        <th>Élève</th>
+                        <th style="width: 180px;" class="text-center bg-light-cell">Note Classe <span class="text-muted fw-normal">/ 20</span></th>
+                        <th style="width: 180px;" class="text-center bg-light-cell">Note Compo <span class="text-muted fw-normal">/ 20</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let n of notes; let i = index">
+                        <td class="text-center text-muted fw-semibold">{{ i + 1 }}</td>
+                        <td>
+                            <span class="badge bg-light text-secondary border px-2 py-1.5 fw-mono fs-7">
+                                {{ n.matricule }}
+                            </span>
+                        </td>
+                        <td class="fw-bold text-dark text-uppercase">
+                            {{ n.nom }} <span class="fw-semibold text-capitalize text-secondary">{{ n.prenom }}</span>
+                        </td>
+                        <td class="bg-light-cell px-3">
+                            <div class="input-group input-group-sm rounded-3 shadow-2xs overflow-hidden border-2">
+                                <input type="number" class="form-control text-center border-0 fw-bold custom-input-note" 
+                                       [(ngModel)]="n.noteClasse" [ngModelOptions]="{standalone: true}" 
+                                       min="0" max="20" step="0.01" placeholder="—" 
+                                       (blur)="n.noteClasse = validateNote(n.noteClasse ?? 0)">
+                                <span class="input-group-text bg-white border-0 text-muted small px-2">/20</span>
+                            </div>
+                        </td>
+                        <td class="bg-light-cell px-3">
+                            <div class="input-group input-group-sm rounded-3 shadow-2xs overflow-hidden border-2">
+                                <input type="number" class="form-control text-center border-0 fw-bold custom-input-note" 
+                                       [(ngModel)]="n.noteCompo" [ngModelOptions]="{standalone: true}" 
+                                       min="0" max="20" step="0.01" placeholder="—" 
+                                       (blur)="n.noteCompo = validateNote(n.noteCompo ?? 0)">
+                                <span class="input-group-text bg-white border-0 text-muted small px-2">/20</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-        <button class="btn btn-success" (click)="save()">Enregistre les modifications</button>
+        <!-- ZONE D'ACTION PIED DE PAGE -->
+        <div class="card-footer bg-light border-top p-3 d-flex justify-content-end">
+            <button class="btn btn-success fw-bold px-4 py-2 shadow-sm rounded-3 d-inline-flex align-items-center" (click)="save()">
+                <i class="fas fa-save me-2"></i> Enregistrer les modifications
+            </button>
+        </div>
     </div>
-
 
 </div>

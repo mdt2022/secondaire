@@ -1,88 +1,116 @@
-<h3 class="mb-4 text-primary"> Enregistrer les notes d’une classe de {{etablissement}}</h3>
+<div class="container py-4">
 
-<form [formGroup]="form" class="card p-4 shadow-sm">
+  <!-- EN-TÊTE DE LA PAGE -->
+  <div class="page-header mb-4 bg-white p-4 rounded-4 shadow-sm border-start border-primary border-4 animate-fade-in">
+    <h1 class="h3 fw-extrabold text-dark mb-1">Enregistrer les notes d'une classe</h1>
+    <p class="text-muted mb-0 small text-uppercase tracking-wider fw-semibold">{{ etablissement }}</p>
+  </div>
 
-    <div class="row g-3">
-
-        <div class="col-md-3">
-            <label class="form-label">Année scolaire</label>
-            <select class="form-select" formControlName="anneeId" (change)="onAnneeOuClasseChange()">
-            <option value="">-- Choisir --</option>
-            <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
+  <!-- CONTAINER PRINCIPAL DU FORMULAIRE -->
+  <form [formGroup]="form" class="card border-0 shadow-sm p-4 rounded-4 bg-white animate-fade-in">
+    
+    <!-- SECTION FILTRES -->
+    <div class="row g-3 mb-4">
+      <div class="col-12 col-sm-6 col-md-3">
+        <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Année scolaire</label>
+        <select class="form-select border-2 custom-select shadow-2xs" formControlName="anneeId" (change)="onAnneeOuClasseChange()">
+          <option value="">Sélectionner...</option>
+          <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
         </select>
-        </div>
+      </div>
 
-        <div class="col-md-3">
-            <label class="form-label">Classe</label>
-            <select class="form-select" formControlName="classeId" (change)="onAnneeOuClasseChange()">
-            <option value="">-- Choisir --</option>
-            <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+      <div class="col-12 col-sm-6 col-md-3">
+        <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Classe</label>
+        <select class="form-select border-2 custom-select shadow-2xs" formControlName="classeId" (change)="onAnneeOuClasseChange()">
+          <option value="">Sélectionner...</option>
+          <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
         </select>
-        </div>
+      </div>
 
-        <div class="col-md-3">
-            <label class="form-label">Matière</label>
-            <select class="form-select" formControlName="matiereId">
-            <option value="">-- Choisir --</option>
-            <option *ngFor="let m of matieres" [value]="m.id">{{ m.libelle }}</option>
+      <div class="col-12 col-sm-6 col-md-3">
+        <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Matière</label>
+        <select class="form-select border-2 custom-select shadow-2xs" formControlName="matiereId">
+          <option value="">Sélectionner...</option>
+          <option *ngFor="let m of matieres" [value]="m.id">{{ m.libelle }}</option>
         </select>
-        </div>
+      </div>
 
-        <div class="col-md-3">
-            <label class="form-label">Période</label>
-            <select class="form-select" formControlName="periodeId">
-            <option value="">-- Choisir --</option>
-            <option *ngFor="let p of periodes" [value]="p.id">{{ p.libelle }}</option>
+      <div class="col-12 col-sm-6 col-md-3">
+        <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Période</label>
+        <select class="form-select border-2 custom-select shadow-2xs" formControlName="periodeId">
+          <option value="">Sélectionner...</option>
+          <option *ngFor="let p of periodes" [value]="p.id">{{ p.libelle }}</option>
         </select>
-        </div>
-
+      </div>
     </div>
 
-
-    <div *ngIf="loadingEleves" class="text-center my-3">
-        <div class="spinner-border text-primary"></div>
-        <p>Chargement des élèves...</p>
+    <!-- ÉTAT DE CHARGEMENT -->
+    <div *ngIf="loadingEleves" class="text-center my-5 p-4 border rounded-4 bg-light-subtle animate-fade-in">
+      <div class="spinner-border text-primary mb-3" role="status" style="width: 2.5rem; height: 2.5rem;">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <p class="text-secondary fw-semibold mb-0">Chargement de la liste des élèves...</p>
     </div>
 
-    <table *ngIf="elevesCharges" class="table table-bordered table-striped mt-4">
-
-        <thead>
+    <!-- ZONE DE TABLEAU DES ÉLÈVES AVEC SOURIS/TABLEAU DE SAISIE -->
+    <div *ngIf="elevesCharges" class="card border-0 rounded-4 overflow-hidden shadow-2xs mb-3 animate-fade-in">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 custom-table">
+          <thead class="table-light border-bottom-0">
             <tr>
-                <th>Matricule</th>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>Moy Classe</th>
-                <th>Moy Compo</th>
+              <th style="width: 140px;">Matricule</th>
+              <th>Nom & Prénom</th>
+              <th style="width: 180px;" class="text-center bg-light-cell">Moy Classe <span class="text-muted fw-normal">/ 20</span></th>
+              <th style="width: 180px;" class="text-center bg-light-cell">Moy Compo <span class="text-muted fw-normal">/ 20</span></th>
             </tr>
-        </thead>
+          </thead>
 
-        <tbody formArrayName="notes">
+          <tbody formArrayName="notes">
             <tr *ngFor="let n of notes.controls; let i = index" [formGroupName]="i">
-
-                <td>{{ eleves[i].eleve.matricule }}</td>
-                <td>{{ eleves[i].eleve.nom }}</td>
-                <td>{{ eleves[i].eleve.prenom }}</td>
-
-                <td>
-                    <input type="number" class="form-control text-center" formControlName="noteClasse">
-                </td>
-
-                <td>
-                    <input type="number" class="form-control text-center" formControlName="noteCompo">
-                </td>
+              <td>
+                <span class="badge bg-light text-secondary border px-2 py-1.5 fw-mono fs-7">
+                  {{ eleves[i].eleve.matricule }}
+                </span>
+              </td>
+              <td class="fw-bold text-dark text-uppercase">
+                {{ eleves[i].eleve.nom }} <span class="fw-semibold text-capitalize text-secondary">{{ eleves[i].eleve.prenom }}</span>
+              </td>
+              <td class="bg-light-cell px-3">
+                <div class="input-group input-group-sm rounded-3 shadow-2xs overflow-hidden border-2 input-group-container">
+                  <input type="number" class="form-control text-center border-0 fw-bold custom-input-note" 
+                         formControlName="noteClasse" placeholder="—" min="0" max="20" step="0.25">
+                  <span class="input-group-text bg-white border-0 text-muted small px-2">/20</span>
+                </div>
+              </td>
+              <td class="bg-light-cell px-3">
+                <div class="input-group input-group-sm rounded-3 shadow-2xs overflow-hidden border-2 input-group-container">
+                  <input type="number" class="form-control text-center border-0 fw-bold custom-input-note" 
+                         formControlName="noteCompo" placeholder="—" min="0" max="20" step="0.25">
+                  <span class="input-group-text bg-white border-0 text-muted small px-2">/20</span>
+                </div>
+              </td>
             </tr>
-        </tbody>
-    </table>
+          </tbody>
+        </table>
+      </div>
 
-    <div *ngIf="doublons?.length" class="alert alert-warning mt-3">
-        Doublons ignorés pour :
-        <strong>{{ doublons.join(', ') }}</strong>
+      <!-- BOUTONS D'ACTIONS DANS LE PIED DU TABLEAU -->
+      <div class="card-footer bg-light border-top p-3 d-flex justify-content-end">
+        <button type="button" class="btn btn-success fw-bold px-4 py-2 shadow-sm rounded-3 d-inline-flex align-items-center" 
+                [disabled]="form.invalid" (click)="enregistrer()">
+          <i class="fas fa-save me-2"></i> Enregistrer les notes
+        </button>
+      </div>
     </div>
 
-    <div class="text-center mt-3" *ngIf="elevesCharges">
-        <button type="button" class="btn btn-success btn-sm px-3" [disabled]="form.invalid" (click)="enregistrer()">
-    Enregistrer
-  </button>
+    <!-- MESSAGES DE DOUBLONS IGNORÉS -->
+    <div *ngIf="doublons?.length" class="alert bg-light-warning text-warning border-0 shadow-2xs rounded-3 animate-fade-in p-3 d-flex align-items-start">
+      <i class="fas fa-exclamation-triangle me-3 fs-5 mt-0.5"></i>
+      <div>
+        <span class="fw-bold d-block mb-1">Doublons ignorés pour les élèves suivants :</span>
+        <span class="fw-semibold">{{ doublons.join(', ') }}</span>
+      </div>
     </div>
 
-</form>
+  </form>
+</div>

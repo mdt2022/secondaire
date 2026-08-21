@@ -9,6 +9,7 @@ import { ClasseEcoleService } from '../../../service/classeecole.service';
 import { EleveecoleService } from '../../../service/eleveecole.service';
 import { PeriodeService } from '../../../service/periode.service';
 import { NoteService } from '../../../service/note.service';
+import { AuthService } from '../../../service/auth.service';
 
 @Component({
   selector: 'app-bulletin-eleve',
@@ -36,7 +37,8 @@ export class BulletinEleveComponent implements OnInit {
     private classeService: ClasseEcoleService,
     private eleveService: EleveecoleService,
     private periodeService: PeriodeService,
-    private noteService: NoteService
+    private noteService: NoteService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -114,31 +116,31 @@ async imprimer() {
 
   const maxWidth = 155; 
   doc.setFont('times', 'bold'); 
-  doc.setFontSize(18); // Légère réduction pour gagner de l'espace en haut
+  doc.setFontSize(16); // Légère réduction pour gagner de l'espace en haut
   
   const descLignes = doc.splitTextToSize(descriptionEcole.toUpperCase(), maxWidth); 
-  doc.text(descLignes, 110, 20, { align: 'center' }); 
+  doc.text(descLignes, 110, 19, { align: 'center' }); 
 
-  const descriptionHeight = descLignes.length * 6; 
-  const pointilleY = 20 + descriptionHeight; 
+  const descriptionHeight = descLignes.length * 5; 
+  const pointilleY = 18 + descriptionHeight; 
   
-  doc.setFont('times', 'normal'); 
+ 
   doc.setFontSize(9); 
   doc.text('......................................................', 105, pointilleY, { align: 'center' }); 
 
   const adresseAjustee = doc.splitTextToSize(adresseEcole, maxWidth); 
-  doc.text(adresseAjustee, 105, pointilleY + 5, { align: 'center' }); 
+  doc.text(adresseAjustee, 110, pointilleY + 5, { align: 'center' }); 
 
-  doc.setFont('times', 'bold'); 
+
   doc.setFontSize(15); 
   doc.text(`BULLETIN DE LA ${nomPeriode}`, 105, 42, { align: 'center' }); 
 
-  doc.setFont('times', 'normal'); 
-  doc.setFontSize(11); 
+ 
+  doc.setFontSize(12); 
   doc.text(`Année Scolaire : ${nomAnnee}`, 105, 48, { align: 'center' }); 
 
   let y = 56; 
-  doc.setFontSize(11); 
+  doc.setFontSize(12); 
   doc.text(`Nom : ${this.bulletin.eleve.nom}`, 20, y); y += 5; 
   doc.text(`Prénom : ${this.bulletin.eleve.prenom}`, 20, y); y += 5; 
   doc.text(`Classe : ${nomClasse}`, 20, y); y += 6; 
@@ -163,6 +165,7 @@ async imprimer() {
       font: 'times', 
       fontSize: 10, // Réduit de 12 à 10 pour compacter le tableau
       halign: 'center', 
+      fontStyle: 'bold',
       lineColor:[0,0,0], 
       lineWidth: 0.1, 
       cellPadding: 2 // Réduit l'espace interne des cellules
@@ -181,12 +184,10 @@ async imprimer() {
   }
 
   // Bloc des résultats
-  doc.setFont('times', 'bold');
   doc.setFontSize(11); 
   doc.text(`TOTAL : ${this.bulletin.total?.toFixed(2)}`, 20, finalY); 
   doc.text(`Moyenne : ${this.bulletin.moyg?.toFixed(2)}`, 20, finalY + 5); 
-  
-  doc.setFont('times', 'normal');
+
   doc.text(`Observation : ${this.bulletin.observation}`, 20, finalY + 10); 
   
   let offsetElements = 15;
@@ -200,9 +201,14 @@ async imprimer() {
 
   // Bloc de signature
   const signY = finalY + 15; 
-  doc.text(`Fait, le _________________`, 140, signY); 
-  doc.setFont('times', 'bold');
-  doc.text("Le Proviseur", 150, signY + 30); 
+  doc.text(`Fait, le _________________`, 165, signY, { align: 'center' }); 
+  let signateur ;
+      if(this.authService.getEcoleId() === 20){ 
+        signateur = "La Directrice Générale"
+      }else{
+        signateur = "Le Proviseur";
+      }
+  doc.text(signateur, 165, signY + 50, { align: 'center' }); 
 
   // Pied de page (appliqué sur toutes les pages générées)
   const pageCount = (doc as any).internal.getNumberOfPages();

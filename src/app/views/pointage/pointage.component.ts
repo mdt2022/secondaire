@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { Ecole } from '../../model/ecole';
 import { Enseignant } from '../../model/enseignant';
 import Swal from 'sweetalert2';
+import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-pointage',
@@ -16,7 +17,8 @@ import Swal from 'sweetalert2';
   styleUrl: './pointage.component.scss'
 })
 export class PointageComponent implements OnInit {
-  ecoles: Ecole[] = [];
+ // ecoles: Ecole[] = [];
+ ecoleId: number | null | undefined;
   enseignants: Enseignant[] = [];
   selectedEcoleId?: number;
   selectedEnseignantId?: number;
@@ -26,7 +28,8 @@ export class PointageComponent implements OnInit {
   constructor(
     private ecoleService: EcoleService,
     private enseignantService: EnseignantService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     const today = new Date();
     this.dateDebut = this.formatDate(today);
@@ -34,37 +37,13 @@ export class PointageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadEcoles();
+    this.ecoleId = this.authService.getEcoleId()
+    this.ChargerEnseignant();
   }
 
-  loadEcoles(): void {
-    this.ecoleService.getAll().subscribe({
-      next: (data) => {
-        this.ecoles = data;
-
-        const user = JSON.parse(localStorage.getItem('user')!);
-        const adminEcoleId = user.administrateur.ecole.idEcole;
-
-        const adminEcoleExists = this.ecoles.find(e => e.idEcole === adminEcoleId);
-        if (adminEcoleExists) {
-          this.selectedEcoleId = adminEcoleId;
-          this.onEcoleChange(); 
-        }
-      },
-      error: () => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Erreur',
-          text: 'Impossible de charger les écoles',
-          confirmButtonText: 'OK'
-        });
-      }
-    });
-  }
-
-  onEcoleChange(): void {
-    if (this.selectedEcoleId) {
-      this.enseignantService.getEnseignantEcole(this.selectedEcoleId).subscribe({
+  ChargerEnseignant(): void {
+    
+      this.enseignantService.getEnseignantEcole(this.ecoleId).subscribe({
         next: (data) => {
           this.enseignants = data;
 
@@ -89,10 +68,7 @@ export class PointageComponent implements OnInit {
           });
         }
       });
-    } else {
-      this.enseignants = [];
-      this.selectedEnseignantId = undefined;
-    }
+    
   }
 
   simuler(): void {
@@ -110,7 +86,7 @@ export class PointageComponent implements OnInit {
 
     this.router.navigate(['/pointage/fiche-validee'], {
       queryParams: {
-        ecoleId: this.selectedEcoleId,
+        ecoleId: this.ecoleId,
         enseignantId: this.selectedEnseignantId,
         dateDebut: this.dateDebut,
         dateFin: this.dateFin
@@ -121,7 +97,7 @@ export class PointageComponent implements OnInit {
   goToPaiement(): void {
     this.router.navigate(['/pointage/honoraires'], {
       queryParams: {
-        ecoleId: this.selectedEcoleId,
+        ecoleId: this.ecoleId,
         enseignantId: this.selectedEnseignantId,
         dateDebut: this.dateDebut,
         dateFin: this.dateFin

@@ -1,116 +1,153 @@
-<div class="container mt-4">
-  <div class="card shadow-sm border-0">
-    <!-- 🟦 EN-TÊTE -->
-    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-      <h5 class="mb-0 fw-bold">Promotion des élèves</h5>
-      <i class="bi bi-people-fill fs-4"></i>
+<div class="container py-4">
+
+  <!-- EN-TÊTE DE LA PAGE -->
+  <div class="page-header mb-4 bg-white p-4 rounded-4 shadow-sm border-start border-primary border-4 animate-fade-in">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h1 class="h3 fw-extrabold text-dark mb-1">Promotion des élèves</h1>
+        <p class="text-muted mb-0 small text-uppercase tracking-wider fw-semibold">Bascule collective des effectifs vers le niveau supérieur</p>
+      </div>
+      <span class="badge bg-light-primary text-primary p-3 rounded-circle fs-4 shadow-2xs">
+        <i class="bi bi-people-fill"></i>
+      </span>
     </div>
+  </div>
 
-    <!-- 🟩 CORPS -->
-    <div class="card-body">
-      <form [formGroup]="promoForm" class="row g-3">
-
-        <!-- Sélection Classe / Année actuelle -->
-        <div class="col-md-3">
-          <select class="form-select" formControlName="classeActuelle">
-            <option [ngValue]="null">-- Classe actuelle --</option>
+  <form [formGroup]="promoForm" class="animate-fade-in">
+    
+    <!-- ÉTAPE 1 : CLASSE SOURCE -->
+    <div class="card border-0 shadow-sm p-4 rounded-4 bg-white mb-4">
+      <span class="badge bg-light-primary text-primary px-3 py-2 rounded-pill fw-bold mb-3 d-inline-block align-self-start fs-7">
+        1. Sélectionner la classe d'origine
+      </span>
+      
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-md-4">
+          <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Classe actuelle</label>
+          <select class="form-select border-2 custom-select shadow-2xs" formControlName="classeActuelle">
+            <option [ngValue]="null">Choisir une classe...</option>
             <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.nom }}</option>
           </select>
         </div>
 
-        <div class="col-md-3">
-          <select class="form-select" formControlName="anneeActuelle">
-            <option [ngValue]="null">-- Année actuelle --</option>
+        <div class="col-12 col-md-4">
+          <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Année actuelle</label>
+          <select class="form-select border-2 custom-select shadow-2xs" formControlName="anneeActuelle">
+            <option [ngValue]="null">Choisir une année...</option>
             <option *ngFor="let a of annees" [ngValue]="a.id">{{ a.nom }}</option>
           </select>
         </div>
 
-        <div class="col-md-3 align-self-end">
-          <button
-            type="button"
-            class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
-            (click)="chargerEleves()"
-          >
-            <i class="bi bi-search"></i>
-            Charger les élèves
+        <div class="col-12 col-md-4">
+          <button type="button" class="btn btn-primary fw-bold w-100 custom-btn shadow-sm" (click)="chargerEleves()">
+            <i class="bi bi-search me-2"></i>Charger les élèves
           </button>
         </div>
+      </div>
+    </div>
 
-        <!-- 🌀 Spinner de chargement -->
-        <div *ngIf="loading" class="text-center my-4">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Chargement...</span>
-          </div>
-          <p class="mt-2 fw-semibold text-secondary">Chargement des données...</p>
-        </div>
+    <!-- ÉTAT DE CHARGEMENT -->
+    <div *ngIf="loading" class="text-center my-5 p-4 bg-white rounded-4 shadow-sm animate-fade-in">
+      <div class="spinner-border text-primary mb-3" role="status" style="width: 2.5rem; height: 2.5rem;">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <p class="text-secondary fw-semibold mb-0">Recherche des dossiers élèves en cours...</p>
+    </div>
 
-        <!-- 📋 Tableau des élèves -->
-        <div *ngIf="eleves.length > 0" class="mt-4">
-          <table class="table table-bordered table-hover align-middle text-center">
-            <thead class="table-light">
+    <!-- LISTE DES ÉLÈVES & ÉTAPE DE DESTINATION -->
+    <div *ngIf="!loading && eleves.length > 0" class="animate-fade-in">
+      
+      <!-- TABLEAU DES ÉLÈVES -->
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-4 shadow-2xs">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0 custom-table text-center">
+            <thead class="table-light border-bottom-0">
               <tr>
-                <th style="width: 40px;">
-                  <input type="checkbox" (change)="toggleAll($event)" />
+                <th style="width: 60px;">
+                  <div class="form-check d-flex justify-content-center">
+                    <input type="checkbox" class="form-check-input border-2 custom-checkbox" (change)="toggleAll($event)" />
+                  </div>
                 </th>
-                <th>Matricule</th>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>Sexe</th>
+                <th style="width: 150px;">Matricule</th>
+                <th class="text-start">Nom & Prénom</th>
+                <th style="width: 120px;">Sexe</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let e of eleves">
                 <td>
-                  <input
-                    type="checkbox"
-                    [checked]="isSelected(e.id!)"
-                    (change)="toggleSelection(e.id!, $event)"
-                  />
+                  <div class="form-check d-flex justify-content-center">
+                    <input type="checkbox" class="form-check-input border-2 custom-checkbox"
+                           [checked]="isSelected(e.id!)"
+                           (change)="toggleSelection(e.id!, $event)" />
+                  </div>
                 </td>
-                <td>{{ e.eleve.matricule }}</td>
-                <td>{{ e.eleve.nom }}</td>
-                <td>{{ e.eleve.prenom }}</td>
-                <td>{{ e.eleve.sexe }}</td>
+                <td>
+                  <span class="badge bg-light text-secondary border px-2 py-1.5 fw-mono fs-7">
+                    {{ e.eleve.matricule }}
+                  </span>
+                </td>
+                <td class="text-start fw-bold text-dark text-uppercase">
+                  {{ e.eleve.nom }} <span class="fw-semibold text-capitalize text-secondary">{{ e.eleve.prenom }}</span>
+                </td>
+                <td>
+                  <span class="badge rounded-pill px-3 py-1 fs-7 fw-bold"
+                        [ngClass]="e.eleve.sexe === 'Homme' ? 'bg-light-blue text-blue border-blue-subtle' : 'bg-light-pink text-pink border-pink-subtle'">
+                    {{ e.eleve.sexe === 'Homme' ? 'Homme' : 'Femme' }}
+                  </span>
+                </td>
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
 
-          <!-- Sélection classe et année suivante -->
-          <div class="row g-3 mt-4">
-            <div class="col-md-3">
-              <select class="form-select" formControlName="classeSuivante">
-                <option [ngValue]="null">-- Classe suivante --</option>
-                <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.nom }}</option>
-              </select>
-            </div>
+      <!-- ÉTAPE 2 : DESTINATION DE LA PROMOTION -->
+      <div class="card border-0 shadow-sm p-4 rounded-4 bg-white mb-4">
+        <span class="badge bg-light-success text-success px-3 py-2 rounded-pill fw-bold mb-3 d-inline-block align-self-start fs-7">
+          2. Définir le niveau de destination
+        </span>
+        
+        <div class="row g-3 align-items-end">
+          <div class="col-12 col-md-4">
+            <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Classe suivante</label>
+            <select class="form-select border-2 custom-select shadow-2xs" formControlName="classeSuivante">
+              <option [ngValue]="null">Choisir une classe...</option>
+              <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.nom }}</option>
+            </select>
+          </div>
 
-            <div class="col-md-3">
-              <select class="form-select" formControlName="anneeSuivante">
-                <option [ngValue]="null">-- Année suivante --</option>
-                <option *ngFor="let a of annees" [ngValue]="a.id">{{ a.nom }}</option>
-              </select>
-            </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Année suivante</label>
+            <select class="form-select border-2 custom-select shadow-2xs" formControlName="anneeSuivante">
+              <option [ngValue]="null">Choisir une année...</option>
+              <option *ngFor="let a of annees" [ngValue]="a.id">{{ a.nom }}</option>
+            </select>
+          </div>
 
-            <div class="col-md-3 align-self-end">
-              <button
-                type="button"
-                class="btn btn-success w-100 d-flex align-items-center justify-content-center gap-2"
-                (click)="promouvoir()"
-              >
-                <i class="bi bi-arrow-up-circle"></i>
-                Promouvoir
-              </button>
-            </div>
+          <div class="col-12 col-md-4">
+            <button type="button" class="btn btn-success fw-bold w-100 custom-btn shadow-sm" (click)="promouvoir()">
+              <i class="bi bi-arrow-up-circle me-2"></i>Promouvoir les élèves
+            </button>
           </div>
         </div>
-      </form>
+      </div>
+
     </div>
 
-    <!-- 🟥 PIED DE PAGE -->
-    <div class="card-footer bg-light text-end">
-      <small class="text-muted">
-        © {{ currentYear }} - Gestion des élèves | Version 1.0
-      </small>
+    <!-- SQUELETTE VIDE SI RECHERCHE SANS RÉSULTAT -->
+    <div *ngIf="!loading && eleves.length === 0" class="text-center p-5 bg-white rounded-4 shadow-sm border border-dashed animate-fade-in mb-4">
+      <i class="bi bi-folder2-open fs-1 text-muted mb-3 d-block"></i>
+      <p class="text-secondary fw-medium mb-0">Aucun élève trouvé dans cette classe pour l'année sélectionnée.</p>
     </div>
+
+  </form>
+
+  <!-- PIED DE PAGE TECHNIQUE -->
+  <div class="text-center py-2">
+    <small class="text-muted fw-medium fs-7">
+      © {{ currentYear }} - Système de Gestion Scolaire | Version Professionnelle
+    </small>
   </div>
+
 </div>

@@ -1,0 +1,95 @@
+/* Personnalisation des sélecteurs */
+.custom-select {
+  height: 46px;
+  border-color: #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.custom-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+/* Boutons adaptatifs */
+.custom-btn {
+  height: 46px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Cases à cocher personnalisées */
+.custom-checkbox {
+  width: 1.2rem;
+  height: 1.2rem;
+  border-color: #cbd5e1;
+  cursor: pointer;
+}
+
+.custom-checkbox:checked {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+/* Structure moderne de la table */
+.custom-table th {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+  padding: 1.1rem 1rem;
+  background-color: #f8fafc;
+}
+
+.custom-table td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* Typographies et utilitaires */
+.tracking-wider {
+  letter-spacing: 0.05em;
+}
+
+.fw-mono {
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.fs-7 {
+  font-size: 0.8rem;
+}
+
+.shadow-2xs {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.border-dashed {
+  border: 2px dashed #e2e8f0 !important;
+}
+
+/* Arrière-plans pastels personnalisés */
+.bg-light-primary { background-color: #e0f2fe !important; }
+.bg-light-success { background-color: #dcfce7 !important; }
+
+/* Badges de genre épurés */
+.bg-light-blue { background-color: #eff6ff; }
+.text-blue { color: #2563eb; }
+.border-blue-subtle { border: 1px solid #bfdbfe; }
+
+.bg-light-pink { background-color: #fdf2f8; }
+.text-pink { color: #db2777; }
+.border-pink-subtle { border: 1px solid #fbcfe8; }
+
+/* Micro-animation d'affichage fluide */
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

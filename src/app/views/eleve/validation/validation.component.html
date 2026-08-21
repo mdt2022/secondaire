@@ -1,110 +1,124 @@
-<h2 class="mb-3">
-    Afficher la liste des élèves de {{ nomEcole }} par classe et par année pour admission à un examen
-</h2>
+<div class="container py-4">
 
-<div class="card p-3">
-    <div class="row">
+  <!-- EN-TÊTE DE LA PAGE -->
+  <div class="page-header mb-4 bg-white p-4 rounded-4 shadow-sm border-start border-primary border-4 animate-fade-in">
+    <h1 class="h3 fw-extrabold text-dark mb-1">Admission à un examen</h1>
+    <p class="text-muted mb-0 small text-uppercase tracking-wider fw-semibold">{{ nomEcole }}</p>
+  </div>
 
-        <!-- Classe -->
-        <div class="col-md-4">
-            <label>Classe</label>
-            <select class="form-control" [(ngModel)]="classeId">
-        <option value="">-- Choisir classe --</option>
-        <option *ngFor="let c of classes" [value]="c.id">
-          {{ c.nom }}
-        </option>
-      </select>
-        </div>
+  <!-- BLOC DE FILTRES ET RECHERCHE -->
+  <div class="card border-0 shadow-sm p-4 rounded-4 bg-white mb-4 animate-fade-in">
+    <div class="row g-3 align-items-end">
+      <div class="col-12 col-sm-6 col-md-4">
+        <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Classe</label>
+        <select class="form-select border-2 custom-select shadow-2xs" [(ngModel)]="classeId">
+          <option value="">Sélectionner une classe...</option>
+          <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+        </select>
+      </div>
 
-        <!-- Année -->
-        <div class="col-md-4">
-            <label>Année</label>
-            <select class="form-control" [(ngModel)]="anneeId">
-        <option value="">-- Choisir année --</option>
-        <option *ngFor="let a of annees" [value]="a.id">
-          {{ a.nom }}
-        </option>
-      </select>
-        </div>
+      <div class="col-12 col-sm-6 col-md-4">
+        <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Année</label>
+        <select class="form-select border-2 custom-select shadow-2xs" [(ngModel)]="anneeId">
+          <option value="">Sélectionner une année...</option>
+          <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
+        </select>
+      </div>
 
-        <!-- Bouton -->
-        <div class="col-md-4 mt-4">
-            <button class="btn btn-primary w-100" (click)="rechercher()">
-        Rechercher
-      </button>
-        </div>
-
+      <div class="col-12 col-md-4">
+        <button class="btn btn-primary fw-bold w-100 custom-btn shadow-sm" (click)="rechercher()">
+          <i class="fas fa-search me-2"></i>Rechercher
+        </button>
+      </div>
     </div>
-</div>
+  </div>
 
-<hr>
-
-<!-- TABLEAU EXACTEMENT COMME PHALCON -->
-<table class="table table-bordered mt-3" *ngIf="eleves.length > 0">
-    <thead class="table-light">
-        <tr>
-            <th>N°</th>
-            <th>
-                <input type="checkbox" (change)="toutCocher($event)">
-            </th>
-            <th>Matricule</th>
-            <th>Prénom</th>
-            <th>Nom</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        <tr *ngFor="let e of eleves; let i = index">
-            <td>{{ i + 1 }}</td>
-            <td>
-                <input type="checkbox" [(ngModel)]="e.checked">
-            </td>
-            <td>{{ e.eleve.matricule }}</td>
-            <td>{{ e.eleve.prenom }}</td>
-            <td>{{ e.eleve.nom }}</td>
-        </tr>
-
-        <!-- MESSAGE EXACTEMENT COMME PHALCON -->
-        <tr>
-            <th colspan="5">
-                <p class="alert alert-warning h5 text-center">
-                    Sélectionner ou choisir l'ensemble des élèves pour leurs admissions au
-                </p>
-
-                <div class="row mt-3">
-
-                    <!-- Examen -->
-                    <div class="col-md-4">
-                        <label>Examen</label>
-                        <select class="form-control" [(ngModel)]="examen">
-              <option value="">Choisir examen</option>
-              <option value="BAC">BAC</option>
-              <option value="BT2">BT2</option>
-              <option value="CAP">CAP</option>
-            </select>
-                    </div>
-
-                    <!-- Session -->
-                    <div class="col-md-4">
-                        <label>Session</label>
-                        <select class="form-control" [(ngModel)]="sessionId">
-              <option value="">Année</option>
-              <option *ngFor="let a of annees" [value]="a.id">
-                {{ a.nom }}
-              </option>
-            </select>
-                    </div>
-
-                    <!-- Bouton -->
-                    <div class="col-md-4 d-flex align-items-end">
-                        <button class="btn btn-success w-100" (click)="validerAdmission()">
-              Admission
-            </button>
-                    </div>
-
+  <!-- SECTION DES RÉSULTATS -->
+  <div *ngIf="eleves.length > 0" class="animate-fade-in">
+    
+    <!-- TABLEAU DES ÉLÈVES -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-4">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 custom-table">
+          <thead class="table-light border-bottom-0">
+            <tr>
+              <th style="width: 70px;" class="text-center">N°</th>
+              <th style="width: 60px;">
+                <div class="form-check d-flex justify-content-center">
+                  <input type="checkbox" class="form-check-input border-2 custom-checkbox" (change)="toutCocher($event)">
                 </div>
-            </th>
-        </tr>
+              </th>
+              <th style="width: 150px;">Matricule</th>
+              <th>Nom & Prénom</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let e of eleves; let i = index">
+              <td class="text-center text-muted fw-semibold">{{ i + 1 }}</td>
+              <td>
+                <div class="form-check d-flex justify-content-center">
+                  <input type="checkbox" class="form-check-input border-2 custom-checkbox" [(ngModel)]="e.checked">
+                </div>
+              </td>
+              <td>
+                <span class="badge bg-light text-secondary border px-2 py-1.5 fw-mono fs-7">
+                  {{ e.eleve.matricule }}
+                </span>
+              </td>
+              <td class="fw-bold text-dark text-uppercase">
+                {{ e.eleve.nom }} <span class="fw-semibold text-capitalize text-secondary">{{ e.eleve.prenom }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-    </tbody>
-</table>
+    <!-- BLOC DE CONFIGURATION DE L'ADMISSION -->
+    <div class="card border-0 shadow-sm p-4 rounded-4 bg-white mb-4 border-dashed-warning">
+      <div class="d-flex align-items-center mb-3">
+        <span class="badge bg-light-warning text-warning p-2 rounded-3 me-3 fs-5">
+          <i class="fas fa-graduation-cap"></i>
+        </span>
+        <div>
+          <h5 class="mb-0 fw-bold text-dark">Configuration de l'admission</h5>
+          <small class="text-muted">Sélectionnez l'examen et la session cible pour les élèves cochés ci-dessus</small>
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-sm-6 col-md-4">
+          <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Examen</label>
+          <select class="form-select border-2 custom-select shadow-2xs" [(ngModel)]="examen">
+            <option value="">Choisir l'examen...</option>
+            <option value="BAC">BAC (Baccalauréat)</option>
+            <option value="BT2">BT2 (Brevet Technicien 2)</option>
+            <option value="CAP">CAP (Certificat d'Aptitude Pro)</option>
+          </select>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4">
+          <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">Session</label>
+          <select class="form-select border-2 custom-select shadow-2xs" [(ngModel)]="sessionId">
+            <option value="">Choisir la session...</option>
+            <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
+          </select>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <button class="btn btn-success fw-bold w-100 custom-btn shadow-sm" (click)="validerAdmission()">
+            <i class="fas fa-check-circle me-2"></i>Valider l'admission
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SQUELETTE VIDE SI AUCUN ÉLÈVE CHARGÉ -->
+  <div *ngIf="eleves.length === 0" class="text-center p-5 bg-white rounded-4 shadow-sm border border-dashed animate-fade-in">
+    <i class="fas fa-users-slash fa-3x text-muted mb-3"></i>
+    <p class="text-secondary fw-medium mb-0">Aucun élève chargé. Veuillez ajuster vos filtres et lancer la recherche.</p>
+  </div>
+
+</div>

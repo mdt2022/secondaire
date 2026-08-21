@@ -1,62 +1,65 @@
-<div class="container mt-4">
-    <h2 class="mb-4">Fiche de pointage</h2>
+<div class="container mt-5">
+    <!-- En-tête de la page -->
+    <div class="d-flex align-items-center mb-4">
+        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3 me-3">
+            <i class="bi bi-calendar-check fs-3"></i>
+        </div>
+        <div>
+            <h2 class="fw-bold mb-0 text-dark">Fiche de pointage</h2>
+            <p class="text-muted small mb-0">Gérez et simulez les états de paiement des enseignants.</p>
+        </div>
+    </div>
 
-    <div class="card">
-        <div class="card-header bg-light">
-            <div class="row align-items-center">
-                <div class="col-md-3 mb-2">
-                    <label class="form-label small">École</label>
-                    <select class="form-control" [(ngModel)]="selectedEcoleId" (change)="onEcoleChange()">
-                        <option value="">-- Choisir une école --</option>
-                        <option *ngFor="let ecole of ecoles" 
-                                [value]="ecole.idEcole">
-                            {{ ecole.nomEcole }}
-                        </option>
-                    </select>
-                </div>
-
-                <div class="col-md-3 mb-2">
-                    <label class="form-label small">Enseignant</label>
-                    <select class="form-control" [(ngModel)]="selectedEnseignantId" required>
-                        <option value="">-- Choisir un enseignant --</option>
-                        <option *ngFor="let enseignant of enseignants" 
-                                [value]="enseignant.id">
+    <!-- Carte principale -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-4 bg-white">
+            
+            <!-- Ligne 1 : Les champs de saisie (plus larges et aérés) -->
+            <div class="row g-4 mb-4">            
+                <!-- Sélection Enseignant -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold text-secondary small mb-2">
+                        <i class="bi bi-person me-1"></i> Enseignant
+                    </label>
+                    <select class="form-select form-select-lg border-2" [(ngModel)]="selectedEnseignantId" required>
+                        <option value="">Choisir un enseignant...</option>
+                        <option *ngFor="let enseignant of enseignants" [value]="enseignant.id">
                             {{ enseignant.prenom }} {{ enseignant.nom }}
                         </option>
                     </select>
                 </div>
 
-                <div class="col-md-3 mb-2">
-                    <label class="form-label small">Période</label>
-                    <div class="row g-1">
-                        <div class="col-6">
-                            <input type="text" class="form-control" [(ngModel)]="dateDebut" placeholder="Début">
-                        </div>
-                        <div class="col-6">
-                            <input type="text" class="form-control" [(ngModel)]="dateFin" placeholder="Fin">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3 mb-2">
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-primary flex-fill" (click)="simuler()">
-                            Simuler
-                        </button>
-                        <button class="btn btn-success flex-fill" (click)="goToPaiement()">
-                            Paiement
-                        </button>
+                <!-- Sélection Période -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold text-secondary small mb-2">
+                        <i class="bi bi-calendar3 me-1"></i> Période
+                    </label>
+                    <div class="input-group input-group-lg border-0">
+                        <input type="text" class="form-control border-2 text-center" [(ngModel)]="dateDebut" placeholder="Début">
+                        <span class="input-group-text bg-light border-2 text-muted fw-bold">à</span>
+                        <input type="text" class="form-control border-2 text-center" [(ngModel)]="dateFin" placeholder="Fin">
                     </div>
                 </div>
             </div>
+
+            <!-- Ligne 2 : Les boutons (alignés à droite sur leur propre ligne) -->
+            <div class="row">
+                <div class="col-12 d-flex justify-content-end gap-3">
+                    <button class="btn btn-outline-primary btn-lg px-4 fw-semibold d-flex align-items-center gap-2" (click)="simuler()">
+                        <i class="bi bi-play-circle"></i> Simuler
+                    </button>
+                    <button class="btn btn-success btn-lg px-4 fw-semibold d-flex align-items-center gap-2 shadow-sm" (click)="goToPaiement()">
+                        <i class="bi bi-cash-coin"></i> Passer au paiement
+                    </button>
+                </div>
+            </div>
+
         </div>
 
-        <div class="card-body">
-            <div class="alert alert-light border">
-                <p class="mb-0">
-                    Pour simuler l'état de paiement d'un enseignant avant d'imprimer sa fiche, choisissez l'enseignant et cliquez sur "Simuler".
-                </p>
-            </div>
+        <!-- Note d'information intégrée -->
+        <div class="card-footer bg-light border-0 px-4 py-3 d-flex align-items-center gap-2 text-muted small">
+            <i class="bi bi-info-circle text-primary fs-5"></i>
+            <span>Pour simuler l'état de paiement d'un enseignant avant d'imprimer sa fiche, choisissez l'enseignant et cliquez sur <strong>"Simuler"</strong>.</span>
         </div>
     </div>
 </div>
