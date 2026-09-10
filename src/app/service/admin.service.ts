@@ -18,8 +18,8 @@ export class AdministrateurService{
         return this.http.get<Role[]>(this.apiUrl+"/roles/categorie/2");
     }
 
-    getAll(): Observable<Administrateur[]>{
-        return this.http.get<Administrateur[]>(this.apiUrl+"/administrateurs/second");
+    getAll(roleNom: string): Observable<Administrateur[]>{
+        return this.http.get<Administrateur[]>(this.apiUrl+"/administrateurs/second/"+roleNom);
     }
     update(id: number, admin: Administrateur): Observable<Administrateur>{
         return this.http.put<Administrateur>(this.apiUrl+"/administrateurs/"+id, admin);
@@ -30,7 +30,14 @@ export class AdministrateurService{
     getById(id: number): Observable<Administrateur>{
         return this.http.get<Administrateur>(this.apiUrl+"/administrateurs/"+id)
     }
-delete(id: number): Observable<any> {
-  return this.http.delete(`${this.apiUrl}/administrateurs/${id}`);
-}
+    delete(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/administrateurs/${id}`);
+    }
+    changerStatut(id: number, active: boolean): Observable<string> {
+        // Correspond à l'endpoint : PUT /api/administrateurs/{id}/statut?active=true|false
+        return this.http.put(`${this.apiUrl}/administrateurs/${id}/statut`, null, {
+        params: { active: active.toString() },
+        responseType: 'text' // Car l'API renvoie une simple chaîne de texte
+        });
+    }
 }

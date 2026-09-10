@@ -4,7 +4,7 @@ import { environment } from '../../environments/environment';
 import { User } from '../model/user';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
-
+import { finalize } from 'rxjs/operators';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private apiUrl = environment.apiURL;
@@ -77,27 +77,34 @@ export class AuthService {
   }
 
   logout(): void {  
-      const user = this.getUserFromLocalStorage();
-      const userId = user?.administrateur?.id;
-      const token = this.getToken(); // On récupère le token AVANT de vider le localStorage
-      // 1. Arrêter immédiatement la surveillance de l'activité
-      this.stopActivityMonitoring();
-    // 2. Si le serveur a besoin d'être informé et qu'on a les données nécessaires
-    if (userId && token) {
-        // Si vous n'utilisez pas d'intercepteur automatique, passez manuellement le token ici :
-        // const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-        // this.http.post(`${this.apiUrl}/api/auth/logout`, { userId }, { headers }).subscribe(...)
+    
+    const user = this.getUserFromLocalStorage();
+    const rawId = user?.administrateur?.id || user?.id; 
+    const token = this.getToken(); 
+    
+    this.stopActivityMonitoring();
 
-        this.http.post(`${this.apiUrl}/api/auth/logout`, { userId }).subscribe({
+    if (rawId && token) {
+      // 🔴 FORCE LA CONVERSION EN NOMBRE : évite d'envoyer une String au format JSON
+      const userIdConverted = Number(rawId); 
+
+      const payload = { userId: userIdConverted };
+      console.log('Envoi du Payload vers Spring Boot :', payload);
+      /*
+      this.http.post(`${this.apiUrl}/api/auth/logout`, payload)
+        .pipe(
+          finalize(() => this.clearClientSession()) 
+        )
+        .subscribe({
           next: () => console.log('Session fermée côté serveur'),
-          error: (err) => console.error('Erreur de déconnexion serveur', err),
-          complete: () => this.clearClientSession() // Nettoyage local APRÈS la réponse (succès ou erreur)
+          error: (err) => console.error('Erreur HTTP détectée :', err)
         });
-      } else {
-        // Si pas de userId ou pas de token, on nettoie directement en local
-        this.clearClientSession();
-      }
+      */
+    } else {
+      this.clearClientSession();
     }
+  }
+
   /**
    * Centralisation du nettoyage local de la session
    */

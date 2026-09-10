@@ -13,4 +13,6 @@ export interface Administrateur{
     ecole: Ecole;
     photo: string;
     online: boolean
+    // Ajoutez cette ligne ⬇️
+    active: boolean;
 }

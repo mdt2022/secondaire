@@ -13,6 +13,7 @@
                             <th scope="col">Nom</th>
                             <th scope="col">Role</th>
                             <th scope="col">Ecole</th>
+                            <th>Etat</th>
                             <th scope="col" colspan="2">Action</th>
                         </tr>
                     </thead>
@@ -23,15 +24,29 @@
                             <td>{{ admin.nom }}</td>
                             <td>{{ admin.role.nom }}</td>
                             <td>{{ admin.ecole.nomEcole }}</td>
+                            <td class="text-center">
+                                <span [ngClass]="admin.online ? 'badge bg-success' : 'badge bg-danger'">
+                                    <i class="fas fa-circle me-1" style="font-size: 8px;"></i>
+                                    {{ admin.online ? 'En ligne' : 'Hors ligne' }}
+                                </span>
+                            </td>
                             <td>
                                 <a [routerLink]="['../add-edit', admin.id]" class="btn btn-warning">
                                 Modifier
                             </a>
                             </td>
                             <td>
-                                <a (click)="Supprimer(admin.id)" class="btn btn-danger">
-    Supprimer
-                            </a>
+                                <!-- BOUTON DYNAMIQUE : ACTIVER / DÉSACTIVER -->
+                                <button (click)="toggleStatut(admin)" 
+                                        [ngClass]="admin.active ? 'btn btn-sm btn-outline-danger' : 'btn btn-sm btn-outline-success'"
+                                        [title]="admin.active ? 'Désactiver le compte' : 'Activer le compte'"
+                                        class="flex-grow-1">
+                                    <i class="fas" [ngClass]="admin.active ? 'fa-user-slash' : 'fa-user-check'"></i>
+                                    <span class="d-none d-md-inline ms-1">
+                                        {{ admin.active ? 'Bloquer' : 'Activer' }}
+                                    </span>
+                                </button>
+                            
                             </td>
                         </tr>
                     </tbody>
