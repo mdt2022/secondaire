@@ -28,6 +28,13 @@ export const routes: Routes = [
         }
       },
       {
+        path: 'transfert',
+        loadComponent: () => import('./transfert/transfert.component').then(m => m.TransfertComponent),
+        data: {
+          title: 'Transfert'
+        }
+      },
+      {
         path: 'classe',
         loadComponent: () => import('./classe/classe.component').then(m => m.ClasseComponent),
         data: {

@@ -1,0 +1,45 @@
+<div class="container py-4">
+  <div class="mb-4">
+    <h2 class="mb-1">Transférer les emplois du temps</h2>
+    <p class="text-secondary mb-0">Copiez la grille d’une année scolaire vers une autre année de votre école.</p>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form [formGroup]="transfertForm" (ngSubmit)="transferer()">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label" for="ecole">École</label>
+            <select id="ecole" class="form-select" formControlName="ecole">
+              <option [ngValue]="null">-- Sélectionner une école --</option>
+              <option *ngFor="let ecole of ecoles" [ngValue]="ecole.idEcole">{{ ecole.nomEcole }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-5">
+            <label class="form-label" for="sourceAnnee">Année source</label>
+            <select id="sourceAnnee" class="form-select" formControlName="sourceAnnee">
+              <option [ngValue]="null">-- Sélectionner --</option>
+              <option *ngFor="let annee of annees" [ngValue]="annee.id">{{ annee.nom }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-5">
+            <label class="form-label" for="cibleAnnee">Année cible</label>
+            <select id="cibleAnnee" class="form-select" formControlName="cibleAnnee">
+              <option [ngValue]="null">-- Sélectionner --</option>
+              <option *ngFor="let annee of annees" [ngValue]="annee.id">{{ annee.nom }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-2">
+            <button class="btn btn-primary w-100" type="submit" [disabled]="loading">
+              {{ loading ? 'Transfert...' : 'Transférer' }}
+            </button>
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

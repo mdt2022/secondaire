@@ -4,6 +4,12 @@ import { Observable } from 'rxjs';
 import { Emploidutemps } from '../model/emploidutemps';
 import { environment } from '../../environments/environment';
 
+export interface TransferResult {
+  totalSource: number;
+  transferes: number;
+  ignores: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -42,5 +48,12 @@ export class EmploidutempsService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  transferer(sourceAnneeId: number, cibleAnneeId: number, ecoleId: number): Observable<TransferResult> {
+    return this.http.post<TransferResult>(
+      `${this.apiUrl}/transferer/annee/${sourceAnneeId}/vers/${cibleAnneeId}/ecole/${ecoleId}`,
+      {}
+    );
   }
 }
