@@ -111,8 +111,7 @@ export class ClasseComponent implements OnInit {
     this.loading = true;
     this.emploiService.getAll().subscribe({
       next: (res) => {
-        const filtres = res.filter(e => Number(e.classe?.id) === Number(classe) &&
-          Number(e.anneeuv?.id) === Number(anneeuv));
+        const filtres = res.filter(e => Number(e.classe?.id) === Number(classe) && Number(e.anneeuv?.id) === Number(anneeuv));
         this.emploisTable = this.buildTable(filtres);
         this.rechercheEffectuee = true;
         this.loading = false;
