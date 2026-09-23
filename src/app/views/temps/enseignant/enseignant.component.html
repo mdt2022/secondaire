@@ -6,21 +6,21 @@
 
                 <div class="col-md-3">
                     <select formControlName="jour" class="form-select">
-                        <option [ngValue]="null">-- Sélectionner le jour --</option>
+                        <option [ngValue]="null">-- Jour --</option>
                         <option *ngFor="let j of jours" [value]="j">{{ j }}</option>
                     </select>
                 </div>
 
                 <div class="col-md-3">
                     <select formControlName="professeur" class="form-select">
-                        <option [ngValue]="null">-- Sélectionner l’enseignant --</option>
+                        <option [ngValue]="null">-- Enseignant --</option>
                         <option *ngFor="let e of enseignants" [value]="e.id">{{ e.prenom }} {{ e.nom }}</option>
                     </select>
                 </div>
 
                 <div class="col-md-3">
                     <select formControlName="anneeuv" class="form-select">
-                        <option [ngValue]="null">-- Sélectionner l’année --</option>
+                        <option [ngValue]="null">-- Année --</option>
                         <option *ngFor="let a of annees" [ngValue]="a.id">{{ a.nom }}</option>
                     </select>
                 </div>
