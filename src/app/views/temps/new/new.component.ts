@@ -267,7 +267,8 @@ export class NewComponent implements OnInit {
 
   loadEmplois(): void {
     const idEcole = this.user.administrateur.ecole.idEcole;
-    this.emploiService.getAll().subscribe(data => {
+    const idAnnee = this.user.parametre.anneepardefaut.id
+    this.emploiService.parAnneeAndEcole(idAnnee,idEcole).subscribe(data => {
       this.emplois = data.filter(e => e.ecole?.idEcole === idEcole)
         .sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
       this.applyFilter();
