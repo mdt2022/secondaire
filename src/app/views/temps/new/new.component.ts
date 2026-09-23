@@ -220,7 +220,8 @@ export class NewComponent implements OnInit {
 
   loadEmplois(): void {
     const idEcole = this.user.administrateur.ecole.idEcole;
-    this.emploiService.getAll().subscribe(data => {
+    const idAnnee = this.user.parametre.anneepardefaut.id
+    this.emploiService.parAnneeAndEcole(idAnnee,idEcole).subscribe(data => {
       this.emplois = data.filter(e => e.ecole?.idEcole === idEcole)
         .sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
       this.applyFilter();
@@ -276,25 +277,25 @@ export class NewComponent implements OnInit {
 
   delete(id: number): void {
     Swal.fire({
-      title: 'Supprimer cet emploi du temps ?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Supprimer',
-      cancelButtonText: 'Annuler'
-    }).then(result => {
-      if (!result.isConfirmed) return;
-      this.emploiService.delete(id).subscribe({
-        next: () => {
-          this.emplois = this.emplois.filter(e => e.id !== id);
-          this.applyFilter();
-          Swal.fire('Supprimé', 'L’emploi du temps a été supprimé.', 'success');
-        },
-        error: (err) => {
-          console.error('Erreur suppression :', err);
-          Swal.fire('Erreur', 'Impossible de supprimer cet emploi du temps.', 'error');
+        title: 'Suppression',
+        text: 'Voulez-vous vraiment supprimer cet emploi du temps ?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Oui, supprimer',
+        cancelButtonText: 'Annuler'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.emploiService.delete(id).subscribe({
+            next: () => {
+              this.emplois = this.emplois.filter(e => e.id !== id);
+              this.applyFilter();
+            },
+            error: (err) => console.error('Erreur suppression :', err)
+          });
         }
       });
-    });
   }
 
   resetForm(): void {
