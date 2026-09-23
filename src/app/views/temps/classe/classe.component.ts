@@ -92,9 +92,17 @@ export class ClasseComponent implements OnInit {
   onSubmit(): void {
     const { classe, anneeuv } = this.emploiForm.value;
     if (!classe || !anneeuv) {
-      Swal.fire('Sélection requise', 'Veuillez sélectionner la classe et l’année.', 'warning');
-      return;
-    }
+      Swal.fire({
+            title: 'Erreur de choix',
+            text: 'Veuillez sélectionner la classe et l’année ?',
+            icon: 'warning',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'OK',
+          })
+          return
+      }
+    
 
     this.rechercheEffectuee = false;
     const payload: any = {
