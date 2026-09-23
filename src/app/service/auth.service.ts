@@ -76,21 +76,16 @@ export class AuthService {
     return user ? JSON.parse(user) : null;
   }
 
-  logout(): void {  
-    
+  logout(): void {      
     const user = this.getUserFromLocalStorage();
     const rawId = user?.administrateur?.id || user?.id; 
-    const token = this.getToken(); 
-    
+    const token = this.getToken();     
     this.stopActivityMonitoring();
-
     if (rawId && token) {
       // 🔴 FORCE LA CONVERSION EN NOMBRE : évite d'envoyer une String au format JSON
-      const userIdConverted = Number(rawId); 
-
+      const userIdConverted = Number(rawId);
       const payload = { userId: userIdConverted };
-      console.log('Envoi du Payload vers Spring Boot :', payload);
-      /*
+      console.log('Envoi du Payload vers Spring Boot :', payload);    
       this.http.post(`${this.apiUrl}/api/auth/logout`, payload)
         .pipe(
           finalize(() => this.clearClientSession()) 
@@ -98,13 +93,11 @@ export class AuthService {
         .subscribe({
           next: () => console.log('Session fermée côté serveur'),
           error: (err) => console.error('Erreur HTTP détectée :', err)
-        });
-      */
-    } else {
-      this.clearClientSession();
-    }
+        });      
+      } else {
+        this.clearClientSession();
+      }
   }
-
   /**
    * Centralisation du nettoyage local de la session
    */
@@ -121,19 +114,15 @@ export class AuthService {
 
   private startActivityMonitoring(): void {
     this.stopActivityMonitoring(); // Sécurité : éviter les doublons de minuteurs
-
     // Exécuter en dehors de la Zone Angular pour ne pas bloquer les performances de rendu
     this.ngZone.runOutsideAngular(() => {
       const resetTimer = () => this.resetInactivityTimeout();
-
       // Liste des événements déclenchant le renouvellement du temps d'inactivité
-      const events = ['mousemove', 'click', 'keypress', 'scroll', 'touchstart'];
-      
+      const events = ['mousemove', 'click', 'keypress', 'scroll', 'touchstart'];      
       events.forEach(event => {
         window.addEventListener(event, resetTimer);
         this.eventListeners.push(() => window.removeEventListener(event, resetTimer));
       });
-
       this.resetInactivityTimeout();
     });
   }

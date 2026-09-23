@@ -77,10 +77,9 @@ chargerEcoles(): void {
         //console.log(response.user.administrateur.role.nom+"123test123")
         this.loading = false; // stop spinner
         this.authService.saveUserAndToken(response);
-        if(response.user.administrateur.role.nom == 'DEV'){this.router.navigate(['/dashboard']);}
-        if(response.user.administrateur.role.nom == 'AD'){this.router.navigate(['/note']);}
-        if(response.user.administrateur.role.nom == 'AE2C'){this.router.navigate(['/notecd']);}
-        if(response.user.administrateur.role.nom == 'Censeur'){this.router.navigate(['/note']);}
+        if(response.user.administrateur.role.nom == 'DEV'){this.router.navigate(['/dashboard']);}else
+        if(response.user.administrateur.role.nom == 'AE2C'){this.router.navigate(['/notecd']);}else
+        {this.router.navigate(['/note']);}
       },
       error: (err) => {
         this.loading = false; // stop spinner
