@@ -5,8 +5,10 @@ import Swal from 'sweetalert2';
 
 import { Anneeuv } from '../../../model/anneeuv';
 import { Ecole } from '../../../model/ecole';
+import { Classe } from '../../../model/classe';
 import { AnneeuvService } from '../../../service/anneeuv.service';
 import { EcoleService } from '../../../service/ecole.service';
+import { ClasseEcoleService } from '../../../service/classeecole.service';
 import { EmploidutempsService, TransferResult } from '../../../service/emploidutemps.service';
 
 @Component({
@@ -20,6 +22,7 @@ export class TransfertComponent implements OnInit {
   transfertForm!: FormGroup;
   annees: Anneeuv[] = [];
   ecoles: Ecole[] = [];
+  classes: Classe[] = [];
   loading = false;
   message = '';
   erreur = '';
@@ -29,12 +32,14 @@ export class TransfertComponent implements OnInit {
     private fb: FormBuilder,
     private anneeService: AnneeuvService,
     private ecoleService: EcoleService,
+    private classeEcoleService: ClasseEcoleService,
     private emploiService: EmploidutempsService,
   ) {}
 
   ngOnInit(): void {
     this.transfertForm = this.fb.group({
       ecole: [null, Validators.required],
+      classe: [null, Validators.required],
       sourceAnnee: [null, Validators.required],
       cibleAnnee: [null, Validators.required]
     });
@@ -48,17 +53,39 @@ export class TransfertComponent implements OnInit {
       next: ecoles => this.ecoles = ecoles,
       error: () => Swal.fire('Erreur', 'Impossible de charger les écoles.', 'error')
     });
+
+    this.transfertForm.get('ecole')?.valueChanges.subscribe(ecoleId => {
+      this.classes = [];
+      this.transfertForm.patchValue({ classe: null }, { emitEvent: false });
+
+      if (!ecoleId) {
+        return;
+      }
+
+      this.classeEcoleService.getAllClasseParEcole(Number(ecoleId)).subscribe({
+        next: classes => this.classes = classes,
+        error: () => Swal.fire('Erreur', 'Impossible de charger les classes de cette école.', 'error')
+      });
+    });
+  }
+
+  private hasSelection(value: unknown): boolean {
+    return value !== null && value !== undefined && value !== '' && !(typeof value === 'string' && value.trim() === '');
   }
 
   transferer(): void {
-    if (this.transfertForm.invalid) {
+    const ecole = this.transfertForm.get('ecole')?.value;
+    const classe = this.transfertForm.get('classe')?.value;
+    const sourceAnnee = this.transfertForm.get('sourceAnnee')?.value;
+    const cibleAnnee = this.transfertForm.get('cibleAnnee')?.value;
+
+    if (!this.hasSelection(ecole) || !this.hasSelection(classe) || !this.hasSelection(sourceAnnee) || !this.hasSelection(cibleAnnee)) {
       this.transfertForm.markAllAsTouched();
-      Swal.fire('Information', 'Veuillez sélectionner une école, une année source et une année cible.', 'info');
+      Swal.fire('Information', 'Veuillez sélectionner une école, une classe, une année source et une année cible.', 'info');
       return;
     }
 
-    const { ecole, sourceAnnee, cibleAnnee } = this.transfertForm.value;
-    if (sourceAnnee === cibleAnnee) {
+    if (Number(sourceAnnee) === Number(cibleAnnee)) {
       Swal.fire('Attention', 'Les années source et cible doivent être différentes.', 'warning');
       return;
     }
@@ -67,9 +94,10 @@ export class TransfertComponent implements OnInit {
     const source = this.annees.find(annee => annee.id === Number(sourceAnnee));
     const cible = this.annees.find(annee => annee.id === Number(cibleAnnee));
     const ecoleSelectionnee = this.ecoles.find(item => item.idEcole === ecoleId);
+    const classeSelectionnee = this.classes.find(item => item.idClasse === Number(classe));
     Swal.fire({
       title: 'Confirmer le transfert',
-      text: `Transférer les emplois de « ${source?.nom} » vers « ${cible?.nom} » pour « ${ecoleSelectionnee?.nomEcole} » ?`,
+      text: `Transférer les emplois de la classe « ${classeSelectionnee?.nom} » de « ${source?.nom} » vers « ${cible?.nom} » pour « ${ecoleSelectionnee?.nomEcole} » ?`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Oui, transférer',
@@ -80,7 +108,7 @@ export class TransfertComponent implements OnInit {
       this.loading = true;
       this.resultat = undefined;
 
-      this.emploiService.transferer(Number(sourceAnnee), Number(cibleAnnee), ecoleId).subscribe({
+      this.emploiService.transferer(Number(sourceAnnee), Number(cibleAnnee), ecoleId, Number(classe)).subscribe({
         next: resultat => {
           this.resultat = resultat;
           this.loading = false;

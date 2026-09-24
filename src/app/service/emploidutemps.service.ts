@@ -50,9 +50,9 @@ export class EmploidutempsService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  transferer(sourceAnneeId: number, cibleAnneeId: number, ecoleId: number): Observable<TransferResult> {
+  transferer(sourceAnneeId: number, cibleAnneeId: number, ecoleId: number, classeId: number): Observable<TransferResult> {
     return this.http.post<TransferResult>(
-      `${this.apiUrl}/transferer/annee/${sourceAnneeId}/vers/${cibleAnneeId}/ecole/${ecoleId}`,
+      `${this.apiUrl}/transferer/annee/${sourceAnneeId}/vers/${cibleAnneeId}/ecole/${ecoleId}/classe/${classeId}`,
       {}
     );
   }

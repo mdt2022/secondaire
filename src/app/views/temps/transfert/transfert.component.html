@@ -16,6 +16,14 @@
             </select>
           </div>
 
+          <div class="col-md-4">
+            <label class="form-label" for="classe">Classe</label>
+            <select id="classe" class="form-select" formControlName="classe" [disabled]="!transfertForm.get('ecole')?.value">
+              <option [ngValue]="null">-- Sélectionner une classe --</option>
+              <option *ngFor="let classe of classes" [ngValue]="classe.id !== undefined ? classe.id : classe.idClasse">{{ classe.nom }}</option>
+            </select>
+          </div>
+
           <div class="col-md-5">
             <label class="form-label" for="sourceAnnee">Année source</label>
             <select id="sourceAnnee" class="form-select" formControlName="sourceAnnee">
