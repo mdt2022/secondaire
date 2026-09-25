@@ -6,7 +6,7 @@ import { Anneeuv } from './anneeuv';
 
 export interface Enseigner {
 nbreheure: any;
-  id?: number;
+  id: number;
   matiere: Matiere;
   classe: Classe;
   enseignant: Enseignant;

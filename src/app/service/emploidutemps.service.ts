@@ -4,10 +4,20 @@ import { Observable } from 'rxjs';
 import { Emploidutemps } from '../model/emploidutemps';
 import { environment } from '../../environments/environment';
 
+export interface TransferResult {
+  totalSource: number;
+  transferes: number;
+  ignores: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class EmploidutempsService {
+  createEmploi: any;
+  updateEmploi(id: any, payload: { id: any; jour: any; heuredebut: any; heurefin: any; matiere: { id: any; }; professeur: { id: any; }; classe: { id: any; }; anneeuv: { id: any; }; }) {
+    throw new Error('Method not implemented.');
+  }
   private apiUrl = environment.apiURL + '/emploidutemps';
 
 
@@ -16,7 +26,14 @@ export class EmploidutempsService {
   getAll(): Observable<Emploidutemps[]> {
     return this.http.get<Emploidutemps[]>(this.apiUrl);
   }
-
+  //EMPLOIS DU TEMPS PAR JOUR
+  parJour(jour:any,anneeuvId:any,ecoleId:any): Observable<Emploidutemps[]>{
+    return this.http.get<Emploidutemps[]>(`${this.apiUrl}/jour/${jour}/annee/${anneeuvId}/ecole/${ecoleId}`);
+  }
+  //Emplois du temps par enseignant
+  parEnseigant(jour:any,professeur:any,anneeuv:any,ecoleId:any): Observable<Emploidutemps[]>{
+    return this.http.get<Emploidutemps[]>(`${this.apiUrl}/jour/${jour}/professeur/${professeur}/annee/${anneeuv}/ecole/${ecoleId}`);
+  }
   getById(id: number): Observable<Emploidutemps> {
     return this.http.get<Emploidutemps>(`${this.apiUrl}/${id}`);
   }
@@ -31,5 +48,12 @@ export class EmploidutempsService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  transferer(sourceAnneeId: number, cibleAnneeId: number, ecoleId: number, classeId: number): Observable<TransferResult> {
+    return this.http.post<TransferResult>(
+      `${this.apiUrl}/transferer/annee/${sourceAnneeId}/vers/${cibleAnneeId}/ecole/${ecoleId}/classe/${classeId}`,
+      {}
+    );
   }
 }

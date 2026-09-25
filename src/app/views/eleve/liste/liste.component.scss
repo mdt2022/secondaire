@@ -1,0 +1,90 @@
+/* Composants du formulaire de filtrage */
+.custom-select {
+  height: 46px;
+  border-color: #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.custom-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+/* Boutons adaptatifs */
+.custom-btn {
+  height: 46px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Structure moderne de la table */
+.custom-table th {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+  padding: 1.1rem 1rem;
+  background-color: #f8fafc;
+}
+
+.custom-table td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* Micro-boutons d'action sur les lignes */
+.btn-action {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.btn-action:hover {
+  background-color: #f8fafc;
+  transform: scale(1.05);
+}
+
+/* Typographie & Utilitaires graphiques */
+.tracking-wider {
+  letter-spacing: 0.05em;
+}
+
+.fw-mono {
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.fs-7 {
+  font-size: 0.8rem;
+}
+
+.bg-light-primary {
+  background-color: #f0fdf4 !important; /* Couleur douce */
+}
+
+.shadow-2xs {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.border-dashed {
+  border: 2px dashed #e2e8f0 !important;
+}
+
+/* Animation d'affichage fluide */
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

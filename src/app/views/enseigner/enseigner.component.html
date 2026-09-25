@@ -1,30 +1,113 @@
-<div class="container mt-4">
-  <h3>Liste des Enseignements</h3>
-  <a routerLink="new" class="btn btn-primary mb-3">Ajouter</a>
+<!-- LIST -->
+<div *ngIf="viewMode === 'list'">
+    <div class="d-flex justify-content-between mb-3">
+        <h3>Liste des matières enseignées</h3>
+        <button class="btn btn-success" (click)="switchView('create')">Affecter des matières à un enseignant</button>
+    </div>
 
-  <table class="table table-bordered table-striped">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Matière</th>
-        <th>Classe</th>
-        <th>Enseignant</th>
-        <th>École</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let e of enseignants; let i = index">
-        <td>{{ i + 1 }}</td>
-        <td>{{ e.matiere.libelle }}</td>
-        <td>{{ e.classe.nom }}</td>
-        <td>{{ e.enseignant.prenom }} {{ e.enseignant.nom }}</td>
-        <td>{{ e.ecole.nomEcole }}</td>
-        <td>
-          <a [routerLink]="['/enseigner/edit', e.id]" class="btn btn-warning btn-sm">✏️</a>
-          <button class="btn btn-danger btn-sm" (click)="delete(e.id!)">🗑️</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <!-- FILTRES ET RECHERCHE  -->
+    <div class="row mb-3 g-2">
+        <!-- Recherche texte -->
+        <div class="col-md-4">
+            <input type="text" class="form-control" placeholder="Rechercher..." [(ngModel)]="searchText" (input)="applyAll()">
+        </div>
+
+        <!-- Filtre Classe -->
+        <div class="col-md-2">
+            <select class="form-select" [(ngModel)]="filterClasseId" (change)="applyAll()">
+      <option [ngValue]="null">Toutes les classes</option>
+      <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.nom }}</option>
+    </select>
+        </div>
+
+        <!-- Filtre Professeur -->
+        <div class="col-md-3">
+            <select class="form-select" [(ngModel)]="filterProfesseurId" (change)="applyAll()">
+      <option [ngValue]="null">Tous les professeurs</option>
+      <option *ngFor="let p of professeurs" [ngValue]="p.id">{{ p.prenom }} {{ p.nom }}</option>
+    </select>
+        </div>
+
+        <!-- Filtre Matière -->
+        <div class="col-md-3">
+            <select class="form-select" [(ngModel)]="filterMatiereId" (change)="applyAll()">
+      <option [ngValue]="null">Toutes les matières</option>
+      <option *ngFor="let m of matieres" [ngValue]="m.id">{{ m.libelle }}</option>
+    </select>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Classe</th>
+                <th>Professeur</th>
+                <th>Matière</th>
+                <th style="width:120px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let e of pagedData; let i = index">
+                <td>{{ i + 1 + page * size }}</td>
+                <td>{{ e.classe.nom }}</td>
+                <td>{{ e.enseignant.prenom }} {{ e.enseignant.nom }}</td>
+                <td>{{ e.matiere.libelle }}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm me-1" (click)="edit(e)">modifier</button>
+                    <button class="btn btn-danger btn-sm" (click)="delete(e.id)">supprimer</button>
+                </td>
+            </tr>
+            <tr *ngIf="pagedData.length === 0">
+                <td colspan="5" class="text-center text-muted">Aucune donnée trouvée</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="mt-3 d-flex justify-content-between">
+        <button class="btn btn-outline-primary" [disabled]="page === 0" (click)="prevPage()">Précédent</button>
+        <span class="align-self-center">Page {{ page + 1 }} / {{ totalPages }}</span>
+        <button class="btn btn-outline-primary" [disabled]="page + 1 >= totalPages" (click)="nextPage()">Suivant</button>
+    </div>
+</div>
+
+<!--  CREATE  -->
+<div *ngIf="viewMode === 'create'">
+    <h3>Affecter des matières</h3>
+
+    <select class="form-control mb-2" [(ngModel)]="selectedProfesseurId">
+    <option [ngValue]="null">Professeur</option>
+    <option *ngFor="let p of professeurs" [value]="p.id">{{ p.prenom }} {{ p.nom }}</option>
+  </select>
+    <label for="">Nombre de classes</label>
+    <input type="number" class="form-control mb-2" [(ngModel)]="nombreClasse" placeholder="Nombre de classes">
+    <button class="btn btn-success mb-3" (click)="generateAffectations()">Générer</button>
+
+    <div *ngFor="let a of affectations; let i=index" class="border rounded p-3 mb-3">
+        <h6>Classe {{ i + 1 }}</h6>
+        <select class="form-control mb-2" [(ngModel)]="a.classeId">
+      <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+    </select>
+        <div class="mt-2">
+            <label *ngFor="let m of matieres" class="me-3">
+        <input type="checkbox" [value]="m.id" (change)="onMatiereToggle($event, a, m.id)"> {{ m.libelle }}
+      </label>
+        </div>
+    </div>
+
+    <button class="btn btn-primary" (click)="saveAffectations()">Enregistrer</button>
+    <button class="btn btn-secondary ms-2" (click)="switchView('list')">Annuler</button>
+</div>
+
+<!--  EDIT  -->
+<div *ngIf="viewMode === 'edit'">
+    <h3>Modifier l’affectation</h3>
+    <select class="form-control mb-2" [(ngModel)]="selectedEnseigner!.classe.id">
+    <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+  </select>
+    <select class="form-control mb-3" [(ngModel)]="selectedEnseigner!.matiere.id">
+    <option *ngFor="let m of matieres" [value]="m.id">{{ m.libelle }}</option>
+  </select>
+    <button class="btn btn-info" (click)="update()">Enregistrer</button>
+    <button class="btn btn-secondary ms-2" (click)="switchView('list')">Annuler</button>
 </div>

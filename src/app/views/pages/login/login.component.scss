@@ -1,7 +1,15 @@
 .bg-light{
-    background-image: url('../../../../assets/images/mali.webp');
-    background-repeat: no-repeat;       /* ❌ empêche la répétition */
-    background-size: cover;             /* ✅ l’image s’adapte à la taille de l’écran */
-    background-position: center;        /* ✅ centre l’image dans le conteneur */
-    background-attachment: fixed;       /* (optionnel) effet fixe au défilement */
+    background-image: url('../../../../assets/images/arriereplan.jpg');
+    background-size: cover;
+    background-position: center; /* Pour centrer l'image */
+    background-repeat: no-repeat; /* Évite que l'image se répète si elle est petite */
+    width: 100%;
+    min-height: 300px; /* Important : un arrière-plan n'a pas de hauteur par défaut */
+}
+.imgdes{
+    background-image: url('../../../../assets/images/afrique.jpg');
+    background-size: cover;
+    background-position: center; /* Pour centrer l'image */
+    background-repeat: no-repeat; /* Évite que l'image se répète si elle est petite */
+    width: 100%;
 }

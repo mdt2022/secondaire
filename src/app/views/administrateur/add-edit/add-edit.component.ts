@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CardBodyComponent, CardComponent, CardHeaderComponent, ColComponent, RowComponent } from '@coreui/angular';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Administrateur } from '../../../model/administrateur';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Administrateur, AffectationAdministrateur } from '../../../model/administrateur';
 import { Role } from '../../../model/role';
+import { Ecole } from '../../../model/ecole';
 import { AdministrateurService } from '../../../service/admin.service';
 import { RoleService } from '../../../service/role.service';
-import { Ecole } from '../../../model/ecole';
-import { ActivatedRoute, Router } from '@angular/router';
 import { EcoleService } from '../../../service/ecole.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add-edit',
@@ -17,17 +18,16 @@ import { EcoleService } from '../../../service/ecole.service';
     ReactiveFormsModule,
     RowComponent,
     ColComponent,
-    CardComponent, 
-    CardHeaderComponent, 
+    CardComponent,
+    CardHeaderComponent,
     CardBodyComponent,
     CommonModule,
   ],
   templateUrl: './add-edit.component.html',
-  styleUrl: './add-edit.component.scss'
+  styleUrls: ['./add-edit.component.scss']
 })
-export class AddEditComponent implements OnInit{
+export class AddEditComponent implements OnInit {
   adminForm!: FormGroup;
-  administrateurs: Administrateur[] = [];
   roles: Role[] = [];
   ecoles: Ecole[] = [];
   editMode = false;
@@ -44,10 +44,9 @@ export class AddEditComponent implements OnInit{
 
   ngOnInit(): void {
     this.initForm();
-    // Charger les listes
     this.loadRoles();
     this.loadEcoles();
-    // Vérifier si un id est présent dans l’URL
+
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -57,21 +56,20 @@ export class AddEditComponent implements OnInit{
       }
     });
   }
-// Initialisation du formulaire
+
   private initForm(): void {
     this.adminForm = this.fb.group({
       nom: ['', Validators.required],
       prenom: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       telephone: [''],
-      role: [null, Validators.required],
-      ecole: [null, Validators.required],
+      affectations: this.fb.array([]),
       username: ['', Validators.required],
       password: [''],
     });
+    this.ajouterAffectation();
   }
 
-  // Charger les informations de l'administrateur
   private loadAdmin(id: number): void {
     this.adminService.getById(id).subscribe({
       next: (admin: Administrateur) => {
@@ -80,69 +78,102 @@ export class AddEditComponent implements OnInit{
           prenom: admin.prenom,
           email: admin.email,
           telephone: admin.telephone,
-          role: admin.role?.id,
-          ecole: admin.ecole?.idEcole,
           username: admin.username,
-          password: admin.password, // ne jamais afficher le mot de passe
+          password: '', // ne jamais afficher le mot de passe
         });
+        this.affectations.clear();
+        const affectations = admin.affectations?.length
+          ? admin.affectations
+          : (admin.ecole && admin.role ? [{ ecole: admin.ecole, role: admin.role }] : []);
+        affectations.forEach(affectation =>
+          this.ajouterAffectation(affectation.ecole.idEcole, affectation.role.id)
+        );
+        if (!this.affectations.length) this.ajouterAffectation();
       },
-      error: err => console.error('Erreur lors du chargement', err),
+      error: () => Swal.fire('Erreur', 'Impossible de charger l’administrateur', 'error')
     });
   }
 
-  // Charger les rôles
   private loadRoles(): void {
     this.roleService.getAll().subscribe({
-      next: data => (this.roles = data),
-      error: err => console.error('Erreur chargement rôles', err),
+      next: data => this.roles = data,
+      error: () => Swal.fire('Erreur', 'Impossible de charger les rôles', 'error')
     });
   }
 
-  // Charger les écoles
   private loadEcoles(): void {
     this.ecoleService.getAll().subscribe({
-      next: data => (this.ecoles = data),
-      error: err => console.error('Erreur chargement écoles', err),
+      next: data => this.ecoles = data,
+      error: () => Swal.fire('Erreur', 'Impossible de charger les écoles', 'error')
     });
   }
 
-  // Enregistrement
   onSubmit(): void {
     if (this.adminForm.invalid) return;
 
     const formValue = this.adminForm.value;
+    const affectations: AffectationAdministrateur[] = formValue.affectations.map((affectation: { ecole: number; role: number }) => ({
+      ecole: { idEcole: affectation.ecole } as Ecole,
+      role: { id: affectation.role } as Role,
+    }));
     const payload: Administrateur = {
       ...formValue,
-      role: formValue.role ? { id: formValue.role } as Role : null,
-      ecole: formValue.ecole ? { idEcole: formValue.ecole } as Ecole : null,
+      affectations,
+      role: affectations[0].role,
+      ecole: affectations[0].ecole,
     };
 
     if (this.editMode && this.currentId) {
       this.adminService.update(this.currentId, payload).subscribe({
         next: () => {
-          alert('Administrateur modifié avec succès');
+          Swal.fire({
+            icon: 'success',
+            title: 'Modifié',
+            text: 'Administrateur mis à jour avec succès',
+            timer: 1500,
+            showConfirmButton: false
+          });
           this.router.navigate(['/administrateurs']);
         },
+        error: () => Swal.fire('Erreur', 'Impossible de modifier cet administrateur', 'error')
       });
     } else {
       this.adminService.create(payload).subscribe({
         next: () => {
-          alert('Administrateur ajouté avec succès');
+          Swal.fire({
+            icon: 'success',
+            title: 'Créé',
+            text: 'Administrateur ajouté avec succès',
+            timer: 1500,
+            showConfirmButton: false
+          });
           this.router.navigate(['/administrateurs']);
         },
+        error: () => Swal.fire('Erreur', 'Impossible de créer cet administrateur', 'error')
       });
     }
-  }
-
-  edit(admin: Administrateur): void {
-    this.editMode = true;
-    this.currentId = admin.id;
-    this.adminForm.patchValue(admin);
   }
 
   resetForm(): void {
     this.adminForm.reset();
     this.editMode = false;
     this.currentId = undefined;
+  }
+
+  get affectations(): FormArray {
+    return this.adminForm.get('affectations') as FormArray;
+  }
+
+  ajouterAffectation(ecoleId: number | null = null, roleId: number | null = null): void {
+    this.affectations.push(this.fb.group({
+      ecole: [ecoleId, Validators.required],
+      role: [roleId, Validators.required]
+    }));
+  }
+
+  supprimerAffectation(index: number): void {
+    if (this.affectations.length > 1) {
+      this.affectations.removeAt(index);
+    }
   }
 }

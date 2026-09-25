@@ -1,0 +1,47 @@
+/* Formulaires de saisie standardisés */
+.custom-input, .custom-select {
+  height: 46px;
+  border-color: #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.custom-input:focus, .custom-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+  background-color: white;
+}
+
+/* Boutons d'actions principaux */
+.custom-btn {
+  height: 46px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Polices et typographies */
+.tracking-wider {
+  letter-spacing: 0.05em;
+}
+
+/* Arrière-plans doux pour les badges d'en-tête de cartes */
+.bg-light-primary { background-color: #e0f2fe !important; }
+.bg-light-success { background-color: #dcfce7 !important; }
+.bg-light-warning { background-color: #fef3c7 !important; }
+
+.shadow-2xs {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Micro animation d'apparition */
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

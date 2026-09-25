@@ -1,59 +1,104 @@
 <c-card>
-  <c-card-header>
-    <strong>Gestion des matières</strong>
-  </c-card-header>
+    <c-card-header>
+        <strong>Gestion des matières</strong>
+    </c-card-header>
 
-  <c-card-body>
-    <form [formGroup]="matiereForm" (ngSubmit)="onSubmit()">
-      <div class="row g-3">
-        <div class="col-md-4">
-          <label>Libellé</label>
-          <input class="form-control" formControlName="libelle" placeholder="Nom de la matière" />
-        </div>
-        <div class="col-md-4">
-          <label>Coefficient</label>
-          <input class="form-control" type="number" formControlName="coefficient" placeholder="Coefficient" />
-        </div>
-        <div class="col-md-4">
-          <label>Horaire</label>
-          <input class="form-control" type="number" formControlName="horaire" placeholder="Nombre d'heures" />
-        </div>
-      </div>
+    <c-card-body>
+        <form [formGroup]="matiereForm" (ngSubmit)="onSubmit()">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label>Libellé</label>
+                    <input class="form-control" formControlName="libelle" placeholder="Nom de la matière" />
+                </div>
+                <div class="col-md-4">
+                    <label>Coefficient</label>
+                    <input class="form-control" type="number" formControlName="coefficient" placeholder="Coefficient" />
+                </div>
+                <div class="col-md-4">
+                    <label>Horaire</label>
+                    <input class="form-control" type="number" formControlName="horaire" placeholder="Nombre d'heures" />
+                </div>
+            </div>
 
-      <div class="mt-3">
-        <button class="btn btn-primary" type="submit">
+            <div class="mt-3">
+                <button class="btn btn-primary" type="submit">
           {{ editMode ? 'Modifier' : 'Ajouter' }}
         </button>
-        <button class="btn btn-secondary ms-2" type="button" (click)="resetForm()">Annuler</button>
-      </div>
-    </form>
-  </c-card-body>
+                <button class="btn btn-secondary ms-2" type="button" (click)="resetForm()">Annuler</button>
+            </div>
+        </form>
+    </c-card-body>
 </c-card>
 
 <hr />
 
 <c-card>
-  <c-card-body>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Libellé</th>
-          <th>Coefficient</th>
-          <th>Horaire</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let m of matieres">
-          <td>{{ m.libelle }}</td>
-          <td>{{ m.coefficient }}</td>
-          <td>{{ m.horaire }}</td>
-          <td>
-            <button class="btn btn-warning btn-sm" (click)="edit(m)">✏️</button>
-            <button class="btn btn-danger btn-sm ms-2" (click)="delete(m.id!)">🗑️</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </c-card-body>
+    <c-card-body>
+        <div class="mb-2 text-muted" *ngIf="matieres.length > 0">
+            Affichage de {{ filteredMatieres.length === 0 ? 0 : (currentPage - 1) * pageSize + 1 }} – {{ (currentPage - 1) * pageSize + filteredMatieres.length }} sur {{ matieres.length }} matière(s)
+        </div>
+
+        <div class="mb-2 text-muted" *ngIf="matieres.length === 0">
+            Aucune matière enregistrée
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <input class="form-control" placeholder=" Rechercher une matière..." [(ngModel)]="searchTerm" (ngModelChange)="applyFilter()" />
+            </div>
+
+            <div class="col-md-3">
+                <select class="form-select" [(ngModel)]="pageSize" (change)="changePage(1)">
+      <option [value]="5">5</option>
+      <option [value]="10">10</option>
+      <option [value]="20">20</option>
+    </select>
+            </div>
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th (click)="sort('libelle')" class="cursor-pointer">
+                        Libellé {{ sortIcon('libelle') }}
+                    </th>
+                    <th (click)="sort('coefficient')" class="cursor-pointer">
+                        Coefficient {{ sortIcon('coefficient') }}
+                    </th>
+                    <th (click)="sort('horaire')" class="cursor-pointer">
+                        Horaire {{ sortIcon('horaire') }}
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let m of filteredMatieres; let i = index">
+                    <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                    <td>{{ m.libelle }}</td>
+                    <td>{{ m.coefficient }}</td>
+                    <td>{{ m.horaire }}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" (click)="edit(m)">Modifier</button>
+                        <button class="btn btn-danger btn-sm ms-2" (click)="delete(m.id!)">Supprimer</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <nav class="mt-3">
+            <ul class="pagination justify-content-end">
+                <li class="page-item" [class.disabled]="currentPage === 1">
+                    <button class="page-link" (click)="changePage(currentPage - 1)">‹</button>
+                </li>
+
+                <li class="page-item" *ngFor="let p of totalPagesArray" [class.active]="p === currentPage">
+                    <button class="page-link" (click)="changePage(p)">{{ p }}</button>
+                </li>
+
+                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                    <button class="page-link" (click)="changePage(currentPage + 1)">›</button>
+                </li>
+            </ul>
+        </nav>
+
+    </c-card-body>
 </c-card>

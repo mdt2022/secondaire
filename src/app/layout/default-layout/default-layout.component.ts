@@ -17,6 +17,8 @@ import {
 
 import { DefaultFooterComponent, DefaultHeaderComponent } from './';
 import { navItems } from './_nav';
+import { AuthService } from '../../service/auth.service';
+import { User } from '../../model/user';
 
 function isOverflown(element: HTMLElement) {
   return (
@@ -50,6 +52,15 @@ function isOverflown(element: HTMLElement) {
 })
 export class DefaultLayoutComponent {
   public navItems = navItems;
+  user!: User
+  constructor(private authService: AuthService){}
+
+   ngOnInit(): void {
+      this.user = this.authService.getUserFromLocalStorage();
+      if (this.user.administrateur.role.nom) {
+        this.navItems = navItems.filter(item => !item.role || item.role.includes(this.user.administrateur.role.nom));
+      }
+    }
 
   onScrollbarUpdate($event: any) {
     // if ($event.verticalUsed) {

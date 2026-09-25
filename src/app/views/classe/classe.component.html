@@ -1,49 +1,85 @@
 <div class="container mt-4">
-  <h3 class="mb-3">Gestion des Classes</h3>
+    <h3 class="mb-3">Gestion des Classes</h3>
 
-  <form [formGroup]="classeForm" (ngSubmit)="save()">
-    <div class="row g-3">
-      <div class="col-md-3">
-        <input formControlName="nom" type="text" class="form-control" placeholder="Nom" required>
-      </div>
-      <div class="col-md-3">
-        <input formControlName="filiere" type="text" class="form-control" placeholder="Filière">
-      </div>
-      <div class="col-md-3">
-        <input formControlName="options" type="text" class="form-control" placeholder="Options">
-      </div>
-      <div class="col-md-3">
-        <input formControlName="description" type="text" class="form-control" placeholder="Description">
-      </div>
+    <!-- Formulaire -->
+    <form [formGroup]="classeForm" (ngSubmit)="save()">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <input formControlName="nom" type="text" class="form-control" placeholder="Nom" required>
+            </div>
+            <div class="col-md-3">
+                <input formControlName="filiere" type="text" class="form-control" placeholder="Filière">
+            </div>
+            <div class="col-md-3">
+                <input formControlName="options" type="text" class="form-control" placeholder="Options">
+            </div>
+            <div class="col-md-3">
+                <input formControlName="description" type="text" class="form-control" placeholder="Description">
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary me-2">{{ editMode ? 'Modifier' : 'Ajouter' }}</button>
+            <button type="button" class="btn btn-secondary" (click)="resetForm()">Annuler</button>
+        </div>
+    </form>
+
+    <!-- Recherche et pageSize -->
+    <div class="row mt-4 mb-2">
+        <div class="mb-2 text-muted" *ngIf="classes.length > 0">
+            Affichage de {{ filteredClasses.length === 0 ? 0 : (currentPage - 1) * pageSize + 1 }} – {{ (currentPage - 1) * pageSize + paginatedClasses.length }} sur {{ classes.length }} classe(s)
+        </div>
+        <div class="col-md-4">
+            <input type="text" class="form-control" placeholder="Rechercher..." [value]="searchTerm" (input)="searchTerm = $any($event.target).value; applyFilter()">
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" [value]="pageSize" (change)="pageSize = +$any($event.target).value; changePage(1)">
+        <option [value]="5">5</option>
+        <option [value]="10">10</option>
+        <option [value]="20">20</option>
+      </select>
+        </div>
     </div>
 
-    <div class="mt-3">
-      <button type="submit" class="btn btn-primary me-2">{{ editMode ? 'Modifier' : 'Ajouter' }}</button>
-      <button type="button" class="btn btn-secondary" (click)="resetForm()">Annuler</button>
-    </div>
-  </form>
+    <!-- Tableau -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>N°</th>
+                <th (click)="sort('nom')" class="cursor-pointer">Nom {{ sortIcon('nom') }}</th>
+                <th (click)="sort('filiere')" class="cursor-pointer">Filière {{ sortIcon('filiere') }}</th>
+                <th (click)="sort('options')" class="cursor-pointer">Options {{ sortIcon('options') }}</th>
+                <th (click)="sort('description')" class="cursor-pointer">Description {{ sortIcon('description') }}</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let classe of paginatedClasses; let i = index">
+                <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                <td>{{ classe.nom }}</td>
+                <td>{{ classe.filiere }}</td>
+                <td>{{ classe.options }}</td>
+                <td>{{ classe.description }}</td>
+                <td>
+                    <button class="btn btn-sm btn-warning me-2" (click)="edit(classe)">Modifier</button>
+                    <button class="btn btn-sm btn-danger" (click)="delete(classe.id!)">Supprimer</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
-  <table class="table table-striped mt-4">
-    <thead>
-      <tr>
-        <th>Nom</th>
-        <th>Filière</th>
-        <th>Options</th>
-        <th>Description</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let classe of classes">
-        <td>{{ classe.nom }}</td>
-        <td>{{ classe.filiere }}</td>
-        <td>{{ classe.options }}</td>
-        <td>{{ classe.description }}</td>
-        <td>
-          <button class="btn btn-sm btn-warning me-2" (click)="edit(classe)">Modifier</button>
-          <button class="btn btn-sm btn-danger" (click)="delete(classe.id)">Supprimer</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <!-- Pagination -->
+    <nav *ngIf="totalPages > 1">
+        <ul class="pagination justify-content-end">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+                <button class="page-link" (click)="changePage(currentPage - 1)">‹</button>
+            </li>
+            <li class="page-item" *ngFor="let p of totalPagesArray" [class.active]="p === currentPage">
+                <button class="page-link" (click)="changePage(p)">{{ p }}</button>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+                <button class="page-link" (click)="changePage(currentPage + 1)">›</button>
+            </li>
+        </ul>
+    </nav>
 </div>

@@ -73,26 +73,37 @@
                     />
                     </div>
 
-                    <!-- Rôle -->
-                    <div class="col-md-6">
-                    <label class="form-label">Rôle</label>
-                    <select class="form-select" formControlName="role">
-                        <option value="">-- Sélectionner un rôle --</option>
-                        <option *ngFor="let role of roles" [value]="role.id">
-                        {{ role.description }}
-                        </option>
-                    </select>
+                    <!-- Ecoles et rôles -->
+                    <div class="col-12" formArrayName="affectations">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="form-label mb-0">Ecoles et rôles</label>
+                        <button type="button" class="btn btn-outline-primary btn-sm" (click)="ajouterAffectation()">
+                        Ajouter une école
+                        </button>
                     </div>
-
-                    <!-- Ecole -->
-                    <div class="col-md-6">
-                    <label class="form-label">Ecole</label>
-                    <select class="form-select" formControlName="ecole">
-                        <option value="">-- Sélectionner une école --</option>
-                        <option *ngFor="let ecole of ecoles" [value]="ecole.idEcole">
-                        {{ ecole.nomEcole }}
-                        </option>
-                    </select>
+                    <div *ngFor="let affectation of affectations.controls; let i = index" [formGroupName]="i" class="row g-2 mb-2">
+                        <div class="col-md-5">
+                        <select class="form-select" formControlName="ecole">
+                            <option [ngValue]="null">-- Sélectionner une école --</option>
+                            <option *ngFor="let ecole of ecoles" [ngValue]="ecole.idEcole">
+                            {{ ecole.nomEcole }}
+                            </option>
+                        </select>
+                        </div>
+                        <div class="col-md-5">
+                        <select class="form-select" formControlName="role">
+                            <option [ngValue]="null">-- Sélectionner un rôle --</option>
+                            <option *ngFor="let role of roles" [ngValue]="role.id">
+                            {{ role.description }}
+                            </option>
+                        </select>
+                        </div>
+                        <div class="col-md-2">
+                        <button type="button" class="btn btn-outline-danger w-100" (click)="supprimerAffectation(i)" [disabled]="affectations.length === 1">
+                            Retirer
+                        </button>
+                        </div>
+                    </div>
                     </div>
 
                     <!-- Boutons -->

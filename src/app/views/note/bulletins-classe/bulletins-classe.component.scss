@@ -1,0 +1,63 @@
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th,
+    td {
+        border: 1px solid #000;
+        padding: 5px;
+        text-align: center;
+    }
+    h4 {
+        margin-bottom: 20px;
+    }
+}
+/* Alignements et styles spécifiques pour les tableaux modernes */
+.custom-table th {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+  padding: 1rem;
+}
+
+.custom-table td {
+  padding: 1rem;
+}
+
+.bg-light-cell {
+  background-color: #f8fafc;
+}
+
+/* Couleurs utilitaires douces */
+.bg-light-primary {
+  background-color: #e0f2fe !important;
+}
+
+.bg-primary-light {
+  background-color: #f0fdf4;
+}
+
+.shadow-2xs {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Micro animation d'affichage fluide */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Typographie technique pour matricule */
+.fw-mono {
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}

@@ -1,1 +1,39 @@
-Tableau de bord
+<div class="container-fluid">
+  <div class="row">
+    <!-- CONTENU PRINCIPAL -->
+    <main class="col-md-12 ms-sm-auto col-lg-12 px-md-4 py-4">      
+     
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+          <h5 class="card-title mb-0 fw-bold">Administrateurs</h5>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Nom d'utilisateur</th>
+                <th>Email</th>
+                <th>Rôle</th>
+                <th>Statut Token</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let a of administrateurs">
+                <td>{{ a.id }}</td>
+                <td>{{ a.nom }} {{ a.prenom }}</td>
+                <td>{{ a.ecole.nomEcole }}</td>
+                <td><span class="badge bg-danger">{{ a.role.nom }}</span></td>
+                <td>
+                  <span class="badge" [ngClass]="a.online ? 'bg-success' : 'bg-secondary'">
+                    {{ a.online ? 'En ligne' : 'Hors ligne' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

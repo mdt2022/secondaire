@@ -1,31 +1,54 @@
-
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { Paiement } from '../model/paiement';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class PaiementService {
-  private apiUrl = 'http://localhost:8080/api/paiements'; // adapter l'URL
+
+  private apiUrl = environment.apiURL + "/paiementsecondaires";
 
   constructor(private http: HttpClient) {}
 
+  // Récupérer tous les paiements
   getAll(): Observable<Paiement[]> {
     return this.http.get<Paiement[]>(this.apiUrl);
   }
 
-  getById(id: number): Observable<Paiement> {
-    return this.http.get<Paiement>(`${this.apiUrl}/${id}`);
+  // Recherche avec filtres
+  search(
+    ecoleId: number,
+    classeId: number,
+    anneeId: number,
+    eleveId?: number,
+    numerorecu?: string
+  ): Observable<Paiement[]> {
+
+    let params = new HttpParams()
+      .set('ecoleId', ecoleId)
+      .set('classeId', classeId)
+      .set('anneeId', anneeId);
+
+    if (eleveId != null) params = params.set('eleveId', eleveId);
+    if (numerorecu && numerorecu.trim() !== '') params = params.set('numerorecu', numerorecu);
+
+    return this.http.get<Paiement[]>(`${this.apiUrl}/search`, { params });
   }
 
-  create(paiement: Paiement): Observable<Paiement> {
-    return this.http.post<Paiement>(this.apiUrl, paiement);
+  // Création
+  create(data: Paiement): Observable<Paiement> {
+    return this.http.post<Paiement>(this.apiUrl, data);
   }
 
-  update(id: number, paiement: Paiement): Observable<Paiement> {
-    return this.http.put<Paiement>(`${this.apiUrl}/${id}`, paiement);
+  // Modification
+  update(id: number, data: Paiement): Observable<Paiement> {
+    return this.http.put<Paiement>(`${this.apiUrl}/${id}`, data);
   }
 
+  // Suppression
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }

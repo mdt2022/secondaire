@@ -8,17 +8,9 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class FraiscolaireService {
-  private apiUrl = environment.apiURL;
+  private apiUrl = `${environment.apiURL}/fraiscolaires`;
 
   constructor(private http: HttpClient) {}
-
-  getAll(): Observable<Fraiscolaire[]> {
-    return this.http.get<Fraiscolaire[]>(this.apiUrl);
-  }
-
-  getById(id: number): Observable<Fraiscolaire> {
-    return this.http.get<Fraiscolaire>(`${this.apiUrl}/${id}`);
-  }
 
   create(frais: Fraiscolaire): Observable<Fraiscolaire> {
     return this.http.post<Fraiscolaire>(this.apiUrl, frais);
@@ -30,5 +22,9 @@ export class FraiscolaireService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  search(ecoleId: number, classeId: number, anneeId: number): Observable<Fraiscolaire[]> {
+    return this.http.post<Fraiscolaire[]>(`${this.apiUrl}/search`, { ecoleId, classeId, anneeId });
   }
 }

@@ -1,0 +1,62 @@
+/* Personnalisation des sélecteurs */
+.custom-select {
+  height: 46px;
+  border-color: #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease;
+}
+
+.custom-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* Espacement des labels */
+.tracking-wider {
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+}
+
+/* Structure moderne du tableau */
+.custom-table th {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+  padding: 1.1rem 1rem;
+  background-color: #f8fafc;
+}
+
+.custom-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.bg-light-cell {
+  background-color: #f8fafc;
+}
+
+/* Encadré d'accentuation pour la moyenne */
+.highlight-box {
+  background-color: #f0fdf4 !important;
+}
+
+.border-primary-light {
+  border: 1px solid #bbf7d0 !important;
+}
+
+/* Animation fluide à l'affichage */
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fs-7 {
+  font-size: 0.8rem;
+}
