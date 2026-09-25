@@ -19,7 +19,7 @@ export const navItems: INavDataExtended[] = [
   {
     title: true,
     name: 'Configuration',
-    role: ['DEV']
+    role: ['DEV' , 'test']
   },
   {
     name: 'Avance',
@@ -38,7 +38,7 @@ export const navItems: INavDataExtended[] = [
     url: '/administrateur/role',
     linkProps: { fragment: 'headings' },
     iconComponent: { name: 'cil-pencil' },
-    role: ['DEV']
+    role: ['DEV','test']
   },
   {
     name: 'Gestion des Classe',
@@ -117,7 +117,7 @@ export const navItems: INavDataExtended[] = [
   {
     title: true,
     name: 'Extras',
-    role: ['DEV']
+    role: ['DEV', 'test']
   },
   {
     name: 'Pages',

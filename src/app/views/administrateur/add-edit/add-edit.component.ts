@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CardBodyComponent, CardComponent, CardHeaderComponent, ColComponent, RowComponent } from '@coreui/angular';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Administrateur } from '../../../model/administrateur';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Administrateur, AffectationAdministrateur } from '../../../model/administrateur';
 import { Role } from '../../../model/role';
 import { Ecole } from '../../../model/ecole';
 import { AdministrateurService } from '../../../service/admin.service';
@@ -63,11 +63,11 @@ export class AddEditComponent implements OnInit {
       prenom: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       telephone: [''],
-      role: [null, Validators.required],
-      ecole: [null, Validators.required],
+      affectations: this.fb.array([]),
       username: ['', Validators.required],
       password: [''],
     });
+    this.ajouterAffectation();
   }
 
   private loadAdmin(id: number): void {
@@ -78,11 +78,17 @@ export class AddEditComponent implements OnInit {
           prenom: admin.prenom,
           email: admin.email,
           telephone: admin.telephone,
-          role: admin.role?.id,
-          ecole: admin.ecole?.idEcole,
           username: admin.username,
           password: '', // ne jamais afficher le mot de passe
         });
+        this.affectations.clear();
+        const affectations = admin.affectations?.length
+          ? admin.affectations
+          : (admin.ecole && admin.role ? [{ ecole: admin.ecole, role: admin.role }] : []);
+        affectations.forEach(affectation =>
+          this.ajouterAffectation(affectation.ecole.idEcole, affectation.role.id)
+        );
+        if (!this.affectations.length) this.ajouterAffectation();
       },
       error: () => Swal.fire('Erreur', 'Impossible de charger l’administrateur', 'error')
     });
@@ -106,10 +112,15 @@ export class AddEditComponent implements OnInit {
     if (this.adminForm.invalid) return;
 
     const formValue = this.adminForm.value;
+    const affectations: AffectationAdministrateur[] = formValue.affectations.map((affectation: { ecole: number; role: number }) => ({
+      ecole: { idEcole: affectation.ecole } as Ecole,
+      role: { id: affectation.role } as Role,
+    }));
     const payload: Administrateur = {
       ...formValue,
-      role: formValue.role ? { id: formValue.role } as Role : null,
-      ecole: formValue.ecole ? { idEcole: formValue.ecole } as Ecole : null,
+      affectations,
+      role: affectations[0].role,
+      ecole: affectations[0].ecole,
     };
 
     if (this.editMode && this.currentId) {
@@ -147,5 +158,22 @@ export class AddEditComponent implements OnInit {
     this.adminForm.reset();
     this.editMode = false;
     this.currentId = undefined;
+  }
+
+  get affectations(): FormArray {
+    return this.adminForm.get('affectations') as FormArray;
+  }
+
+  ajouterAffectation(ecoleId: number | null = null, roleId: number | null = null): void {
+    this.affectations.push(this.fb.group({
+      ecole: [ecoleId, Validators.required],
+      role: [roleId, Validators.required]
+    }));
+  }
+
+  supprimerAffectation(index: number): void {
+    if (this.affectations.length > 1) {
+      this.affectations.removeAt(index);
+    }
   }
 }

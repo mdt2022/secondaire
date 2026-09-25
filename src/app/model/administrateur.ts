@@ -1,6 +1,12 @@
 import { Ecole } from "./ecole";
 import { Role } from "./role";
 
+export interface AffectationAdministrateur {
+    id?: number;
+    ecole: Ecole;
+    role: Role;
+}
+
 export interface Administrateur{
     id: number;
     nom: string;
@@ -11,6 +17,7 @@ export interface Administrateur{
     password: string;
     role: Role;
     ecole: Ecole;
+    affectations?: AffectationAdministrateur[];
     photo: string;
     online: boolean
     // Ajoutez cette ligne ⬇️

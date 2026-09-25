@@ -74,19 +74,24 @@ chargerEcoles(): void {
     this.loading = true; // démarrer le spinner
     this.authService.login(username, password, ecoleId).subscribe({
       next: (response) => { 
-        //console.log(response.user.administrateur.role.nom+"123test123")
         this.loading = false; // stop spinner
         this.authService.saveUserAndToken(response);
-        if(response.user.administrateur.role.nom == 'DEV'){this.router.navigate(['/dashboard']);}
-        if(response.user.administrateur.role.nom == 'AD'){this.router.navigate(['/note']);}
-        if(response.user.administrateur.role.nom == 'AE2C'){this.router.navigate(['/notecd']);}
-        if(response.user.administrateur.role.nom == 'Censeur'){this.router.navigate(['/note']);}
+        this.redirectAfterLogin(response.user?.administrateur?.role?.nom);
       },
       error: (err) => {
         this.loading = false; // stop spinner
         this.errorMessage =  err.error?.message || 'Erreur de connexion.';
       }
     });
+  }
+
+  private redirectAfterLogin(roleName?: string): void {
+    const role = roleName?.trim().toUpperCase();
+    const destination = role === 'AD' || role === 'AE2C' || role === 'CENSEUR'
+      ? '/note'
+      : '/dashboard';
+
+    this.router.navigate([destination]);
   }
 
 }
