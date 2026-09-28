@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpEvent, HttpEventType, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpEventType, HttpParams, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SupportDeCours, SupportDTO } from '../model/supportDeCours';
 import { environment } from '../../environments/environment';
@@ -57,44 +57,47 @@ export class SupportDeCoursService {
 
   // création avec progression (corrigée)
    createWithFiles(
-    dto: {
-      nom: string;
-      type?: string;
-      matiereId: number;
-      classeId: number;
-    },
+    dto: SupportDTO,
     livreFile?: File,
-    chapitreFiles?: File[],
+    chapitreFiles?: (File | null | undefined)[],
     progressCb?: (p: number) => void
   ): Observable<any> {
 
     const formData = new FormData();
 
-    // 🔴 ICI EST LA CORRECTION MAJEURE
     const supportPayload = {
       nom: dto.nom,
       type: dto.type ?? 'COURS',
-      matiere: { id: dto.matiereId },
-      classe: { id: dto.classeId }
+      structure: dto.structure ?? 'LIVRE',
+      chapitres: (dto.chapitres ?? []).map(chapitre => ({
+        id: chapitre.id,
+        titre: chapitre.titre,
+        numero: chapitre.numero,
+        contenu: chapitre.contenu,
+        fichier: chapitre.fichier
+      }))
     };
 
     formData.append("support", JSON.stringify(supportPayload));
+    chapitreFiles?.forEach((file, index) => {
+      if (!file) return;
+      formData.append("chapitreFiles", file, file.name);
+      formData.append("chapitreFileIndexes", String(index));
+    });
 
     if (livreFile) {
       formData.append("livreFile", livreFile, livreFile.name);
     }
 
-    if (chapitreFiles?.length) {
-      chapitreFiles.forEach(f =>
-        formData.append("chapitreFiles", f, f.name)
-      );
-    }
+    const params = new HttpParams()
+      .set('classeId', String(dto.classeId))
+      .set('matiereId', String(dto.matiereId));
 
     const req = new HttpRequest(
       'POST',
       this.apiUrl,
       formData,
-      { reportProgress: true }
+      { reportProgress: true, params }
     );
 
     return this.http.request(req).pipe(

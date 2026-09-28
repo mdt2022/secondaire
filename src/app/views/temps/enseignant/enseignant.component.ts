@@ -5,11 +5,15 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { EnseignantService } from '../../../service/enseignant.service';
 import { AnneeuvService } from '../../../service/anneeuv.service';
 import { EmploidutempsService } from '../../../service/emploidutemps.service';
+import { PointageService } from '../../../service/pointage.service';
 
 import { Enseignant } from '../../../model/enseignant';
 import { Anneeuv } from '../../../model/anneeuv';
 import { Emploidutemps } from '../../../model/emploidutemps';
+import { Pointage } from '../../../model/pointage';
 import { estAnneeEmploiBloquee } from '../annee-emploi.util';
+import { forkJoin } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-enseignant',
@@ -41,7 +45,8 @@ export class EnseignantComponent implements OnInit {
     private fb: FormBuilder,
     private enseignantService: EnseignantService,
     private anneeService: AnneeuvService,
-    private emploiService: EmploidutempsService
+    private emploiService: EmploidutempsService,
+    private pointageService: PointageService
   ) { }
 
   ngOnInit(): void {
@@ -160,8 +165,52 @@ export class EnseignantComponent implements OnInit {
   }
 
   savePresence(): void {
-    const presentes = this.emploisTable.filter(e => e.present);
-    alert(`${presentes.length} présence(s) enregistrée(s) !`);
+    const presentes = this.emploisTable.filter(e => e.present && e.id != null);
+    if (!presentes.length) {
+      Swal.fire('Aucune présence', 'Cochez au moins un enseignant à enregistrer.', 'warning');
+      return;
+    }
+
+    const datevalider = this.formatDate(this.selectedDate);
+    this.pointageService.getAll().subscribe({
+      next: pointages => {
+        const operations = presentes.map(emploi => {
+          const pointage: Pointage = {
+            id: 0,
+            emploidutemps: emploi,
+            enseignant: emploi.professeur,
+            valider: 'OUI',
+            datevalider
+          };
+          const existant = pointages.find(p =>
+            Number(p.emploidutemps?.id) === Number(emploi.id) &&
+            p.datevalider === datevalider
+          );
+
+          return existant
+            ? this.pointageService.update(existant.id, { ...pointage, id: existant.id })
+            : this.pointageService.create(pointage);
+        });
+
+        forkJoin(operations).subscribe({
+          next: () => Swal.fire('Succès', `${presentes.length} présence(s) enregistrée(s).`, 'success'),
+          error: err => {
+            console.error(err);
+            Swal.fire('Erreur', 'Impossible d’enregistrer les présences.', 'error');
+          }
+        });
+      },
+      error: err => {
+        console.error(err);
+        Swal.fire('Erreur', 'Impossible de charger les pointages existants.', 'error');
+      }
+    });
+  }
+
+  private formatDate(date: Date): string {
+    const jour = String(date.getDate()).padStart(2, '0');
+    const mois = String(date.getMonth() + 1).padStart(2, '0');
+    return `${jour}/${mois}/${date.getFullYear()}`;
   }
 
   // ---------------- Persistance simple via localStorage ----------------

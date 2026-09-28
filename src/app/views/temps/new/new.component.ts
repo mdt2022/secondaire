@@ -17,6 +17,7 @@ import { Classe } from '../../../model/classe';
 import { Anneeuv } from '../../../model/anneeuv';
 import { User } from '../../../model/user';
 import { estAnneeEmploiBloquee } from '../annee-emploi.util';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-new',
@@ -83,7 +84,11 @@ export class NewComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.emploiForm.invalid) return;
+    if (this.emploiForm.invalid) {
+      this.emploiForm.markAllAsTouched();
+      Swal.fire('Formulaire incomplet', 'Veuillez remplir tous les champs obligatoires.', 'warning');
+      return;
+    }
 
     const f = this.emploiForm.value;
 
@@ -117,8 +122,12 @@ export class NewComponent implements OnInit {
         }
         this.resetForm();
         this.applyFilter();
+        Swal.fire('Succès', 'L’emploi du temps a été enregistré.', 'success');
       },
-      error: (err) => console.error('Erreur API :', err)
+      error: (err) => {
+        console.error('Erreur API :', err);
+        Swal.fire('Erreur', 'Impossible d’enregistrer l’emploi du temps.', 'error');
+      }
     });
   }
 
@@ -191,13 +200,25 @@ export class NewComponent implements OnInit {
   delete(id: number): void {
     const emploi = this.emplois.find(e => e.id === id);
     if (estAnneeEmploiBloquee(emploi?.anneeuv)) return;
-    if (!confirm('Supprimer cet emploi du temps ?')) return;
-    this.emploiService.delete(id).subscribe({
-      next: () => {
-        this.emplois = this.emplois.filter(e => e.id !== id);
-        this.applyFilter();
-      },
-      error: (err) => console.error('Erreur suppression :', err)
+    Swal.fire({
+      title: 'Supprimer cet emploi du temps ?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Supprimer',
+      cancelButtonText: 'Annuler'
+    }).then(result => {
+      if (!result.isConfirmed) return;
+      this.emploiService.delete(id).subscribe({
+        next: () => {
+          this.emplois = this.emplois.filter(e => e.id !== id);
+          this.applyFilter();
+          Swal.fire('Supprimé', 'L’emploi du temps a été supprimé.', 'success');
+        },
+        error: (err) => {
+          console.error('Erreur suppression :', err);
+          Swal.fire('Erreur', 'Impossible de supprimer cet emploi du temps.', 'error');
+        }
+      });
     });
   }
 

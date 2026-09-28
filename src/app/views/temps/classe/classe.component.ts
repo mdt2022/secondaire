@@ -15,6 +15,7 @@ import { Emploidutemps } from '../../../model/emploidutemps';
 import { Enseignant } from '../../../model/enseignant';
 import { Matiere } from '../../../model/matiere';
 import { estAnneeEmploiBloquee } from '../annee-emploi.util';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-classe',
@@ -89,7 +90,7 @@ export class ClasseComponent implements OnInit {
   onSubmit(): void {
     const { classe, anneeuv } = this.emploiForm.value;
     if (!classe || !anneeuv) {
-      alert('Veuillez sélectionner la classe et l’année');
+      Swal.fire('Sélection requise', 'Veuillez sélectionner la classe et l’année.', 'warning');
       return;
     }
 
@@ -141,7 +142,24 @@ export class ClasseComponent implements OnInit {
   }
 
   deleteEmploi(id: number): void {
-    if (!confirm('Voulez-vous vraiment supprimer cet emploi du temps ?')) return;
-    this.emploiService.delete(id).subscribe(() => this.onSubmit());
+    Swal.fire({
+      title: 'Supprimer cet emploi du temps ?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Supprimer',
+      cancelButtonText: 'Annuler'
+    }).then(result => {
+      if (!result.isConfirmed) return;
+      this.emploiService.delete(id).subscribe({
+        next: () => {
+          Swal.fire('Supprimé', 'L’emploi du temps a été supprimé.', 'success');
+          this.onSubmit();
+        },
+        error: err => {
+          console.error(err);
+          Swal.fire('Erreur', 'Impossible de supprimer cet emploi du temps.', 'error');
+        }
+      });
+    });
   }
 }

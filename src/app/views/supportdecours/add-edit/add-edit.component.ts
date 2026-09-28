@@ -13,6 +13,7 @@ import { AuthService } from '../../../service/auth.service';
 import { ClasseEcoleService } from '../../../service/classeecole.service';
 import { EnseignerService } from '../../../service/enseigner.service';
 import { ActivatedRoute } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add-edit',
@@ -144,11 +145,10 @@ export class AddEditComponent implements OnInit {
 submit() {
 
   if (!this.classe_id || !this.matiere_id) {
-    alert(' Classe et matière obligatoires');
+    Swal.fire('Informations manquantes', 'La classe et la matière sont obligatoires.', 'warning');
     return;
   }
 
-  // ✅ DTO PROPRE
   const dto: SupportDTO = {
     nom: this.nom,
     type: this.typeSupport,
@@ -160,17 +160,10 @@ submit() {
       titre: c.titre,
       numero: c.numero,
       contenu: c.contenu,
-      
     }))
   };
 
-  // ✅ EXTRACTION DES FICHIERS DES CHAPITRES
-  const chapitresFiles: File[] = this.chapitres
-    .filter(c => c.file)
-    .map(c => c.file!);
-
-  console.log('DTO envoyé ', dto);
-  console.log('Fichiers chapitres ', chapitresFiles);
+  const chapitresFiles = this.chapitres.map(c => c.file);
 
   this.uploading = true;
   this.progress = 0;
@@ -181,12 +174,12 @@ submit() {
   .pipe(finalize(() => this.uploading = false))
   .subscribe({
     next: () => {
-      alert('Support créé avec succès');
+      Swal.fire('Support créé', 'Le support a été enregistré avec succès.', 'success');
       this.reset();
     },
     error: err => {
       console.error(err);
-      alert(' Erreur lors de la création');
+      Swal.fire('Erreur', 'Impossible de créer le support.', 'error');
     }
   });
 }
