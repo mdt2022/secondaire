@@ -15,8 +15,7 @@ import { Emploidutemps } from '../../../model/emploidutemps';
 import { Enseignant } from '../../../model/enseignant';
 import { Matiere } from '../../../model/matiere';
 import Swal from 'sweetalert2';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import { estAnneeEmploiBloquee } from '../annee-emploi.util';
 
 @Component({
   selector: 'app-classe',
@@ -71,7 +70,7 @@ export class ClasseComponent implements OnInit {
   }
 
   loadAnnees(): void {
-    this.anneeService.getAll().subscribe(res => this.annees = res);
+    this.anneeService.getAll().subscribe(res => this.annees = res.filter(a => !estAnneeEmploiBloquee(a)));
   }
 
   loadClassesByEcole(): void {

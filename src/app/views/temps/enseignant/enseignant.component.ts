@@ -1,25 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { EnseignantService } from '../../../service/enseignant.service';
 import { AnneeuvService } from '../../../service/anneeuv.service';
 import { EmploidutempsService } from '../../../service/emploidutemps.service';
-import { PointageService } from '../../../service/pointage.service';
 
 import { Enseignant } from '../../../model/enseignant';
 import { Anneeuv } from '../../../model/anneeuv';
 import { Emploidutemps } from '../../../model/emploidutemps';
-import { Pointage, PointageWritePayload } from '../../../model/pointage';
-import { forkJoin } from 'rxjs';
-import Swal from 'sweetalert2';
-
-type EmploiPresence = Emploidutemps & {
-  present: boolean;
-  nbreheure: number;
-  presenceDate: string;
-};
+import { estAnneeEmploiBloquee } from '../annee-emploi.util';
 
 @Component({
   selector: 'app-enseignant',
@@ -36,11 +26,10 @@ export class EnseignantComponent implements OnInit {
   enseignants: Enseignant[] = [];
   annees: Anneeuv[] = [];
 
-  emploisTable: EmploiPresence[] = [];
-  pagedEmplois: EmploiPresence[] = [];
+  emploisTable: (Emploidutemps & { present: boolean; nbreheure: number })[] = [];
+  pagedEmplois: (Emploidutemps & { present: boolean; nbreheure: number })[] = [];
 
   loading = false;
-  savingPresence = false;
   idEcole!: number;
   selectedDate: Date = new Date();
 
@@ -52,8 +41,7 @@ export class EnseignantComponent implements OnInit {
     private fb: FormBuilder,
     private enseignantService: EnseignantService,
     private anneeService: AnneeuvService,
-    private emploiService: EmploidutempsService,
-    private pointageService: PointageService
+    private emploiService: EmploidutempsService
   ) { }
 
   ngOnInit(): void {
@@ -92,7 +80,7 @@ export class EnseignantComponent implements OnInit {
 
   loadAnnees(): void {
     this.anneeService.getAll().subscribe({
-      next: data => this.annees = data,
+      next: data => this.annees = data.filter(a => !estAnneeEmploiBloquee(a)),
       error: err => console.error(err)
     });
   }
@@ -108,7 +96,7 @@ export class EnseignantComponent implements OnInit {
     this.loading = true;
     this.selectedDate = this.getDateOfWeek(jour);
 
-    this.emploiService.parEnseigant(jour, professeur, anneeuv, this.idEcole).subscribe({
+    this.emploiService.parEnseigant(jour,professeur,anneeuv,this.idEcole).subscribe({
       next: data => {
         this.emploisTable = data
           .filter(e =>
@@ -122,15 +110,10 @@ export class EnseignantComponent implements OnInit {
             return {
               ...e,
               present: cache ?? false,
-              nbreheure: this.calculHeures(e.heuredebut, e.heurefin),
-              presenceDate: this.formatDateForInput(this.selectedDate)
+              nbreheure: this.calculHeures(e.heuredebut, e.heurefin)
             };
           });
 
-        this.emploisTable.forEach(emploi => {
-          emploi.present = this.getCachedPresence(emploi.id, emploi.presenceDate) ?? emploi.present;
-        });
-        this.loadPresenceCache();
         this.page = 1;
         this.totalPages = Math.ceil(this.emploisTable.length / this.pageSize);
         this.updatePage();
@@ -171,211 +154,37 @@ export class EnseignantComponent implements OnInit {
   prevPage(): void { if (this.page > 1) { this.page--; this.updatePage(); } }
 
   // ---------------- Gestion des présences ----------------
-  togglePresence(row: EmploiPresence): void {
+  togglePresence(row: any): void {
     row.present = !row.present;
-    if (row.id != null && this.isValidDateInput(row.presenceDate)) {
-      this.savePresenceCache(row.id, row.present, row.presenceDate);
-    }
-  }
-
-  updatePresenceDate(row: EmploiPresence, event: Event): void {
-    const date = (event.target as HTMLInputElement).value;
-    row.presenceDate = date;
-    row.present = this.isValidDateInput(date)
-      ? this.getCachedPresence(row.id, date) ?? false
-      : false;
+    this.savePresenceCache(row.id, row.present);
   }
 
   savePresence(): void {
-    if (this.savingPresence) return;
-
-    const presentes = this.emploisTable.filter(e => e.present && e.id != null);
-    if (!presentes.length) {
-      Swal.fire('Aucune présence', 'Cochez au moins un enseignant à enregistrer.', 'warning');
-      return;
-    }
-
-    if (presentes.some(emploi => !this.isValidDateInput(emploi.presenceDate))) {
-      Swal.fire('Date invalide', 'Veuillez choisir une date valide pour chaque présence sélectionnée.', 'warning');
-      return;
-    }
-
-    const emploisInvalides = presentes.filter(emploi =>
-      !Number(emploi.id) || !Number(emploi.professeur?.id)
-    );
-    if (emploisInvalides.length) {
-      Swal.fire(
-        'Emploi incomplet',
-        'Un emploi sélectionné ne possède pas d’identifiant valide ou d’enseignant associé. Rechargez la liste après avoir enregistré l’emploi du temps.',
-        'error'
-      );
-      return;
-    }
-
-    const professeurId = Number(this.emploiForm?.get('professeur')?.value);
-    const dates = presentes.map(emploi => emploi.presenceDate).sort();
-
-    this.savingPresence = true;
-
-    this.pointageService.rechercher({
-      enseignantId: professeurId || undefined,
-      ecoleId: this.idEcole,
-      dateDebut: dates[0],
-      dateFin: dates[dates.length - 1]
-    }).subscribe({
-      next: pointages => {
-        const existingKeys = new Set(pointages.map(pointage =>
-          `${Number(pointage.emploidutemps?.id)}:${this.normalizeDateValue(pointage.datevalider)}`
-        ));
-        const dejaEnregistrees = presentes.filter(emploi =>
-          existingKeys.has(`${Number(emploi.id)}:${emploi.presenceDate}`)
-        );
-        const aEnregistrer = presentes.filter(emploi =>
-          !existingKeys.has(`${Number(emploi.id)}:${emploi.presenceDate}`)
-        );
-
-        if (aEnregistrer.length === 0) {
-          presentes.forEach(emploi => {
-            if (emploi.id != null) this.savePresenceCache(emploi.id, true, emploi.presenceDate);
-          });
-          this.savingPresence = false;
-          Swal.fire(
-            'Présence déjà enregistrée',
-            'Impossible d’enregistrer deux fois la présence du même emploi pour la même date.',
-            'info'
-          );
-          return;
-        }
-
-        const operations = aEnregistrer.map(emploi => {
-          const emploiId = Number(emploi.id);
-          const enseignantId = Number(emploi.professeur?.id);
-
-          const pointage: PointageWritePayload = {
-            emploidutemps: { id: emploiId },
-            enseignant: { id: enseignantId },
-            valider: 'OUI',
-            datevalider: this.formatDateFromInput(emploi.presenceDate)
-          };
-
-          return this.pointageService.create(pointage);
-        });
-
-        forkJoin(operations).subscribe({
-          next: () => {
-            presentes.forEach(emploi => {
-              if (emploi.id != null) {
-                this.savePresenceCache(emploi.id, true, emploi.presenceDate);
-              }
-            });
-            this.savingPresence = false;
-            const dejaMessage = dejaEnregistrees.length
-              ? ` ${dejaEnregistrees.length} présence(s) déjà enregistrées n’ont pas été ajoutées une seconde fois.`
-              : '';
-            Swal.fire('Succès', `${aEnregistrer.length} présence(s) enregistrée(s).${dejaMessage}`, 'success');
-          },
-          error: err => {
-            console.error(err);
-            this.savingPresence = false;
-            Swal.fire('Erreur d’enregistrement', this.getRequestErrorMessage(err), 'error');
-          }
-        });
-      },
-      error: err => {
-        console.error(err);
-        this.savingPresence = false;
-        Swal.fire('Erreur', 'Impossible de charger les pointages existants.', 'error');
-      }
-    });
-  }
-
-  private formatDate(date: Date): string {
-    const annee = date.getFullYear();
-    const mois = String(date.getMonth() + 1).padStart(2, '0');
-    const jour = String(date.getDate()).padStart(2, '0');
-    return `${jour}/${mois}/${annee}`;
-  }
-
-  private formatDateForInput(date: Date): string {
-    const annee = date.getFullYear();
-    const mois = String(date.getMonth() + 1).padStart(2, '0');
-    const jour = String(date.getDate()).padStart(2, '0');
-    return `${annee}-${mois}-${jour}`;
-  }
-
-  private formatDateFromInput(value: string): string {
-    const [annee, mois, jour] = value.split('-');
-    return `${jour}/${mois}/${annee}`;
-  }
-
-  private isValidDateInput(value: string): boolean {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
-    const [annee, mois, jour] = value.split('-').map(Number);
-    const date = new Date(annee, mois - 1, jour);
-    return date.getFullYear() === annee &&
-      date.getMonth() === mois - 1 &&
-      date.getDate() === jour;
-  }
-
-  private normalizeDateValue(value?: string | null): string {
-    if (!value) return '';
-    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
-    if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
-      const [jour, mois, annee] = value.split('/');
-      return `${annee}-${mois}-${jour}`;
-    }
-    return value;
-  }
-
-  private getRequestErrorMessage(error: unknown): string {
-    if (error instanceof HttpErrorResponse) {
-      const responseMessage = typeof error.error === 'string'
-        ? error.error
-        : error.error?.message;
-
-      return responseMessage
-        ? `Le serveur a refusé l’enregistrement : ${responseMessage}`
-        : `La requête d’enregistrement a échoué (HTTP ${error.status || 'inconnu'}). Vérifiez la console ou l’onglet Réseau du navigateur.`;
-    }
-
-    return 'Une erreur inattendue est survenue. Consultez la console du navigateur pour plus de détails.';
+    const presentes = this.emploisTable.filter(e => e.present);
+    alert(`${presentes.length} présence(s) enregistrée(s) !`);
   }
 
   // ---------------- Persistance simple via localStorage ----------------
-  private getPresenceCacheObject(): Record<string, boolean> {
-    try {
-      return JSON.parse(localStorage.getItem('presenceCache') || '{}') || {};
-    } catch {
-      return {};
-    }
-  }
-
-  private buildPresenceCacheKey(id: number, date: string = this.formatDateForInput(this.selectedDate)): string {
-    const dayKey = this.formatDateFromInput(date);
-    return `${dayKey}:${id}`;
-  }
-
-  savePresenceCache(id: number, present: boolean, date?: string): void {
-    const cache = this.getPresenceCacheObject();
-    cache[this.buildPresenceCacheKey(id, date)] = present;
+  savePresenceCache(id: number, present: boolean): void {
+    const cache = JSON.parse(localStorage.getItem('presenceCache') || '{}');
+    cache[id] = present;
     localStorage.setItem('presenceCache', JSON.stringify(cache));
   }
 
-  getCachedPresence(id?: number, date: string = this.formatDateForInput(this.selectedDate)): boolean | undefined {
+  getCachedPresence(id?: number): boolean | undefined {
     if (!id) return undefined;
-    const cache = this.getPresenceCacheObject();
-    return cache[this.buildPresenceCacheKey(id, date)];
+    const cache = JSON.parse(localStorage.getItem('presenceCache') || '{}');
+    return cache[id];
   }
 
   loadPresenceCache(): void {
-    const cache = this.getPresenceCacheObject();
+    const cache = JSON.parse(localStorage.getItem('presenceCache') || '{}');
+
+    if (!cache) return;
 
     this.emploisTable.forEach(row => {
-      if (row.id !== undefined) {
-        const key = this.buildPresenceCacheKey(row.id, row.presenceDate);
-        if (cache[key] !== undefined) {
-          row.present = Boolean(cache[key]);
-        }
+      if (row.id !== undefined && cache[row.id] !== undefined) {
+        row.present = cache[row.id];
       }
     });
   }
