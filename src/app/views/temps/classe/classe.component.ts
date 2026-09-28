@@ -14,8 +14,9 @@ import { Anneeuv } from '../../../model/anneeuv';
 import { Emploidutemps } from '../../../model/emploidutemps';
 import { Enseignant } from '../../../model/enseignant';
 import { Matiere } from '../../../model/matiere';
-import Swal from 'sweetalert2';
+
 import { estAnneeEmploiBloquee } from '../annee-emploi.util';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-classe',
