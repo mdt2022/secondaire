@@ -11,6 +11,7 @@ import { Emploidutemps } from '../../../model/emploidutemps';
 import { Anneeuv } from '../../../model/anneeuv';
 import { Enseignant } from '../../../model/enseignant';
 import { Enseigner } from '../../../model/enseigner';
+import { estAnneeEmploiBloquee } from '../annee-emploi.util';
 
 @Component({
   selector: 'app-jour',
@@ -61,7 +62,7 @@ export class JourComponent implements OnInit {
   }
   loadAnnees(): void {
     this.anneeService.getAll().subscribe({
-      next: data => this.annees = data,
+      next: data => this.annees = data.filter(a => !estAnneeEmploiBloquee(a)),
       error: err => console.error('Erreur chargement années', err)
     });
   }

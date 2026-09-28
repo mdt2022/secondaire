@@ -16,6 +16,7 @@ import { Enseignant } from '../../../model/enseignant';
 import { Classe } from '../../../model/classe';
 import { Anneeuv } from '../../../model/anneeuv';
 import { User } from '../../../model/user';
+import { estAnneeEmploiBloquee } from '../annee-emploi.util';
 
 @Component({
   selector: 'app-new',
@@ -127,13 +128,13 @@ export class NewComponent implements OnInit {
     this.enseignantService.getEnseignantEcole(idEcole).subscribe(d => this.enseignants = d);
     this.enseignerService.getAllForEcole(idEcole).subscribe(d => this.enseignes = d);
     this.classeService.getAllClasseParEcole(idEcole).subscribe(d => this.classes = d);
-    this.anneeuvService.getAll().subscribe(d => this.anneeuvs = d);
+    this.anneeuvService.getAll().subscribe(d => this.anneeuvs = d.filter(a => !estAnneeEmploiBloquee(a)));
   }
 
   loadEmplois(): void {
     const idEcole = this.user.administrateur.ecole.idEcole;
     this.emploiService.getAll().subscribe(data => {
-      this.emplois = data.filter(e => e.ecole?.idEcole === idEcole)
+      this.emplois = data.filter(e => e.ecole?.idEcole === idEcole && !estAnneeEmploiBloquee(e.anneeuv))
         .sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
       this.applyFilter();
     });
@@ -172,6 +173,7 @@ export class NewComponent implements OnInit {
   }
 
   edit(e: Emploidutemps): void {
+    if (estAnneeEmploiBloquee(e.anneeuv)) return;
     this.editMode = true;
     this.currentId = e.id;
 
@@ -187,6 +189,8 @@ export class NewComponent implements OnInit {
   }
 
   delete(id: number): void {
+    const emploi = this.emplois.find(e => e.id === id);
+    if (estAnneeEmploiBloquee(emploi?.anneeuv)) return;
     if (!confirm('Supprimer cet emploi du temps ?')) return;
     this.emploiService.delete(id).subscribe({
       next: () => {

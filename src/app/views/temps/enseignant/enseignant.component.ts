@@ -9,6 +9,7 @@ import { EmploidutempsService } from '../../../service/emploidutemps.service';
 import { Enseignant } from '../../../model/enseignant';
 import { Anneeuv } from '../../../model/anneeuv';
 import { Emploidutemps } from '../../../model/emploidutemps';
+import { estAnneeEmploiBloquee } from '../annee-emploi.util';
 
 @Component({
   selector: 'app-enseignant',
@@ -79,7 +80,7 @@ export class EnseignantComponent implements OnInit {
 
   loadAnnees(): void {
     this.anneeService.getAll().subscribe({
-      next: data => this.annees = data,
+      next: data => this.annees = data.filter(a => !estAnneeEmploiBloquee(a)),
       error: err => console.error(err)
     });
   }
