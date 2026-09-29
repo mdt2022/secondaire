@@ -34,6 +34,9 @@
                     <button class="btn btn-secondary ms-2" type="button" (click)="resetForm()">
                         Annuler
                     </button>
+                    <button *ngIf="rechercheEffectuee" class="btn btn-success ms-2" type="button" (click)="printEmploi()" [disabled]="emploisTable.length === 0">
+                        Imprimer
+                    </button>
                 </div>
 
             </div>

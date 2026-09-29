@@ -14,8 +14,9 @@ import { Anneeuv } from '../../../model/anneeuv';
 import { Emploidutemps } from '../../../model/emploidutemps';
 import { Enseignant } from '../../../model/enseignant';
 import { Matiere } from '../../../model/matiere';
-import { estAnneeEmploiBloquee } from '../annee-emploi.util';
 import Swal from 'sweetalert2';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-classe',
@@ -35,6 +36,7 @@ export class ClasseComponent implements OnInit {
 
   emploisTable: any[] = [];
   loading = false;
+  rechercheEffectuee = false;
   user: any;
 
   constructor(
@@ -69,7 +71,7 @@ export class ClasseComponent implements OnInit {
   }
 
   loadAnnees(): void {
-    this.anneeService.getAll().subscribe(res => this.annees = res.filter(a => !estAnneeEmploiBloquee(a)));
+    this.anneeService.getAll().subscribe(res => this.annees = res);
   }
 
   loadClassesByEcole(): void {
@@ -94,6 +96,7 @@ export class ClasseComponent implements OnInit {
       return;
     }
 
+    this.rechercheEffectuee = false;
     const payload: any = {
       jour: this.emploiForm.value.jour,
       heuredebut: this.emploiForm.value.heuredebut,
@@ -111,6 +114,7 @@ export class ClasseComponent implements OnInit {
         const filtres = res.filter(e => Number(e.classe?.id) === Number(classe) &&
           Number(e.anneeuv?.id) === Number(anneeuv));
         this.emploisTable = this.buildTable(filtres);
+        this.rechercheEffectuee = true;
         this.loading = false;
       },
       error: (err) => {
@@ -129,12 +133,82 @@ export class ClasseComponent implements OnInit {
       }
       map.get(key)[e.jour] = e;
     });
-    return Array.from(map.values());
+    return Array.from(map.values()).sort((a, b) => {
+      const [debutA, finA] = a.heure.split(' - ').map((heure: string) => this.minutesDepuisMinuit(heure));
+      const [debutB, finB] = b.heure.split(' - ').map((heure: string) => this.minutesDepuisMinuit(heure));
+      return debutA - debutB || finA - finB;
+    });
+  }
+
+  private minutesDepuisMinuit(heure: string): number {
+    const [heures, minutes] = heure.split(':').map(Number);
+    return heures * 60 + minutes;
+  }
+
+  async printEmploi(): Promise<void> {
+    if (this.emploisTable.length === 0) {
+      Swal.fire('Aucun emploi du temps', 'Recherchez une classe avant de lancer l’impression.', 'info');
+      return;
+    }
+
+    const { classe, anneeuv } = this.emploiForm.value;
+    const classeNom = this.classes.find(item => Number(item.id) === Number(classe))?.description ?? '';
+    const anneeNom = this.annees.find(item => Number(item.id) === Number(anneeuv))?.nom ?? '';
+    const descriptionEcole = this.user?.administrateur?.ecole?.descriptionEcole ?? '';
+    const doc = new jsPDF('l', 'mm', 'a4');
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const logo = await this.loadLogoForPdf();
+
+    if (logo) doc.addImage(logo, 'PNG', 15, 10, 25, 25);
+    doc.setFont('times', 'bold');
+    doc.setFontSize(20);
+    const descriptionLignes = doc.splitTextToSize(descriptionEcole.toUpperCase(), pageWidth - 75);
+    doc.text(descriptionLignes, pageWidth / 2 + 10, 16, { align: 'center' });
+    const titreY = Math.max(34, 16 + descriptionLignes.length * 8 + 5);
+    doc.setFontSize(16);
+    doc.text('Emploi du temps par classe', pageWidth / 2, titreY, { align: 'center' });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(`Classe : ${classeNom}    Année scolaire : ${anneeNom}`, pageWidth / 2, titreY + 7, { align: 'center' });
+
+    const jours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+    const body = this.emploisTable.map(row => [
+      row.heure,
+      ...jours.map(jour => row[jour]?.matiere?.libelle ?? '')
+    ]);
+
+    autoTable(doc, {
+      startY: titreY + 13,
+      head: [['Horaire', ...jours]],
+      body,
+      theme: 'grid',
+      styles: { fontSize: 9, cellPadding: 3, valign: 'middle' },
+      headStyles: { fillColor: [40, 100, 180] },
+      didDrawPage: () => {
+        doc.setFontSize(8);
+        doc.text(`Page ${doc.getNumberOfPages()}`, pageWidth - 10, pageHeight - 6, { align: 'right' });
+      }
+    });
+
+    const nomFichier = String(classeNom || 'classe').replace(/[^a-zA-Z0-9-]/g, '-');
+    const anneeFichier = String(anneeNom || 'annee').replace(/[^a-zA-Z0-9-]/g, '-');
+    doc.save(`emploi-du-temps-${nomFichier}-${anneeFichier}.pdf`);
+  }
+
+  private loadLogoForPdf(): Promise<HTMLImageElement | null> {
+    return new Promise(resolve => {
+      const logo = new Image();
+      logo.onload = () => resolve(logo);
+      logo.onerror = () => resolve(null);
+      logo.src = 'assets/logo.png';
+    });
   }
 
   resetForm(): void {
     this.emploiForm.reset();
     this.emploisTable = [];
+    this.rechercheEffectuee = false;
   }
 
   getEmploi(row: any): any {

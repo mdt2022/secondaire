@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="col-md-3 text-end">
-                    <button class="btn btn-success" type="button" (click)="printEmploi()">🖨️ Imprimer</button>
+                    <button *ngIf="rechercheEffectuee" class="btn btn-success" type="button" (click)="printEmploi()">🖨️ Imprimer</button>
                 </div>
 
             </div>

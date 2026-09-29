@@ -11,7 +11,6 @@ import { Enseignant } from '../../../model/enseignant';
 import { Anneeuv } from '../../../model/anneeuv';
 import { Emploidutemps } from '../../../model/emploidutemps';
 import { Pointage } from '../../../model/pointage';
-import { estAnneeEmploiBloquee } from '../annee-emploi.util';
 import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 
@@ -85,7 +84,7 @@ export class EnseignantComponent implements OnInit {
 
   loadAnnees(): void {
     this.anneeService.getAll().subscribe({
-      next: data => this.annees = data.filter(a => !estAnneeEmploiBloquee(a)),
+      next: data => this.annees = data,
       error: err => console.error(err)
     });
   }

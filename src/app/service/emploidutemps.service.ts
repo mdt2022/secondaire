@@ -56,4 +56,11 @@ export class EmploidutempsService {
       {}
     );
   }
+
+  transfererToutesClasses(sourceAnneeId: number, cibleAnneeId: number, ecoleId: number): Observable<TransferResult> {
+    return this.http.post<TransferResult>(
+      `${this.apiUrl}/transferer/annee/${sourceAnneeId}/vers/${cibleAnneeId}/ecole/${ecoleId}/toutes-classes`,
+      {}
+    );
+  }
 }

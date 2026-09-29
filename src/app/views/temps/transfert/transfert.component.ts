@@ -10,7 +10,6 @@ import { AnneeuvService } from '../../../service/anneeuv.service';
 import { EcoleService } from '../../../service/ecole.service';
 import { ClasseEcoleService } from '../../../service/classeecole.service';
 import { EmploidutempsService, TransferResult } from '../../../service/emploidutemps.service';
-import { estAnneeEmploiBloquee } from '../annee-emploi.util';
 
 @Component({
   selector: 'app-transfert-emploi',
@@ -46,7 +45,7 @@ export class TransfertComponent implements OnInit {
     });
 
     this.anneeService.getAll().subscribe({
-      next: annees => this.annees = annees.filter(annee => !estAnneeEmploiBloquee(annee)),
+      next: annees => this.annees = annees,
       error: () => Swal.fire('Erreur', 'Impossible de charger les années scolaires.', 'error')
     });
 
@@ -95,10 +94,13 @@ export class TransfertComponent implements OnInit {
     const source = this.annees.find(annee => annee.id === Number(sourceAnnee));
     const cible = this.annees.find(annee => annee.id === Number(cibleAnnee));
     const ecoleSelectionnee = this.ecoles.find(item => item.idEcole === ecoleId);
+    const toutesClasses = classe === 'toutes';
     const classeSelectionnee = this.classes.find(item => item.idClasse === Number(classe));
     Swal.fire({
       title: 'Confirmer le transfert',
-      text: `Transférer les emplois de la classe « ${classeSelectionnee?.nom} » de « ${source?.nom} » vers « ${cible?.nom} » pour « ${ecoleSelectionnee?.nomEcole} » ?`,
+      text: toutesClasses
+        ? `Transférer les emplois de toutes les classes de « ${source?.nom} » vers « ${cible?.nom} » pour « ${ecoleSelectionnee?.nomEcole} » ?`
+        : `Transférer les emplois de la classe « ${classeSelectionnee?.nom} » de « ${source?.nom} » vers « ${cible?.nom} » pour « ${ecoleSelectionnee?.nomEcole} » ?`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Oui, transférer',
@@ -109,7 +111,11 @@ export class TransfertComponent implements OnInit {
       this.loading = true;
       this.resultat = undefined;
 
-      this.emploiService.transferer(Number(sourceAnnee), Number(cibleAnnee), ecoleId, Number(classe)).subscribe({
+      const transfert$ = toutesClasses
+        ? this.emploiService.transfererToutesClasses(Number(sourceAnnee), Number(cibleAnnee), ecoleId)
+        : this.emploiService.transferer(Number(sourceAnnee), Number(cibleAnnee), ecoleId, Number(classe));
+
+      transfert$.subscribe({
         next: resultat => {
           this.resultat = resultat;
           this.loading = false;
