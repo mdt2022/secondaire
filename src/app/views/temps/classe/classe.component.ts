@@ -14,9 +14,9 @@ import { Anneeuv } from '../../../model/anneeuv';
 import { Emploidutemps } from '../../../model/emploidutemps';
 import { Enseignant } from '../../../model/enseignant';
 import { Matiere } from '../../../model/matiere';
-
-import { estAnneeEmploiBloquee } from '../annee-emploi.util';
 import Swal from 'sweetalert2';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-classe',
@@ -71,7 +71,7 @@ export class ClasseComponent implements OnInit {
   }
 
   loadAnnees(): void {
-    this.anneeService.getAll().subscribe(res => this.annees = res.filter(a => !estAnneeEmploiBloquee(a)));
+    this.anneeService.getAll().subscribe(res => this.annees = res);
   }
 
   loadClassesByEcole(): void {
@@ -154,7 +154,6 @@ export class ClasseComponent implements OnInit {
     const classeNom = this.classes.find(item => Number(item.id) === Number(classe))?.description ?? '';
     const anneeNom = this.annees.find(item => Number(item.id) === Number(anneeuv))?.nom ?? '';
     const descriptionEcole = this.user?.administrateur?.ecole?.descriptionEcole ?? '';
-    const adresseEcole = this.user?.administrateur?.ecole?.adresseEcole ?? '';
     const doc = new jsPDF('l', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
@@ -183,11 +182,10 @@ export class ClasseComponent implements OnInit {
       head: [['Horaire', ...jours]],
       body,
       theme: 'grid',
-      styles: { fontSize: 9, cellPadding: 1, valign: 'middle' },
+      styles: { fontSize: 9, cellPadding: 3, valign: 'middle' },
       headStyles: { fillColor: [40, 100, 180] },
       didDrawPage: () => {
         doc.setFontSize(8);
-        doc.text(adresseEcole, 15, pageHeight - 8);
         doc.text(`Page ${doc.getNumberOfPages()}`, pageWidth - 10, pageHeight - 6, { align: 'right' });
       }
     });

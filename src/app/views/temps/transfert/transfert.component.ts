@@ -10,7 +10,6 @@ import { AnneeuvService } from '../../../service/anneeuv.service';
 import { EcoleService } from '../../../service/ecole.service';
 import { ClasseEcoleService } from '../../../service/classeecole.service';
 import { EmploidutempsService, TransferResult } from '../../../service/emploidutemps.service';
-import { estAnneeEmploiBloquee } from '../annee-emploi.util';
 
 @Component({
   selector: 'app-transfert-emploi',
@@ -46,7 +45,7 @@ export class TransfertComponent implements OnInit {
     });
 
     this.anneeService.getAll().subscribe({
-      next: annees => this.annees = annees.filter(annee => !estAnneeEmploiBloquee(annee)),
+      next: annees => this.annees = annees,
       error: () => Swal.fire('Erreur', 'Impossible de charger les années scolaires.', 'error')
     });
 

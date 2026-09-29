@@ -11,7 +11,8 @@ import { Emploidutemps } from '../../../model/emploidutemps';
 import { Anneeuv } from '../../../model/anneeuv';
 import { Enseignant } from '../../../model/enseignant';
 import { Enseigner } from '../../../model/enseigner';
-import { estAnneeEmploiBloquee } from '../annee-emploi.util';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-jour',
@@ -26,6 +27,7 @@ export class JourComponent implements OnInit {
   idEcole!: number;
   emplois: Emploidutemps[] = [];
   emploisParClasse: { classe: string; emplois: Emploidutemps[] }[] = [];
+  rechercheEffectuee = false;
 
   annees: Anneeuv[] = [];
   enseignants: Enseignant[] = [];
@@ -62,7 +64,7 @@ export class JourComponent implements OnInit {
   }
   loadAnnees(): void {
     this.anneeService.getAll().subscribe({
-      next: data => this.annees = data.filter(a => !estAnneeEmploiBloquee(a)),
+      next: data => this.annees = data,
       error: err => console.error('Erreur chargement années', err)
     });
   }
@@ -86,6 +88,7 @@ export class JourComponent implements OnInit {
 
     const { jour, anneeuv } = this.emploiForm.value;
 
+    this.rechercheEffectuee = false;
     this.emploiService.parJour(jour,anneeuv,this.idEcole).subscribe({
       next: data => {
         this.emplois = data
@@ -96,6 +99,7 @@ export class JourComponent implements OnInit {
           }));
 
         this.groupByClasse();
+        this.rechercheEffectuee = true;
       },
       error: err => console.error('Erreur chargement emplois', err)
     });
@@ -126,19 +130,81 @@ export class JourComponent implements OnInit {
       .map(([classe, emplois]) => ({ classe, emplois }));
   }
 
-  printEmploi(): void {
-    const printContent = document.getElementById('emploiPrint');
-    if (!printContent) return;
+  async printEmploi(): Promise<void> {
+    if (this.emplois.length === 0) {
+      alert('Aucun emploi du temps à imprimer');
+      return;
+    }
 
-    const newWin = window.open('', '_blank');
-    if (!newWin) return;
+    const { jour, anneeuv } = this.emploiForm.value;
+    const anneeNom = this.annees.find(annee => annee.id == anneeuv)?.nom ?? '';
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const descriptionEcole = user?.administrateur?.ecole?.descriptionEcole ?? user?.parametre?.ecole?.descriptionEcole ?? '';
+    const doc = new jsPDF('l', 'mm', 'a4');
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const logo = await this.loadLogoForPdf();
 
-    newWin.document.write('<html><head><title>Emploi du temps</title>');
-    newWin.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">');
-    newWin.document.write('</head><body>');
-    newWin.document.write(printContent.innerHTML);
-    newWin.document.write('</body></html>');
-    newWin.document.close();
-    newWin.print();
+    if (logo) doc.addImage(logo, 'PNG', 15, 10, 25, 25);
+    doc.setFont('times', 'bold');
+    doc.setFontSize(20);
+    const descriptionLignes = doc.splitTextToSize(descriptionEcole.toUpperCase(), pageWidth - 75);
+    doc.text(descriptionLignes, pageWidth / 2 + 10, 16, { align: 'center' });
+    const titreY = Math.max(34, 16 + descriptionLignes.length * 8 + 5);
+    doc.setFontSize(16);
+    doc.text('Emploi du temps', pageWidth / 2, titreY, { align: 'center' });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(`Jour : ${jour}    Année scolaire : ${anneeNom}`, pageWidth / 2, titreY + 7, { align: 'center' });
+
+    let positionY = titreY + 13;
+    this.emploisParClasse.forEach(bloc => {
+      if (positionY > pageHeight - 30) {
+        doc.addPage();
+        positionY = 15;
+      }
+
+      doc.setFont('times', 'bold');
+      doc.setFontSize(14);
+      doc.text(bloc.classe, 15, positionY + 5);
+
+      const body = bloc.emplois.map(emploi => [
+        `${emploi.professeur?.prenom ?? ''} ${emploi.professeur?.nom ?? ''}`.trim(),
+        `${emploi.heuredebut} -- ${emploi.heurefin}`,
+        emploi.matiere?.libelle ?? '',
+        emploi.matiere?.coefficient ?? '',
+        emploi.matiere?.horaire ?? '',
+        emploi.nbreheure ?? '',
+        ''
+      ]);
+
+      autoTable(doc, {
+        startY: positionY + 9,
+        head: [['Professeur', 'Horaires', 'Matière', 'Coefficient', 'Horaire h', 'Nombre d’heures', 'Emargement']],
+        body,
+        theme: 'grid',
+        styles: { fontSize: 8, cellPadding: 2, valign: 'middle' },
+        headStyles: { fillColor: [40, 100, 180] },
+        didDrawPage: () => {
+          doc.setFontSize(8);
+          doc.text(`Page ${doc.getNumberOfPages()}`, pageWidth - 10, pageHeight - 6, { align: 'right' });
+        }
+      });
+
+      positionY = (doc as any).lastAutoTable.finalY + 10;
+    });
+
+    const jourFichier = String(jour || 'jour').toLowerCase().replace(/[^a-z0-9-]/g, '-');
+    const anneeFichier = String(anneeNom || 'annee').replace(/[^a-zA-Z0-9-]/g, '-');
+    doc.save(`emploi-du-temps-${jourFichier}-${anneeFichier}.pdf`);
+  }
+
+  private loadLogoForPdf(): Promise<HTMLImageElement | null> {
+    return new Promise(resolve => {
+      const logo = new Image();
+      logo.onload = () => resolve(logo);
+      logo.onerror = () => resolve(null);
+      logo.src = 'assets/logo.png';
+    });
   }
 }
