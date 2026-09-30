@@ -16,6 +16,8 @@ import { Classe } from '../../../model/classe';
 import { Eleve } from '../../../model/eleve';
 import Swal from 'sweetalert2';
 import { Router, RouterModule } from '@angular/router';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-liste',
@@ -89,6 +91,58 @@ export class ListeComponent implements OnInit {
         this.resultat = true
       }
     })
+  }
+
+  async imprimerListe(): Promise<void> {
+    if (this.eleves.length === 0) {
+      Swal.fire('Liste vide', 'Aucun élève à imprimer.', 'info');
+      return;
+    }
+
+    const { classe: classeId, anneeuv: anneeId } = this.eleveecoleForm.value;
+    const classeNom = this.classes.find(classe => String(classe.id) === String(classeId))?.nom ?? '';
+    const anneeNom = this.annees.find(annee => String(annee.id) === String(anneeId))?.nom ?? '';
+    const descriptionEcole = this.user?.administrateur?.ecole?.descriptionEcole ?? '';
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const logo = await this.loadLogoForPdf();
+
+    if (logo) doc.addImage(logo, 'PNG', 15, 10, 25, 25);
+    doc.setFont('times', 'bold');
+    doc.setFontSize(18);
+    const descriptionLignes = doc.splitTextToSize(descriptionEcole.toUpperCase(), pageWidth - 75);
+    doc.text(descriptionLignes, pageWidth / 2 + 10, 16, { align: 'center' });
+    const titreY = Math.max(34, 16 + descriptionLignes.length * 7 + 4);
+    doc.setFontSize(14);
+    doc.text('Liste des élèves', pageWidth / 2, titreY, { align: 'center' });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(`Classe : ${classeNom}    Année scolaire : ${anneeNom}`, pageWidth / 2, titreY + 7, { align: 'center' });
+
+    autoTable(doc, {
+      startY: titreY + 13,
+      head: [['N°', 'Matricule', 'Nom', 'Prénom']],
+      body: this.eleves.map((inscription, index) => [
+        String(index + 1),
+        inscription.eleve?.matricule ?? '',
+        inscription.eleve?.nom ?? '',
+        inscription.eleve?.prenom ?? ''
+      ]),
+      headStyles: { fillColor: [37, 99, 235] },
+      styles: { font: 'helvetica', fontSize: 9 }
+    });
+
+    doc.autoPrint();
+    window.open(doc.output('bloburl'), '_blank');
+  }
+
+  private loadLogoForPdf(): Promise<HTMLImageElement | null> {
+    return new Promise(resolve => {
+      const logo = new Image();
+      logo.onload = () => resolve(logo);
+      logo.onerror = () => resolve(null);
+      logo.src = 'assets/logo.png';
+    });
   }
 
   delete(id: number) {
