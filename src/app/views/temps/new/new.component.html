@@ -64,15 +64,6 @@
 
         <div class="col-12" *ngIf="emploiForm.get('classe')?.value && emploiForm.get('anneeuv')?.value">
           <div *ngIf="verificationEffectifEnCours" class="form-text">Vérification de l’effectif de la classe...</div>
-          <div *ngIf="!verificationEffectifEnCours && effectifClasse === 0" class="text-danger fs-6 fw-semibold mt-2" role="alert">
-            Aucun élève n’est inscrit dans cette classe pour l’année sélectionnée. La création est bloquée.
-          </div>
-          <div *ngIf="!verificationEffectifEnCours && effectifClasse !== null && effectifClasse > 0" class="text-success small mt-2">
-            Effectif vérifié : {{ effectifClasse }} élève(s).
-          </div>
-          <div *ngIf="!verificationEffectifEnCours && verificationEffectifErreur" class="text-danger small mt-2" role="alert">
-            Impossible de vérifier l’effectif. La création sera refusée tant que la vérification échoue.
-          </div>
         </div>
 
         <div class="mt-3">

@@ -187,11 +187,24 @@ export class NewComponent implements OnInit {
         if (verificationId !== this.verificationEffectifId) return;
         this.effectifClasse = inscriptions.length;
         this.verificationEffectifEnCours = false;
+        if (inscriptions.length === 0) {
+          Swal.fire('Classe sans élèves', 'Aucun élève n’est inscrit dans cette classe pour l’année sélectionnée.', 'warning');
+        } else {
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: `Effectif vérifié : ${inscriptions.length} élève(s).`,
+            showConfirmButton: false,
+            timer: 2500
+          });
+        }
       },
       error: () => {
         if (verificationId !== this.verificationEffectifId) return;
         this.verificationEffectifErreur = true;
         this.verificationEffectifEnCours = false;
+        Swal.fire('Vérification impossible', 'L’effectif de la classe n’a pas pu être vérifié.', 'error');
       }
     });
   }
