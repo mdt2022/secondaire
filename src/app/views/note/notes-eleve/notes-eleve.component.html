@@ -80,11 +80,4 @@
         </div>
     </div>
 
-    <!-- MESSAGES DE NOTIFICATION -->
-    <div *ngIf="message" class="alert mt-3 border-0 shadow-sm rounded-3 animate-fade-in p-3 d-flex align-items-center" 
-         [ngClass]="{ 'bg-light-success text-success': success, 'bg-light-danger text-danger': !success }">
-        <i class="fas me-3 fs-5" [ngClass]="{ 'fa-check-circle': success, 'fa-exclamation-circle': !success }"></i>
-        <div class="fw-semibold">{{ message }}</div>
-    </div>
-
 </div>

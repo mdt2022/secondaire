@@ -8,6 +8,7 @@ import { Classe } from '../../../model/classe';
 import { AnneeuvService } from '../../../service/anneeuv.service';
 import { ClasseEcoleService } from '../../../service/classeecole.service';
 import { EleveecoleService } from '../../../service/eleveecole.service';
+import Swal from 'sweetalert2';
 
 interface StatistiqueClasse {
   id: number;
@@ -77,6 +78,7 @@ export class StatistiqueComponent implements OnInit {
     if (!this.ecoleId) {
       this.loading = false;
       this.errorMessage = 'Impossible d’identifier l’établissement connecté.';
+      Swal.fire('Erreur', this.errorMessage, 'error');
       return;
     }
 
@@ -97,6 +99,7 @@ export class StatistiqueComponent implements OnInit {
       error: () => {
         this.loading = false;
         this.errorMessage = 'Le chargement des années et des classes a échoué.';
+        Swal.fire('Erreur', this.errorMessage, 'error');
       }
     });
   }
@@ -156,6 +159,7 @@ export class StatistiqueComponent implements OnInit {
         if (version !== this.requestVersion) return;
         this.loading = false;
         this.errorMessage = 'Le chargement des effectifs a échoué. Réessayez.';
+        Swal.fire('Erreur', this.errorMessage, 'error');
       }
     });
   }

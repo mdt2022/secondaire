@@ -26,8 +26,6 @@ export class RoleComponent implements OnInit {
   editing = false;
   editingId: number | null = null;
 
-  errorMessage: string | null = null;
-
   constructor(
     private roleService: RoleService,
     private fb: FormBuilder
@@ -48,7 +46,6 @@ export class RoleComponent implements OnInit {
     this.roleService.getAll().subscribe({
       next: data => this.roles = data,
       error: () => {
-        this.errorMessage = 'Impossible de charger les rôles';
         Swal.fire('Erreur', 'Impossible de charger les rôles', 'error');
       }
     });

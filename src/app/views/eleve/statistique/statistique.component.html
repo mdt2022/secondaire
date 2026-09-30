@@ -18,8 +18,6 @@
 		Chargement des statistiques...
 	</div>
 
-	<div *ngIf="!loading && errorMessage" class="alert alert-danger" role="alert">{{ errorMessage }}</div>
-
 	<ng-container *ngIf="!loading && !errorMessage && anneeId !== null">
 		<section class="summary-grid" aria-label="Résumé des effectifs">
 			<article class="summary-item summary-total">

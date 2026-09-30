@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { CardModule, ButtonModule, TableModule, FormModule } from '@coreui/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../service/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-enseignant',
@@ -165,8 +166,15 @@ export class EnseignantComponent implements OnInit {
     });
   }
 
-  delete(id: number): void {
-    if (!confirm('Supprimer cet enseignant ?')) return;
+  async delete(id: number): Promise<void> {
+    const confirmation = await Swal.fire({
+      title: 'Supprimer cet enseignant ?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Supprimer',
+      cancelButtonText: 'Annuler'
+    });
+    if (!confirmation.isConfirmed) return;
 
     this.enseignantService.delete(id).subscribe(() => this.loadEnseignants());
   }
