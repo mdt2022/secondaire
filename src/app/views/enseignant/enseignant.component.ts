@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Enseignant } from '../../model/enseignant';
 import { EnseignantService } from '../../service/enseignant.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CardModule, ButtonModule, TableModule, FormModule } from '@coreui/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -66,16 +66,16 @@ export class EnseignantComponent implements OnInit {
 
   initForm(): void {
     this.enseignantForm = this.fb.group({
-      matricule: ['', Validators.required],
-      nom: ['', Validators.required],
-      prenom: ['', Validators.required],
-      adresse: ['', Validators.required],
-      telephone: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      lieun: ['', Validators.required],
-      datedn: ['', Validators.required],
+      matricule: [''],
+      nom: [''],
+      prenom: [''],
+      adresse: [''],
+      telephone: [''],
+      email: [''],
+      lieun: [''],
+      datedn: [''],
       photo: [''],
-      tarif: [0, Validators.required]
+      tarif: [0]
     });
   }
 
@@ -147,12 +147,20 @@ export class EnseignantComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.enseignantForm.invalid) return;
+    const formValue = this.enseignantForm.value;
 
     const data = {
-      ...this.enseignantForm.value,
-      photo: this.selectedPhoto,
-      ecole: { idEcole: this.currentEcoleId }
+      matricule: formValue.matricule || `ENS-${Date.now()}`,
+      nom: formValue.nom || 'Non renseigné',
+      prenom: formValue.prenom || 'Non renseigné',
+      adresse: formValue.adresse || 'Non renseigné',
+      telephone: formValue.telephone || 'Non renseigné',
+      email: formValue.email || '',
+      lieun: formValue.lieun || 'Non renseigné',
+      datedn: formValue.datedn || null,
+      tarif: Number(formValue.tarif) || 0,
+      photo: this.selectedPhoto || formValue.photo || '',
+      ecole: { idEcole: this.currentEcoleId! }
     };
 
     const action = this.editMode

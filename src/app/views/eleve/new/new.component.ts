@@ -48,16 +48,16 @@ export class NewComponent implements OnInit {
 
     this.form = this.fb.group({
       eleve: this.fb.group({
-        matricule: ['', Validators.required],
-        nom: ['', Validators.required],
-        prenom: ['', Validators.required],
-        datedn: ['', Validators.required],
-        lieudn: ['', Validators.required],
+        matricule: [''],
+        nom: [''],
+        prenom: [''],
+        datedn: [''],
+        lieudn: [''],
         prenompere: [''],
         prenommere: [''],
         nommere: [''],
         nationalite: [''],
-        sexe: ['', Validators.required]
+        sexe: ['']
       }),
       classe: [null, Validators.required],
       anneeuv: [null, Validators.required],
@@ -128,7 +128,10 @@ export class NewComponent implements OnInit {
     }
 
     this.loading = true;
-    const eleveData = this.form.get('eleve')?.value;
+    const eleveData = {
+      ...this.form.get('eleve')?.value,
+      matricule: this.form.get('eleve.matricule')?.value?.trim() || `MAT-${Date.now()}`
+    };
     
     const affectationData = {
       ecole: this.user.administrateur.ecole,
