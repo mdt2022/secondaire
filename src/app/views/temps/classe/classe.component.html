@@ -8,9 +8,8 @@
             <div class="row g-3">
 
                 <div class="col-md-3">
-                    <label>Classe</label>
                     <select class="form-select" formControlName="classe">
-                        <option value="">-- Choisir --</option>
+                        <option value="">-- Classe --</option>
                         <option *ngFor="let c of classes" [ngValue]="c.id">
                             {{ c.nom }}
                         </option>
@@ -18,9 +17,8 @@
                 </div>
 
                 <div class="col-md-3">
-                    <label>Année universitaire</label>
                     <select class="form-select" formControlName="anneeuv">
-                        <option value="">-- Choisir --</option>
+                        <option value="">-- Année --</option>
                         <option *ngFor="let a of annees" [ngValue]="a.id">
                             {{ a.nom }}
                         </option>
