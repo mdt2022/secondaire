@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -10,7 +11,7 @@ import { PointageService } from '../../../service/pointage.service';
 import { Enseignant } from '../../../model/enseignant';
 import { Anneeuv } from '../../../model/anneeuv';
 import { Emploidutemps } from '../../../model/emploidutemps';
-import { Pointage } from '../../../model/pointage';
+import { Pointage, PointageWritePayload } from '../../../model/pointage';
 import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 
@@ -33,6 +34,7 @@ export class EnseignantComponent implements OnInit {
   pagedEmplois: (Emploidutemps & { present: boolean; nbreheure: number })[] = [];
 
   loading = false;
+  savingPresence = false;
   idEcole!: number;
   selectedDate: Date = new Date();
 
@@ -100,7 +102,7 @@ export class EnseignantComponent implements OnInit {
     this.loading = true;
     this.selectedDate = this.getDateOfWeek(jour);
 
-    this.emploiService.parEnseigant(jour,professeur,anneeuv,this.idEcole).subscribe({
+    this.emploiService.parEnseigant(jour, professeur, anneeuv, this.idEcole).subscribe({
       next: data => {
         this.emploisTable = data
           .filter(e =>
@@ -118,6 +120,7 @@ export class EnseignantComponent implements OnInit {
             };
           });
 
+        this.loadPresenceCache();
         this.page = 1;
         this.totalPages = Math.ceil(this.emploisTable.length / this.pageSize);
         this.updatePage();
@@ -164,75 +167,169 @@ export class EnseignantComponent implements OnInit {
   }
 
   savePresence(): void {
+    if (this.savingPresence) return;
+
     const presentes = this.emploisTable.filter(e => e.present && e.id != null);
     if (!presentes.length) {
       Swal.fire('Aucune présence', 'Cochez au moins un enseignant à enregistrer.', 'warning');
       return;
     }
 
-    const datevalider = this.formatDate(this.selectedDate);
-    this.pointageService.getAll().subscribe({
+    const emploisInvalides = presentes.filter(emploi =>
+      !Number(emploi.id) || !Number(emploi.professeur?.id)
+    );
+    if (emploisInvalides.length) {
+      Swal.fire(
+        'Emploi incomplet',
+        'Un emploi sélectionné ne possède pas d’identifiant valide ou d’enseignant associé. Rechargez la liste après avoir enregistré l’emploi du temps.',
+        'error'
+      );
+      return;
+    }
+
+    const datevalider = this.formatDate(this.selectedDate || new Date());
+    const professeurId = Number(this.emploiForm?.get('professeur')?.value);
+
+    this.savingPresence = true;
+
+    this.pointageService.rechercher({
+      enseignantId: professeurId || undefined,
+      ecoleId: this.idEcole,
+      dateDebut: this.normalizeDateValue(datevalider),
+      dateFin: this.normalizeDateValue(datevalider)
+    }).subscribe({
       next: pointages => {
-        const operations = presentes.map(emploi => {
-          const pointage: Pointage = {
-            id: 0,
-            emploidutemps: emploi,
-            enseignant: emploi.professeur,
+        const existingKeys = new Set(pointages.map(pointage =>
+          `${Number(pointage.emploidutemps?.id)}:${this.normalizeDateValue(pointage.datevalider)}`
+        ));
+        const dejaEnregistrees = presentes.filter(emploi =>
+          existingKeys.has(`${Number(emploi.id)}:${this.normalizeDateValue(datevalider)}`)
+        );
+        const aEnregistrer = presentes.filter(emploi =>
+          !existingKeys.has(`${Number(emploi.id)}:${this.normalizeDateValue(datevalider)}`)
+        );
+
+        if (aEnregistrer.length === 0) {
+          presentes.forEach(emploi => {
+            if (emploi.id != null) this.savePresenceCache(emploi.id, true);
+          });
+          this.savingPresence = false;
+          Swal.fire(
+            'Présence déjà enregistrée',
+            'Impossible d’enregistrer deux fois la présence du même emploi pour la même date.',
+            'info'
+          );
+          return;
+        }
+
+        const operations = aEnregistrer.map(emploi => {
+          const emploiId = Number(emploi.id);
+          const enseignantId = Number(emploi.professeur?.id);
+
+          const pointage: PointageWritePayload = {
+            emploidutemps: { id: emploiId },
+            enseignant: { id: enseignantId },
             valider: 'OUI',
             datevalider
           };
-          const existant = pointages.find(p =>
-            Number(p.emploidutemps?.id) === Number(emploi.id) &&
-            p.datevalider === datevalider
-          );
 
-          return existant
-            ? this.pointageService.update(existant.id, { ...pointage, id: existant.id })
-            : this.pointageService.create(pointage);
+          return this.pointageService.create(pointage);
         });
 
         forkJoin(operations).subscribe({
-          next: () => Swal.fire('Succès', `${presentes.length} présence(s) enregistrée(s).`, 'success'),
+          next: () => {
+            presentes.forEach(emploi => {
+              if (emploi.id != null) {
+                this.savePresenceCache(emploi.id, true);
+              }
+            });
+            this.savingPresence = false;
+            const dejaMessage = dejaEnregistrees.length
+              ? ` ${dejaEnregistrees.length} présence(s) déjà enregistrées n’ont pas été ajoutées une seconde fois.`
+              : '';
+            Swal.fire('Succès', `${aEnregistrer.length} présence(s) enregistrée(s).${dejaMessage}`, 'success');
+          },
           error: err => {
             console.error(err);
-            Swal.fire('Erreur', 'Impossible d’enregistrer les présences.', 'error');
+            this.savingPresence = false;
+            Swal.fire('Erreur d’enregistrement', this.getRequestErrorMessage(err), 'error');
           }
         });
       },
       error: err => {
         console.error(err);
+        this.savingPresence = false;
         Swal.fire('Erreur', 'Impossible de charger les pointages existants.', 'error');
       }
     });
   }
 
   private formatDate(date: Date): string {
-    const jour = String(date.getDate()).padStart(2, '0');
+    const annee = date.getFullYear();
     const mois = String(date.getMonth() + 1).padStart(2, '0');
-    return `${jour}/${mois}/${date.getFullYear()}`;
+    const jour = String(date.getDate()).padStart(2, '0');
+    return `${jour}/${mois}/${annee}`;
+  }
+
+  private normalizeDateValue(value?: string | null): string {
+    if (!value) return '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+      const [jour, mois, annee] = value.split('/');
+      return `${annee}-${mois}-${jour}`;
+    }
+    return value;
+  }
+
+  private getRequestErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      const responseMessage = typeof error.error === 'string'
+        ? error.error
+        : error.error?.message;
+
+      return responseMessage
+        ? `Le serveur a refusé l’enregistrement : ${responseMessage}`
+        : `La requête d’enregistrement a échoué (HTTP ${error.status || 'inconnu'}). Vérifiez la console ou l’onglet Réseau du navigateur.`;
+    }
+
+    return 'Une erreur inattendue est survenue. Consultez la console du navigateur pour plus de détails.';
   }
 
   // ---------------- Persistance simple via localStorage ----------------
+  private getPresenceCacheObject(): Record<string, boolean> {
+    try {
+      return JSON.parse(localStorage.getItem('presenceCache') || '{}') || {};
+    } catch {
+      return {};
+    }
+  }
+
+  private buildPresenceCacheKey(id: number): string {
+    const dayKey = this.formatDate(this.selectedDate || new Date());
+    return `${dayKey}:${id}`;
+  }
+
   savePresenceCache(id: number, present: boolean): void {
-    const cache = JSON.parse(localStorage.getItem('presenceCache') || '{}');
-    cache[id] = present;
+    const cache = this.getPresenceCacheObject();
+    cache[this.buildPresenceCacheKey(id)] = present;
     localStorage.setItem('presenceCache', JSON.stringify(cache));
   }
 
   getCachedPresence(id?: number): boolean | undefined {
     if (!id) return undefined;
-    const cache = JSON.parse(localStorage.getItem('presenceCache') || '{}');
-    return cache[id];
+    const cache = this.getPresenceCacheObject();
+    return cache[this.buildPresenceCacheKey(id)];
   }
 
   loadPresenceCache(): void {
-    const cache = JSON.parse(localStorage.getItem('presenceCache') || '{}');
-
-    if (!cache) return;
+    const cache = this.getPresenceCacheObject();
 
     this.emploisTable.forEach(row => {
-      if (row.id !== undefined && cache[row.id] !== undefined) {
-        row.present = cache[row.id];
+      if (row.id !== undefined) {
+        const key = this.buildPresenceCacheKey(row.id);
+        if (cache[key] !== undefined) {
+          row.present = Boolean(cache[key]);
+        }
       }
     });
   }

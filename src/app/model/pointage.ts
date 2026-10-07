@@ -9,6 +9,14 @@ export interface Pointage {
   datevalider: string;
 }
 
+export interface PointageWritePayload {
+  id?: number;
+  emploidutemps: { id: number };
+  enseignant: { id: number };
+  valider: string;
+  datevalider: string;
+}
+
 export interface RecherchePointage {
   ecoleId?: number;
   enseignantId?: number;

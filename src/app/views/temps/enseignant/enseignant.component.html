@@ -83,7 +83,9 @@
         </div>
 
         <div class="text-end mt-2">
-            <button class="btn btn-success" (click)="savePresence()">Enregistrer les présences</button>
+            <button class="btn btn-success" (click)="savePresence()" [disabled]="savingPresence || loading">
+                {{ savingPresence ? 'Enregistrement...' : 'Enregistrer les présences' }}
+            </button>
         </div>
     </div>
 </div>
