@@ -7,6 +7,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { AuthService } from '../../../../service/auth.service';
 import {User} from '../../../../model/user';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-honoraires',
@@ -56,7 +57,7 @@ calculerHonoraires(): void {
     },
     error: (error) => {
       console.error('Erreur lors du calcul des honoraires:', error);
-      alert('Une erreur est survenue lors du calcul des honoraires');
+      Swal.fire('Erreur', 'Une erreur est survenue lors du calcul des honoraires.', 'error');
       this.isLoading = false; 
     }
   });
@@ -194,7 +195,7 @@ imprimerPDF() {
   validateDates(): boolean {
     const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
     if (!dateRegex.test(this.dateDebut) || !dateRegex.test(this.dateFin)) {
-      alert('Veuillez entrer des dates valides au format JJ/MM/AAAA');
+      Swal.fire('Dates invalides', 'Veuillez entrer des dates valides au format JJ/MM/AAAA.', 'warning');
       return false;
     }
     return true;

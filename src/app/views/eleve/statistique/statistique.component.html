@@ -1,1 +1,82 @@
-<p>statistique works!</p>
+<main class="statistics-page">
+	<header class="statistics-header">
+		<div>
+			<p class="eyebrow">GESTION DES ÉLÈVES</p>
+			<h1>Statistiques des effectifs</h1>
+			<p class="subtitle">Répartition des élèves inscrits par classe et par année scolaire.</p>
+		</div>
+		<label class="year-filter">
+			<span>Année scolaire</span>
+			<select class="form-select" [ngModel]="anneeId" (ngModelChange)="changerAnnee($event)" [disabled]="loading && annees.length === 0">
+				<option *ngFor="let annee of annees" [ngValue]="annee.id">{{ annee.nom }}</option>
+			</select>
+		</label>
+	</header>
+
+	<div *ngIf="loading" class="state-message" role="status">
+		<span class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></span>
+		Chargement des statistiques...
+	</div>
+
+	<ng-container *ngIf="!loading && !errorMessage && anneeId !== null">
+		<section class="summary-grid" aria-label="Résumé des effectifs">
+			<article class="summary-item summary-total">
+				<span class="summary-label">Élèves inscrits</span>
+				<strong>{{ totalEleves }}</strong>
+				<span class="summary-note">pour l’année sélectionnée</span>
+			</article>
+			<article class="summary-item summary-classes">
+				<span class="summary-label">Classes suivies</span>
+				<strong>{{ classes.length }}</strong>
+				<span class="summary-note">dans cet établissement</span>
+			</article>
+			<article class="summary-item summary-average">
+				<span class="summary-label">Moyenne par classe</span>
+				<strong>{{ moyenneParClasse | number:'1.0-1' }}</strong>
+				<span class="summary-note">élèves en moyenne</span>
+			</article>
+			<article class="summary-item summary-largest">
+				<span class="summary-label">Effectif le plus élevé</span>
+				<strong>{{ classePlusNombreuse?.nombre ?? 0 }}</strong>
+				<span class="summary-note">{{ classePlusNombreuse?.nom || 'Aucune classe' }}</span>
+			</article>
+		</section>
+
+		<section class="distribution-section" aria-labelledby="distribution-title">
+			<div class="section-heading">
+				<div>
+					<p class="eyebrow">RÉPARTITION</p>
+					<h2 id="distribution-title">Effectif par classe</h2>
+				</div>
+				<span class="total-chip">{{ totalEleves }} élèves</span>
+			</div>
+
+			<div *ngIf="classes.length === 0" class="empty-state">Aucune classe n’est configurée pour cet établissement.</div>
+			<div *ngIf="classes.length > 0 && totalEleves === 0" class="empty-state">Aucune inscription trouvée pour cette année scolaire.</div>
+
+			<div *ngIf="totalEleves > 0" class="chart-container" [style.height.px]="graphiqueHauteur">
+				<canvas #effectifChart role="img" aria-label="Graphique des effectifs d’élèves par classe"></canvas>
+			</div>
+
+			<div class="table-wrap" *ngIf="statistiques.length > 0">
+				<table class="table align-middle mb-0">
+					<thead>
+						<tr><th>Classe</th><th class="text-end">Effectif</th><th class="text-end">Part du total</th></tr>
+					</thead>
+					<tbody>
+						<tr *ngFor="let statistique of statistiques">
+							<td class="class-name">{{ statistique.nom }}</td>
+							<td class="text-end">{{ statistique.nombre }}</td>
+							<td class="text-end">{{ statistique.pourcentage | number:'1.0-1' }} %</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr><th>Total</th><th class="text-end">{{ totalEleves }}</th><th class="text-end">100 %</th></tr>
+					</tfoot>
+				</table>
+			</div>
+		</section>
+	</ng-container>
+
+	<div *ngIf="!loading && !errorMessage && annees.length === 0" class="empty-state">Aucune année scolaire n’est disponible.</div>
+</main>

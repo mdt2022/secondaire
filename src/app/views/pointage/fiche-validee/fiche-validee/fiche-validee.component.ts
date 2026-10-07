@@ -6,6 +6,7 @@ import { RouterLink, ActivatedRoute } from '@angular/router';
 import { PointageService } from '../../../../service/pointage.service';
 import autoTable from 'jspdf-autotable';
 import jsPDF from 'jspdf';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-fiche-validee',
@@ -117,7 +118,7 @@ export class FicheValideeComponent implements OnInit {
       const end = new Date(this.filterDateEnd);
       if (start > end) {
         this.filterDateEnd = '';
-        alert('La date de fin doit être postérieure à la date de début');
+        Swal.fire('Dates invalides', 'La date de fin doit être postérieure à la date de début.', 'warning');
       }
     }
     this.applyFilters();
@@ -463,22 +464,30 @@ export class FicheValideeComponent implements OnInit {
   }
 
 
-  deletePointage(id: number): void {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce pointage ? Cette action est irréversible.')) {
-      this.pointageService.delete(id).subscribe({
-        next: () => this.loadFicheValidee(),
-        error: (error) => {
-          console.error('Erreur lors de la suppression:', error);
-          alert('Une erreur est survenue lors de la suppression du pointage.');
-        }
-      });
-    }
+  async deletePointage(id: number): Promise<void> {
+    const confirmation = await Swal.fire({
+      title: 'Supprimer ce pointage ?',
+      text: 'Cette action est irréversible.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Supprimer',
+      cancelButtonText: 'Annuler'
+    });
+    if (!confirmation.isConfirmed) return;
+
+    this.pointageService.delete(id).subscribe({
+      next: () => this.loadFicheValidee(),
+      error: (error) => {
+        console.error('Erreur lors de la suppression:', error);
+        Swal.fire('Erreur', 'Une erreur est survenue lors de la suppression du pointage.', 'error');
+      }
+    });
   }
 
 imprimerFichePaiement() {
 
   if (!this.filteredFiche.length) {
-    alert('Aucune donnée à imprimer');
+    Swal.fire('Aucune donnée', 'Aucune donnée à imprimer.', 'info');
     return;
   }
 

@@ -9,6 +9,7 @@ import { EnseignantService } from '../../../service/enseignant.service';
 import { ClasseEcoleService } from '../../../service/classeecole.service';
 import { AnneeuvService } from '../../../service/anneeuv.service';
 import { AuthService } from '../../../service/auth.service';
+import { EleveecoleService } from '../../../service/eleveecole.service';
 
 import { Emploidutemps } from '../../../model/emploidutemps';
 import { Enseigner } from '../../../model/enseigner';
@@ -52,6 +53,10 @@ export class NewComponent implements OnInit {
   user!: User;
 
   selectedEmploi?: Emploidutemps; // Pour la vue détails
+  effectifClasse: number | null = null;
+  verificationEffectifEnCours = false;
+  verificationEffectifErreur = false;
+  private verificationEffectifId = 0;
 
   jours: string[] = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
@@ -62,7 +67,8 @@ export class NewComponent implements OnInit {
     private enseignantService: EnseignantService,
     private classeService: ClasseEcoleService,
     private anneeuvService: AnneeuvService,
-    private authService: AuthService
+    private authService: AuthService,
+    private eleveecoleService: EleveecoleService
   ) { }
 
   ngOnInit(): void {
@@ -107,6 +113,36 @@ export class NewComponent implements OnInit {
       ecole: { idEcole: this.user.administrateur.ecole.idEcole }
     } as Partial<Emploidutemps>;
 
+    if (!this.editMode) {
+      const idEcole = this.user.administrateur.ecole.idEcole;
+      this.verificationEffectifEnCours = true;
+      this.eleveecoleService.getByClasseAndAnnee([
+        String(anneeuvId),
+        String(idEcole),
+        String(classeId)
+      ]).subscribe({
+        next: inscriptions => {
+          this.verificationEffectifEnCours = false;
+          this.effectifClasse = inscriptions.length;
+          if (inscriptions.length === 0) {
+            Swal.fire('Classe sans élèves', 'Impossible de créer un emploi du temps pour une classe sans élève inscrit durant cette année.', 'warning');
+            return;
+          }
+          this.enregistrer(payload);
+        },
+        error: () => {
+          this.verificationEffectifEnCours = false;
+          this.verificationEffectifErreur = true;
+          Swal.fire('Vérification impossible', 'L’effectif de la classe n’a pas pu être vérifié. Aucun emploi du temps n’a été créé.', 'error');
+        }
+      });
+      return;
+    }
+
+    this.enregistrer(payload);
+  }
+
+  private enregistrer(payload: Partial<Emploidutemps>): void {
     const req = this.editMode && this.currentId
       ? this.emploiService.update(this.currentId, payload as Emploidutemps)
       : this.emploiService.create(payload as Emploidutemps);
@@ -126,6 +162,49 @@ export class NewComponent implements OnInit {
       error: (err) => {
         console.error('Erreur API :', err);
         Swal.fire('Erreur', 'Impossible d’enregistrer l’emploi du temps.', 'error');
+      }
+    });
+  }
+
+  verifierEffectifClasse(): void {
+    const classeId = Number(this.emploiForm.get('classe')?.value);
+    const anneeuvId = Number(this.emploiForm.get('anneeuv')?.value);
+    const idEcole = this.user.administrateur.ecole.idEcole;
+    const verificationId = ++this.verificationEffectifId;
+
+    this.effectifClasse = null;
+    this.verificationEffectifEnCours = false;
+    this.verificationEffectifErreur = false;
+    if (!classeId || !anneeuvId) return;
+
+    this.verificationEffectifEnCours = true;
+    this.eleveecoleService.getByClasseAndAnnee([
+      String(anneeuvId),
+      String(idEcole),
+      String(classeId)
+    ]).subscribe({
+      next: inscriptions => {
+        if (verificationId !== this.verificationEffectifId) return;
+        this.effectifClasse = inscriptions.length;
+        this.verificationEffectifEnCours = false;
+        if (inscriptions.length === 0) {
+          Swal.fire('Classe sans élèves', 'Aucun élève n’est inscrit dans cette classe pour l’année sélectionnée.', 'warning');
+        } else {
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: `Effectif vérifié : ${inscriptions.length} élève(s).`,
+            showConfirmButton: false,
+            timer: 2500
+          });
+        }
+      },
+      error: () => {
+        if (verificationId !== this.verificationEffectifId) return;
+        this.verificationEffectifErreur = true;
+        this.verificationEffectifEnCours = false;
+        Swal.fire('Vérification impossible', 'L’effectif de la classe n’a pas pu être vérifié.', 'error');
       }
     });
   }
@@ -219,9 +298,13 @@ export class NewComponent implements OnInit {
   }
 
   resetForm(): void {
+    this.verificationEffectifId++;
     this.emploiForm.reset();
     this.editMode = false;
     this.currentId = undefined;
+    this.effectifClasse = null;
+    this.verificationEffectifEnCours = false;
+    this.verificationEffectifErreur = false;
   }
 
   onSearch(event: any): void {

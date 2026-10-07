@@ -13,6 +13,7 @@ import { Enseignant } from '../../../model/enseignant';
 import { Enseigner } from '../../../model/enseigner';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-jour',
@@ -132,7 +133,7 @@ export class JourComponent implements OnInit {
 
   async printEmploi(): Promise<void> {
     if (this.emplois.length === 0) {
-      alert('Aucun emploi du temps à imprimer');
+      Swal.fire('Aucune donnée', 'Aucun emploi du temps à imprimer.', 'info');
       return;
     }
 

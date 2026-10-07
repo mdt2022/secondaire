@@ -103,14 +103,5 @@
       </div>
     </div>
 
-    <!-- MESSAGES DE DOUBLONS IGNORÉS -->
-    <div *ngIf="doublons?.length" class="alert bg-light-warning text-warning border-0 shadow-2xs rounded-3 animate-fade-in p-3 d-flex align-items-start">
-      <i class="fas fa-exclamation-triangle me-3 fs-5 mt-0.5"></i>
-      <div>
-        <span class="fw-bold d-block mb-1">Doublons ignorés pour les élèves suivants :</span>
-        <span class="fw-semibold">{{ doublons.join(', ') }}</span>
-      </div>
-    </div>
-
   </form>
 </div>

@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { AnneeuvService } from '../../../service/anneeuv.service';
 import { User } from '../../../model/user';
 import { AuthService } from '../../../service/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-redoublement',
@@ -91,17 +92,17 @@ promoForm!: FormGroup;
   Redoubler() {
     const { classeActuelle, anneeSuivante } = this.promoForm.value;
     if (this.selectedEleves.length === 0) {
-      alert("Veuillez sélectionner au moins un élève !");
+      Swal.fire('Sélection requise', 'Veuillez sélectionner au moins un élève !', 'warning');
       return;
     }
 
     if (!classeActuelle || !anneeSuivante) {
-      alert("Veuillez choisir la classe et l'année suivante !");
+      Swal.fire('Informations manquantes', "Veuillez choisir la classe et l'année suivante !", 'warning');
       return;
     }
     this.eleveEcoleService.redoubler(this.selectedEleves, classeActuelle, anneeSuivante).subscribe({
       next: (res) => {
-        alert(res.message);
+        Swal.fire('Succès', res.message, 'success');
         this.selectedEleves = [];
         this.eleves = [];
       },

@@ -47,7 +47,7 @@
 
           <div class="col-md-4">
             <label>Classe</label>
-            <select class="form-control" formControlName="classe">
+            <select class="form-control" formControlName="classe" (change)="verifierEffectifClasse()">
               <option value="">-- Choisir --</option>
               <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
             </select>
@@ -55,15 +55,19 @@
 
           <div class="col-md-4">
             <label>Année universitaire</label>
-            <select class="form-control" formControlName="anneeuv">
+            <select class="form-control" formControlName="anneeuv" (change)="verifierEffectifClasse()">
               <option value="">-- Choisir --</option>
               <option *ngFor="let a of anneeuvs" [value]="a.id">{{ a.nom }}</option>
             </select>
           </div>
         </div>
 
+        <div class="col-12" *ngIf="emploiForm.get('classe')?.value && emploiForm.get('anneeuv')?.value">
+          <div *ngIf="verificationEffectifEnCours" class="form-text">Vérification de l’effectif de la classe...</div>
+        </div>
+
         <div class="mt-3">
-          <button class="btn btn-primary">{{ editMode ? 'Modifier' : 'Enregistrer' }}</button>
+          <button class="btn btn-primary" [disabled]="verificationEffectifEnCours || (!editMode && effectifClasse === 0)">{{ editMode ? 'Modifier' : 'Enregistrer' }}</button>
           <button type="button" class="btn btn-secondary ms-2" (click)="resetForm()">Annuler</button>
         </div>
       </form>

@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Pointage } from '../../../../model/pointage';
 import { Enseignant } from '../../../../model/enseignant';
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-liste-pointage',
   standalone: true,
@@ -59,19 +60,27 @@ export class ListePointageComponent implements OnInit {
     this.selectedIds = [];
   }
 
-  supprimerSelection(): void {
+  async supprimerSelection(): Promise<void> {
     if (this.selectedIds.length === 0) {
-      alert('Veuillez sélectionner au moins un pointage');
+      Swal.fire('Sélection requise', 'Veuillez sélectionner au moins un pointage.', 'warning');
       return;
     }
 
-    if (confirm(`Voulez-vous vraiment supprimer ${this.selectedIds.length} pointage(s)?`)) {
-      this.pointageService.supprimerMultiple(this.selectedIds).subscribe(() => {
-        alert('Pointages supprimés avec succès');
-        this.loadPointages();
-        this.selectedIds = [];
-      });
-    }
+    const confirmation = await Swal.fire({
+      title: 'Confirmer la suppression',
+      text: `Voulez-vous vraiment supprimer ${this.selectedIds.length} pointage(s) ?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Supprimer',
+      cancelButtonText: 'Annuler'
+    });
+    if (!confirmation.isConfirmed) return;
+
+    this.pointageService.supprimerMultiple(this.selectedIds).subscribe(() => {
+      Swal.fire('Succès', 'Pointages supprimés avec succès.', 'success');
+      this.loadPointages();
+      this.selectedIds = [];
+    });
   }
 
   getEnseignantNom(enseignantId: number | undefined): string {

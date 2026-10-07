@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Pointage, RecherchePointage, ResultatSimulation, SimulationPaiement } from '../model/pointage';
+import { Pointage, PointageWritePayload, RecherchePointage, ResultatSimulation, SimulationPaiement } from '../model/pointage';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PointageService {
-  private apiUrl = 'http://localhost:8080/pointages';
+  private apiUrl = `${environment.apiURL}/pointages`;
 
   constructor(private http: HttpClient) {}
 
@@ -19,11 +20,11 @@ export class PointageService {
     return this.http.get<Pointage>(`${this.apiUrl}/${id}`);
   }
 
-  create(pointage: Pointage): Observable<Pointage> {
+  create(pointage: PointageWritePayload): Observable<Pointage> {
     return this.http.post<Pointage>(this.apiUrl, pointage);
   }
 
-  update(id: number, pointage: Pointage): Observable<Pointage> {
+  update(id: number, pointage: PointageWritePayload): Observable<Pointage> {
     return this.http.put<Pointage>(`${this.apiUrl}/${id}`, pointage);
   }
 
