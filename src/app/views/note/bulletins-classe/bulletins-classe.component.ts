@@ -292,6 +292,9 @@ imprimerListePDF(): void {
 
   const doc = new jsPDF('l', 'mm', 'a4'); 
 
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const adresseEcole = user?.administrateur?.ecole?.adresseEcole ?? '';
+  const pageHeight = doc.internal.pageSize.getHeight();
   doc.setFontSize(14);
   doc.text(`LISTE GÉNÉRALE DES MOYENNES`, 14, 15);
 
@@ -313,9 +316,14 @@ imprimerListePDF(): void {
     head: [['#','Matricule','Nom','Prénom','Moyenne','Observation','Rang']],
     body: body,
     theme: 'grid',
+    margin: { bottom: 18 },
     styles: { fontSize: 9 },
     headStyles: { halign: 'center' },
-    bodyStyles: { halign: 'center' }
+    bodyStyles: { halign: 'center' },
+    didDrawPage: () => {
+      doc.setFontSize(8);
+      doc.text(adresseEcole, 14, pageHeight - 8);
+    }
   });
 
   doc.save(`Liste_Moyennes_${Date.now()}.pdf`);

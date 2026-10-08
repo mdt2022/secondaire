@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { MatiereService } from '../../service/matiere.service';
-import { Matiere } from '../../model/matiere';
+import { MatiereService } from '../../../service/matiere.service';
+import { Matiere } from '../../../model/matiere';
 import { CardModule, ButtonModule, TableModule } from '@coreui/angular';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';

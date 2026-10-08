@@ -1,0 +1,117 @@
+<div class="container-fluid role-management">
+  <div class="page-heading">
+    <div>
+      <p class="text-uppercase text-primary fw-semibold small mb-1">Administration</p>
+      <h3 class="mb-1">Rôles et permissions</h3>
+      <p class="text-body-secondary mb-0">Choisissez les modules et les actions autorisés pour chaque rôle.</p>
+    </div>
+    <button class="btn btn-outline-primary" type="button" (click)="startCreate()">Nouveau rôle</button>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header fw-semibold">Rôles existants</div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Nom</th>
+            <th>Description</th>
+            <th>Catégorie</th>
+            <th>Permissions actives</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let role of roles">
+            <td class="fw-semibold">{{ role.nom }}</td>
+            <td>{{ role.description || '—' }}</td>
+            <td>{{ role.categorie?.nom || '—' }}</td>
+            <td>
+              <span class="badge rounded-pill text-bg-primary">
+                {{ role.permissions?.length || (role.permissionsConfigured ? 0 : 'Par défaut') }}
+              </span>
+            </td>
+            <td class="text-end text-nowrap">
+              <button class="btn btn-sm btn-outline-primary me-2" type="button" (click)="startEdit(role)">
+                Modifier
+              </button>
+              <button class="btn btn-sm btn-outline-danger" type="button" (click)="deleteRole(role.id)">
+                Supprimer
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="roles.length === 0">
+            <td colspan="5" class="text-center text-body-secondary py-4">Aucun rôle à afficher.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header fw-semibold">
+      {{ editing ? 'Modifier le rôle et ses permissions' : 'Créer un rôle et définir ses permissions' }}
+    </div>
+    <div class="card-body">
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <label class="form-label" for="roleName">Nom du rôle *</label>
+            <input id="roleName" formControlName="nom" class="form-control" autocomplete="off" />
+            <div *ngIf="form.controls['nom'].invalid && form.controls['nom'].touched" class="text-danger small mt-1">
+              Le nom est requis.
+            </div>
+          </div>
+          <div class="col-md-5">
+            <label class="form-label" for="roleDescription">Description</label>
+            <input id="roleDescription" formControlName="description" class="form-control" />
+          </div>
+          <div class="col-md-3">
+            <label class="form-label" for="categoryId">Identifiant de catégorie</label>
+            <input id="categoryId" type="number" formControlName="categorieId" class="form-control" />
+          </div>
+        </div>
+
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+          <div>
+            <h5 class="mb-1">Matrice des permissions</h5>
+            <p class="small text-body-secondary mb-0">La consultation d’un module contrôle aussi l’accès à son écran.</p>
+          </div>
+          <span class="small text-body-secondary">{{ selectedPermissions.size }} permission(s) sélectionnée(s)</span>
+        </div>
+
+        <div class="table-responsive permission-table">
+          <table class="table table-bordered align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col">Module</th>
+                <th scope="col" *ngFor="let action of actions" class="text-center">{{ action.label }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let module of modules">
+                <th scope="row">{{ module.label }}</th>
+                <td *ngFor="let action of actions" class="text-center">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    [id]="permissionCode(module.code, action.code)"
+                    [checked]="permissionActive(module.code, action.code)"
+                    (change)="onPermissionChange(module.code, action.code, $event)"
+                    [attr.aria-label]="action.label + ' — ' + module.label" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 mt-4">
+          <button class="btn btn-primary" type="submit" [disabled]="form.invalid">
+            {{ editing ? 'Enregistrer les modifications' : 'Créer le rôle' }}
+          </button>
+          <button class="btn btn-outline-secondary" type="button" (click)="startCreate()">Réinitialiser</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

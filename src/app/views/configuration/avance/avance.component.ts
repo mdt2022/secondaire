@@ -4,14 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import Swal from 'sweetalert2';
 
-import { AvanceService } from '../../service/avance.service';
-import { EnseignantService } from '../../service/enseignant.service';
-import { AnneeuvService } from '../../service/anneeuv.service';
+import { AvanceService } from '../../../service/avance.service';
+import { EnseignantService } from '../../../service/enseignant.service';
+import { AnneeuvService } from '../../../service/anneeuv.service';
 
 @Component({
   selector: 'app-avance',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgxPaginationModule],
+  imports: [CommonModule, FormsModule, NgxPaginationModule,],
   templateUrl: './avance.component.html',
 })
 export class AvanceComponent implements OnInit {

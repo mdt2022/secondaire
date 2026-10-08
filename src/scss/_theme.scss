@@ -36,6 +36,20 @@ body {
   @include ltr-rtl("margin-left", auto);
 }
 
+.sidebar-nav .nav-link[href="/dashboard"] {
+  margin: 0.35rem 0.75rem;
+  border-radius: 0.5rem;
+  background-color: #e8f1ff;
+  color: #1554a5;
+  font-weight: 600;
+}
+
+.sidebar-nav .nav-link[href="/dashboard"]:hover,
+.sidebar-nav .nav-link[href="/dashboard"].active {
+  background-color: #1769c2;
+  color: #fff;
+}
+
 .sidebar-narrow,
 .sidebar-narrow-unfoldable:not(:hover) {
   .sidebar-toggler {

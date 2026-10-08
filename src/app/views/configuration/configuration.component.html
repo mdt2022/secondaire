@@ -1,0 +1,24 @@
+<section class="container-fluid py-3 config-page">
+  <header class="mb-4">
+    <h2 class="h4 mb-1"><i class="bi bi-gear me-2" aria-hidden="true"></i>Paramètres de configuration</h2>
+    <p class="text-body-secondary mb-0">Gestion des paramètres fondamentaux du système</p>
+  </header>
+
+  <div class="row g-4">
+    @for (item of availableLinks; track item.url) {
+      <div class="col-sm-6 col-xl-4 col-xxl-3">
+        <a class="card h-100 text-decoration-none text-reset config-card" [routerLink]="item.url">
+          <div class="card-body d-flex align-items-center gap-3">
+            <span [class]="'config-icon ' + item.color">
+              <i [class]="item.icon" aria-hidden="true"></i>
+            </span>
+            <div class="config-card-content">
+              <h3 class="h6 mb-1">{{ item.title }}</h3>
+            </div>
+            <i class="bi bi-arrow-right config-arrow" aria-hidden="true"></i>
+          </div>
+        </a>
+      </div>
+    }
+  </div>
+</section>

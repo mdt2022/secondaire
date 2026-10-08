@@ -1,39 +1,139 @@
-<div class="container-fluid">
-  <div class="row">
-    <!-- CONTENU PRINCIPAL -->
-    <main class="col-md-12 ms-sm-auto col-lg-12 px-md-4 py-4">      
-     
-      <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white py-3">
-          <h5 class="card-title mb-0 fw-bold">Administrateurs</h5>
+<main class="dashboard">
+  <header class="dashboard-header">
+    <div>
+      <h1>Tableau de bord</h1>
+      <p class="dashboard-context">Vue d’ensemble de votre établissement et de son activité.</p>
+    </div>
+    <label class="year-picker">
+      <span>Année scolaire</span>
+      <select
+        class="form-select"
+        [ngModel]="anneeSelectionnee"
+        (ngModelChange)="changerAnnee($event)"
+        [disabled]="!annees.length">
+        <option *ngFor="let annee of annees" [ngValue]="annee.id">{{ annee.nom }}</option>
+      </select>
+    </label>
+  </header>
+
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    {{ errorMessage }}
+    <button class="btn btn-sm btn-outline-danger ms-3" type="button" (click)="reessayer()">Réessayer</button>
+  </div>
+
+  <section class="chart-grid" aria-label="Graphiques des indicateurs de l’établissement">
+    <article class="chart-card">
+      <div class="chart-heading">
+        <div>
+          <h2>Activité de l’établissement</h2>
+          <p>Effectifs et suivi pour l’année scolaire sélectionnée</p>
         </div>
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-              <tr>
-                <th>ID</th>
-                <th>Nom d'utilisateur</th>
-                <th>Email</th>
-                <th>Rôle</th>
-                <th>Statut Token</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let a of administrateurs">
-                <td>{{ a.id }}</td>
-                <td>{{ a.nom }} {{ a.prenom }}</td>
-                <td>{{ a.ecole.nomEcole }}</td>
-                <td><span class="badge bg-danger">{{ a.role.nom }}</span></td>
-                <td>
-                  <span class="badge" [ngClass]="a.online ? 'bg-success' : 'bg-secondary'">
-                    {{ a.online ? 'En ligne' : 'Hors ligne' }}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <span class="chart-badge">Effectifs</span>
+      </div>
+      <p *ngIf="loading || loadingEvolution" class="trend-message" role="status">Chargement des données…</p>
+      <div *ngIf="!loading && !loadingEvolution && !errorMessage && !errorEvolution" class="bar-chart">
+        <div class="bar-row">
+          <span class="bar-label">Emplois du temps</span>
+          <div class="bar-track" role="progressbar" aria-label="Emplois du temps" [attr.aria-valuenow]="totalEmplois" [attr.aria-valuemin]="0" [attr.aria-valuemax]="maximumActivite">
+            <div class="bar-fill" [style.width.%]="largeurActivite(totalEmplois)"></div>
+          </div>
+          <strong class="bar-value">{{ totalEmplois | number }}</strong>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Émargements</span>
+          <div class="bar-track" role="progressbar" aria-label="Émargements" [attr.aria-valuenow]="totalEmargements" [attr.aria-valuemin]="0" [attr.aria-valuemax]="maximumActivite">
+            <div class="bar-fill" [style.width.%]="largeurActivite(totalEmargements)"></div>
+          </div>
+          <strong class="bar-value">{{ totalEmargements | number }}</strong>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Élèves inscrits</span>
+          <div class="bar-track" role="progressbar" aria-label="Élèves inscrits" [attr.aria-valuenow]="totalEleves" [attr.aria-valuemin]="0" [attr.aria-valuemax]="maximumActivite">
+            <div class="bar-fill" [style.width.%]="largeurActivite(totalEleves)"></div>
+          </div>
+          <strong class="bar-value">{{ totalEleves | number }}</strong>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Classes</span>
+          <div class="bar-track" role="progressbar" aria-label="Classes" [attr.aria-valuenow]="classes.length" [attr.aria-valuemin]="0" [attr.aria-valuemax]="maximumActivite">
+            <div class="bar-fill" [style.width.%]="largeurActivite(classes.length)"></div>
+          </div>
+          <strong class="bar-value">{{ classes.length | number }}</strong>
         </div>
       </div>
-    </main>
-  </div>
-</div>
+    </article>
+
+    <article class="chart-card">
+      <div class="chart-heading">
+        <div>
+          <h2>Suivi financier</h2>
+          <p>Montants pour l’année scolaire sélectionnée</p>
+        </div>
+        <span class="chart-badge">FCFA</span>
+      </div>
+      <p *ngIf="loading" class="trend-message" role="status">Chargement des données…</p>
+      <div *ngIf="!loading && !errorMessage" class="bar-chart">
+        <div class="bar-row">
+          <span class="bar-label">Paiements scolaires reçus</span>
+          <div class="bar-track" role="progressbar" aria-label="Paiements scolaires reçus" [attr.aria-valuenow]="totalPaiements" [attr.aria-valuemin]="0" [attr.aria-valuemax]="maximumFinancier">
+            <div class="bar-fill" [style.width.%]="largeurFinanciere(totalPaiements)"></div>
+          </div>
+          <strong class="bar-value">{{ totalPaiements | number:'1.0-0' }}</strong>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Honoraires enseignants validés</span>
+          <div class="bar-track" role="progressbar" aria-label="Honoraires enseignants validés" [attr.aria-valuenow]="totalHonorairesBruts" [attr.aria-valuemin]="0" [attr.aria-valuemax]="maximumFinancier">
+            <div class="bar-fill" [style.width.%]="largeurFinanciere(totalHonorairesBruts)"></div>
+          </div>
+          <strong class="bar-value">{{ totalHonorairesBruts | number:'1.0-0' }}</strong>
+        </div>
+        <p class="chart-note">Honoraires estimés en brut, hors avances.</p>
+      </div>
+    </article>
+  </section>
+
+  <ng-template #loadingValue>
+    <span class="metric-loading" [attr.aria-label]="loading || loadingEvolution ? 'Chargement' : 'Indisponible'">
+      {{ loading || loadingEvolution ? '…' : '—' }}
+    </span>
+  </ng-template>
+
+  <section class="trend-card" aria-labelledby="trend-title">
+    <div class="trend-heading">
+      <div>
+        <h2 id="trend-title">Évolution des emplois du temps</h2>
+        <p>Nombre d’emplois enregistrés par année scolaire</p>
+      </div>
+      <span class="trend-total" *ngIf="!loadingEvolution">{{ evolutionEmplois.length }} année(s)</span>
+    </div>
+
+    <p *ngIf="errorEvolution" class="alert alert-warning mb-0" role="status">
+      {{ errorEvolution }}
+      <button class="btn btn-sm btn-outline-warning ms-3" type="button" (click)="reessayer()">Réessayer</button>
+    </p>
+    <p *ngIf="loadingEvolution" class="trend-message" role="status">Chargement de l’évolution…</p>
+    <p *ngIf="!loadingEvolution && !errorEvolution && !evolutionEmplois.length" class="trend-message">
+      Aucune année scolaire à afficher.
+    </p>
+
+    <div class="trend-list" *ngIf="!loadingEvolution && !errorEvolution && evolutionEmplois.length">
+      <div class="trend-row" *ngFor="let item of evolutionEmplois">
+        <span class="trend-year">{{ item.annee.nom }}</span>
+        <div
+          class="trend-track"
+          role="progressbar"
+          [attr.aria-label]="'Emplois du temps pour ' + item.annee.nom"
+          [attr.aria-valuenow]="item.nombre"
+          [attr.aria-valuemin]="0"
+          [attr.aria-valuemax]="maximumEmplois">
+          <div class="trend-bar" [style.width.%]="largeurBarre(item.nombre)"></div>
+        </div>
+        <strong class="trend-count">{{ item.nombre | number }}</strong>
+      </div>
+    </div>
+
+    <p class="trend-footnote">
+      L’application ne conserve pas de date de création pour chaque emploi ; la comparaison est faite par année scolaire.
+    </p>
+  </section>
+</main>

@@ -1,0 +1,76 @@
+.config-page {
+  background: #f4f5f7;
+  min-height: calc(100vh - 8rem);
+}
+
+.config-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  padding: .25rem 0 .8rem;
+  color: #6c757d;
+  border-bottom: 1px solid #dee2e6;
+
+  a {
+    color: #6257d9;
+  }
+}
+
+.config-card {
+  min-height: 128px;
+  border: 1px solid #e7e7e7;
+  border-radius: .75rem;
+  background: #fff;
+  transition: transform .2s ease, box-shadow .2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .1);
+  }
+}
+
+.config-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  flex: 0 0 3.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 1.35rem;
+
+  &.primary { background: #5b55d9; }
+  &.info { background: #3298f5; }
+  &.warning { background: #ffad0a; }
+  &.danger { background: #e95158; }
+  &.success { background: #18a34a; }
+  &.dark { background: #202630; }
+  &.secondary { background: #73808c; }
+}
+
+.config-card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.config-arrow {
+  color: #adb5bd;
+  transition: transform .2s ease;
+}
+
+.config-card:hover .config-arrow {
+  transform: translateX(3px);
+}
+
+@media (max-width: 575.98px) {
+  .config-card {
+    min-height: 108px;
+  }
+
+  .config-icon {
+    width: 3rem;
+    height: 3rem;
+    flex-basis: 3rem;
+  }
+}

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { DefaultLayoutComponent } from './layout';
+import { permissionGuard } from './service/permission.service';
 
 
 export const routes: Routes = [
@@ -11,13 +12,14 @@ export const routes: Routes = [
   {
     path: '',
     component: DefaultLayoutComponent,
+    canActivateChild: [permissionGuard],
     data: {
       title: 'Accueil'
     },
     children: [
       {
         path: 'avance',
-        loadChildren: () => import('./views/avance/routes').then(m => m.routes)
+        redirectTo: 'configuration/avance'
       },
       {
         path: 'supports',
@@ -28,8 +30,8 @@ export const routes: Routes = [
         loadChildren: () => import('./views/dashboard/routes').then((m) => m.routes)
       },
       {
-        path: 'administrateur',
-        loadChildren: () => import('./views/administrateur/routes').then((m) => m.routes)
+        path: 'configuration',
+        loadChildren: () => import('./views/configuration/routes').then(m => m.routes)
       },
       {
         path: 'administrateur',
@@ -37,15 +39,15 @@ export const routes: Routes = [
       },
       {
         path: 'classe',
-        loadChildren: () => import('./views/classe/routes').then((m) => m.routes)
+        redirectTo: 'configuration/classe'
       },
       {
         path: 'matiere',
-        loadChildren: () => import('./views/matiere/routes').then((m) => m.routes)
+        redirectTo: 'configuration/matiere'
       },
       {
         path: 'classeecole',
-        loadChildren: () => import('./views/classeecole/routes').then((m) => m.routes)
+        redirectTo: 'configuration/classeecole'
       },
       {
         path: 'eleve',
@@ -84,6 +86,13 @@ export const routes: Routes = [
         loadChildren: () => import('./views/pages/routes').then((m) => m.routes)
       }
     ]
+  },
+  {
+    path: 'acces-refuse',
+    loadComponent: () => import('./views/pages/access-denied/access-denied.component').then(m => m.AccessDeniedComponent),
+    data: {
+      title: 'Accès refusé'
+    }
   },
   {
     path: '404',

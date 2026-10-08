@@ -81,6 +81,8 @@ imprimer() {
   const doc = new jsPDF('p', 'mm', 'a4');
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const adresseEcole = user?.administrateur?.ecole?.adresseEcole ?? '';
 
   const logo = 'assets/logo.png';
   doc.addImage(logo, 'PNG', 15, 10, 25, 25);
@@ -122,6 +124,7 @@ imprimer() {
     head: [['N', 'Matricule', 'Nom', 'Prénom', 'Note classe', 'Note Compo']],
     body: tableData,
     theme: 'grid',
+    margin: { bottom: 18 },
     styles: {
       fontSize: 9,
 
@@ -133,6 +136,8 @@ imprimer() {
       fontStyle: 'bold'
     },
     didDrawPage: function (data) {
+      doc.setFontSize(8);
+      doc.text(adresseEcole, 14, pageHeight - 8);
 
       const date = new Date();
       const dateString = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();

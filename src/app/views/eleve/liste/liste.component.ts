@@ -103,6 +103,7 @@ export class ListeComponent implements OnInit {
     const classeNom = this.classes.find(classe => String(classe.id) === String(classeId))?.nom ?? '';
     const anneeNom = this.annees.find(annee => String(annee.id) === String(anneeId))?.nom ?? '';
     const descriptionEcole = this.user?.administrateur?.ecole?.descriptionEcole ?? '';
+    const adresseEcole = this.user?.administrateur?.ecole?.adresseEcole ?? '';
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const logo = await this.loadLogoForPdf();
@@ -129,7 +130,12 @@ export class ListeComponent implements OnInit {
         inscription.eleve?.prenom ?? ''
       ]),
       headStyles: { fillColor: [37, 99, 235] },
-      styles: { font: 'helvetica', fontSize: 9 }
+      styles: { font: 'helvetica', fontSize: 9 },
+      margin: { bottom: 18 },
+      didDrawPage: () => {
+        doc.setFontSize(8);
+        doc.text(adresseEcole, 15, doc.internal.pageSize.getHeight() - 8);
+      }
     });
 
     doc.autoPrint();

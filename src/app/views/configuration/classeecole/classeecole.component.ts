@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
-import { ClasseEcole } from '../../model/classeecole';
-import { Classe } from '../../model/classe';
-import { Ecole } from '../../model/ecole';
-import { ClasseEcoleService } from '../../service/classeecole.service';
-import { ClasseService } from '../../service/classe.service';
-import { EcoleService } from '../../service/ecole.service';
+import { ClasseEcole } from '../../../model/classeecole';
+import { Classe } from '../../../model/classe';
+import { Ecole } from '../../../model/ecole';
+import { ClasseEcoleService } from '../../../service/classeecole.service';
+import { ClasseService } from '../../../service/classe.service';
+import { EcoleService } from '../../../service/ecole.service';
 
 @Component({
   selector: 'app-classeecole',

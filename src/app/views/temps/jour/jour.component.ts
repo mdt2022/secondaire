@@ -141,9 +141,11 @@ export class JourComponent implements OnInit {
   const { jour, anneeuv } = this.emploiForm.value;
   const anneeNom = this.annees.find(annee => annee.id == anneeuv)?.nom ?? '';
   const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const descriptionEcole = user?.administrateur?.ecole?.descriptionEcole ?? user?.parametre?.ecole?.descriptionEcole ?? '';
+  const ecole = user?.administrateur?.ecole ?? user?.parametre?.ecole;
+  const descriptionEcole = ecole?.descriptionEcole ?? '';
+  const adresseEcole = ecole?.adresseEcole ?? '';
 
-  const doc = new jsPDF('l', 'mm', 'a4');
+  const doc = new jsPDF('p', 'mm', 'a4');
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   const logo = await this.loadLogoForPdf();
@@ -151,33 +153,32 @@ export class JourComponent implements OnInit {
   if (logo) doc.addImage(logo, 'PNG', 15, 10, 25, 25);
 
   doc.setFont('times', 'bold');
-  doc.setFontSize(20);
+  doc.setFontSize(15);
   const descriptionLignes = doc.splitTextToSize(descriptionEcole.toUpperCase(), pageWidth - 75);
   doc.text(descriptionLignes, pageWidth / 2 + 10, 16, { align: 'center' });
 
-  const titreY = Math.max(34, 16 + descriptionLignes.length * 8 + 5);
-  doc.setFontSize(20);
+  const titreY = Math.max(34, 16 + descriptionLignes.length * 6 + 5);
+  doc.setFontSize(16);
   doc.text("FICHE D'EMARGEMENTS", pageWidth / 2, titreY, { align: 'center' });
 
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(14);
+  doc.setFontSize(10);
   doc.text(`Jour : ${jour}  Année scolaire : ${anneeNom}`, pageWidth / 2, titreY + 7, { align: 'center' });
 
   let positionY = titreY + 13;
   const dateImpression = new Date().toLocaleDateString('fr-FR');
 
   this.emploisParClasse.forEach((bloc, index) => {
-    // Calcul strict : Hauteur d'une ligne moyenne (~8mm) + Entête (~10mm) + Titre de classe (~10mm)
     const tableHeightEstimated = 12 + (bloc.emplois.length * 8) + 10;
 
     // Si le tableau entier ne tient pas dans l'espace restant (en gardant 25mm de marge pour le footer)
-    if (positionY + tableHeightEstimated > pageHeight - 25) {
+    if (positionY + tableHeightEstimated > pageHeight - 28) {
       doc.addPage();
       positionY = 20; // Repositionnement propre en haut de la nouvelle page
     }
 
     doc.setFont('times', 'bold');
-    doc.setFontSize(16);
+    doc.setFontSize(12);
     doc.text(bloc.classe, 15, positionY + 6);
 
     const body = bloc.emplois.map(emploi => [
@@ -192,17 +193,37 @@ export class JourComponent implements OnInit {
 
     autoTable(doc, {
       startY: positionY + 11,
-      head: [['Professeur', 'Horaires', 'Matière', 'Coefficient', 'Horaire h', 'Nombre d’heures', 'Emargement']],
+      head: [['Professeur', 'Horaires', 'Matière', 'Coef.', 'Horaire h', 'Nb heures', 'Emargement']],
       body,
       theme: 'grid',
-      pageBreak: 'auto', // Permet la transition si une classe a énormément de lignes
-      margin: { bottom: 30, left: 15, right: 15 }, // Marge basse augmentée pour sécuriser le bas de page
-      styles: { fontSize: 12, cellPadding: 2, valign: 'middle' },
-      headStyles: { fillColor: [40, 100, 180] },
+      pageBreak: 'auto',
+      margin: { bottom: 25, left: 10, right: 10 },
+      styles: {
+        fontSize: 8,
+        cellPadding: 2,
+        minCellHeight: 9,
+        lineColor: [70, 70, 70],
+        lineWidth: 0.25,
+        textColor: [20, 20, 20],
+        valign: 'middle',
+        overflow: 'linebreak'
+      },
+      rowPageBreak: 'avoid',
+      headStyles: {
+        fillColor: [40, 100, 180],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+        lineColor: [50, 50, 50],
+        lineWidth: 0.3
+      },
       columnStyles: {
-        3: { halign: 'center' },
-        4: { halign: 'center' },
-        5: { halign: 'center' }
+        0: { cellWidth: 34 },
+        1: { cellWidth: 24, halign: 'center' },
+        2: { cellWidth: 31 },
+        3: { cellWidth: 13, halign: 'center' },
+        4: { cellWidth: 17, halign: 'center' },
+        5: { cellWidth: 17, halign: 'center' },
+        6: { cellWidth: 'auto' }
       }
     });
 
@@ -221,10 +242,11 @@ export class JourComponent implements OnInit {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     
-    // 1. Dessin de la description de l'école (parfaitement nettoyée et centrée)
-    const texteEcoleNettoye = descriptionEcole.replace(/^\s+|\s+\$/g, ''); // Équivalent robuste à .trim()
-    const lignesFooter = doc.splitTextToSize(texteEcoleNettoye, pageWidth - 100);
-    doc.text(lignesFooter, pageWidth / 2, pageHeight - 14, { align: 'center' });
+    // Affiche l’adresse de l’établissement dans le pied de page.
+    const adresseLignes = doc.splitTextToSize(adresseEcole.trim(), pageWidth - 80);
+    if (adresseLignes.length) {
+      doc.text(adresseLignes, pageWidth / 2, pageHeight - 14, { align: 'center' });
+    }
     
     // 2. Date d'impression en bas à gauche
     doc.text(`Imprimé le : ${dateImpression}`, 15, pageHeight - 8, { align: 'left' });

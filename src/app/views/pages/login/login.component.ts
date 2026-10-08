@@ -6,7 +6,9 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router } from '@angular/router';
 import { AuthService } from '../../../service/auth.service';
 import { Ecole } from '../../../model/ecole';
+import { User } from '../../../model/user';
 import { EcoleService } from '../../../service/ecole.service';
+import { PermissionService } from '../../../service/permission.service';
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
@@ -47,7 +49,8 @@ export class LoginComponent  implements OnInit {
     private fb: FormBuilder, 
     private authService: AuthService, 
     private router: Router,
-    private ecoleService: EcoleService
+    private ecoleService: EcoleService,
+    private permissionService: PermissionService
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
@@ -76,7 +79,7 @@ chargerEcoles(): void {
       next: (response) => { 
         this.loading = false; // stop spinner
         this.authService.saveUserAndToken(response);
-        this.redirectAfterLogin(response.user?.administrateur?.role?.nom);
+        this.redirectAfterLogin(response.user);
       },
       error: (err) => {
         this.loading = false; // stop spinner
@@ -85,13 +88,34 @@ chargerEcoles(): void {
     });
   }
 
-  private redirectAfterLogin(roleName?: string): void {
-    const role = roleName?.trim().toUpperCase();
-    const destination = role === 'AD' || role === 'AE2C' || role === 'CENSEUR'
+  private redirectAfterLogin(user: User | null): void {
+    const role = user?.administrateur?.role?.nom?.trim().toUpperCase();
+    const preferredPath = role === 'AD' || role === 'AE2C' || role === 'CENSEUR'
       ? '/note'
       : '/dashboard';
-
-    this.router.navigate([destination]);
+    const candidatePaths = [
+      preferredPath,
+      '/dashboard',
+      '/note',
+      '/temps',
+      '/eleve/eleve',
+      '/enseignant',
+      '/supports',
+      '/frais',
+      '/enseigner',
+      '/paiement',
+      '/pointage',
+      '/avance',
+      '/classe',
+      '/classeecole',
+      '/matiere',
+      '/administrateur/role',
+      '/administrateur'
+    ];
+    const destination = candidatePaths.find(path =>
+      this.permissionService.canAccessUrl(user, path)
+    );
+    this.router.navigate([destination ?? '/acces-refuse']);
   }
 
 }

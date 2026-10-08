@@ -35,7 +35,7 @@ export const routes: Routes = [
       },
       {
         path: 'role',
-        loadComponent: () => import('./role/role.component').then(m => m.RoleComponent),
+        loadComponent: () => import('../configuration/role/role.component').then(m => m.RoleComponent),
         data: {
           title: 'Gestion des rôles'
         }

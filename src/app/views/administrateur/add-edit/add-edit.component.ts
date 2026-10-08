@@ -133,7 +133,7 @@ export class AddEditComponent implements OnInit {
             timer: 1500,
             showConfirmButton: false
           });
-          this.router.navigate(['/administrateurs']);
+          this.router.navigate(['/administrateur/listes']);
         },
         error: () => Swal.fire('Erreur', 'Impossible de modifier cet administrateur', 'error')
       });
@@ -147,7 +147,7 @@ export class AddEditComponent implements OnInit {
             timer: 1500,
             showConfirmButton: false
           });
-          this.router.navigate(['/administrateurs']);
+          this.router.navigate(['/administrateur/listes']);
         },
         error: () => Swal.fire('Erreur', 'Impossible de créer cet administrateur', 'error')
       });

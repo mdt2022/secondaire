@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { Classe } from '../../model/classe';
-import { ClasseService } from '../../service/classe.service';
+import { Classe } from '../../../model/classe';
+import { ClasseService } from '../../../service/classe.service';
 import { CommonModule } from '@angular/common';
 
 @Component({

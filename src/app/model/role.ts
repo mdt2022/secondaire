@@ -5,4 +5,6 @@ export interface Role{
     nom: string;
     description?: string;
     categorie?: Categorie | null;
+    permissions?: string[];
+    permissionsConfigured?: boolean;
 }
