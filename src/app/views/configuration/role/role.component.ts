@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 
 import { Role } from '../../../model/role';
 import { RoleService } from '../../../service/role.service';
+import { permissionActions, permissionModules } from '../../../service/permission.service';
 
 import Swal from 'sweetalert2';
 
@@ -25,6 +26,9 @@ export class RoleComponent implements OnInit {
 
   editing = false;
   editingId: number | null = null;
+  readonly modules = permissionModules;
+  readonly actions = permissionActions;
+  selectedPermissions = new Set<string>();
 
   constructor(
     private roleService: RoleService,
@@ -55,6 +59,7 @@ export class RoleComponent implements OnInit {
   startCreate(): void {
     this.editing = false;
     this.editingId = null;
+    this.selectedPermissions = new Set<string>();
     this.form.reset();
   }
 
@@ -68,8 +73,43 @@ export class RoleComponent implements OnInit {
       description: role.description,
       categorieId: role.categorie ? role.categorie.id : null
     });
+    this.selectedPermissions = new Set(
+      role.permissionsConfigured
+        ? role.permissions ?? []
+        : this.permissionsParDefaut(role.nom)
+    );
   }
 
+  permissionCode(moduleCode: string, actionCode: string): string {
+    return `${moduleCode}:${actionCode}`;
+  }
+
+  permissionActive(moduleCode: string, actionCode: string): boolean {
+    return this.selectedPermissions.has(this.permissionCode(moduleCode, actionCode));
+  }
+
+  onPermissionChange(moduleCode: string, actionCode: string, event: Event): void {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement)) return;
+    const permission = this.permissionCode(moduleCode, actionCode);
+    if (target.checked) this.selectedPermissions.add(permission);
+    else this.selectedPermissions.delete(permission);
+  }
+
+  private permissionsParDefaut(roleName: string): string[] {
+    const normalizedName = roleName.trim().toUpperCase();
+    const excludedModules = normalizedName === 'DEV'
+      ? []
+      : normalizedName === 'TEST'
+        ? ['AVANCES', 'ADMINISTRATEURS', 'CLASSES', 'AFFECTATIONS_CLASSES', 'MATIERES']
+        : ['AVANCES', 'ADMINISTRATEURS', 'CLASSES', 'AFFECTATIONS_CLASSES', 'MATIERES'];
+    const modules = normalizedName === 'DEV'
+      ? this.modules
+      : this.modules.filter(module => !excludedModules.includes(module.code));
+    return modules.flatMap(module =>
+      this.actions.map(action => this.permissionCode(module.code, action.code))
+    );
+  }
 
   save(): void {
     if (this.form.invalid) {
@@ -88,7 +128,9 @@ export class RoleComponent implements OnInit {
       description: this.form.value.description,
       categorie: this.form.value.categorieId
         ? { id: this.form.value.categorieId }
-        : null
+        : null,
+      permissions: [...this.selectedPermissions],
+      permissionsConfigured: true
     };
 
     if (this.editing && this.editingId) {
@@ -97,7 +139,7 @@ export class RoleComponent implements OnInit {
           Swal.fire({
             icon: 'success',
             title: 'Modification réussie',
-            text: 'Le rôle a été mis à jour',
+            text: 'Le rôle a été mis à jour. Les utilisateurs concernés doivent se reconnecter pour actualiser leur menu.',
             timer: 1500,
             showConfirmButton: false
           });
@@ -105,6 +147,7 @@ export class RoleComponent implements OnInit {
           this.form.reset();
           this.editing = false;
           this.editingId = null;
+          this.selectedPermissions.clear();
         },
         error: () => {
           Swal.fire('Erreur', 'Erreur lors de la modification du rôle', 'error');
@@ -123,6 +166,7 @@ export class RoleComponent implements OnInit {
           });
           this.load();
           this.form.reset();
+          this.selectedPermissions.clear();
         },
         error: () => {
           Swal.fire('Erreur', 'Erreur lors de la création du rôle', 'error');

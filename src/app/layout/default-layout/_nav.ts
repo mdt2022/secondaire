@@ -81,14 +81,15 @@ export const navItems: INavDataExtended[] = [
   {
     name: 'Configuration',
     url: '/configuration',
-    permissionModule: 'CONFIGURATION',
-    iconComponent: { name: 'cil-settings' }
+    iconComponent: { name: 'cil-settings' },
+    role: ['DEV' , 'test']
   },
   {
     name: 'Administrateur',
     url: '/administrateur/listes',
     permissionModule: 'ADMINISTRATEURS',
-    iconComponent: { name: 'cil-user-follow' }
+    iconComponent: { name: 'cil-user-follow' },
+    role: ['DEV']
   },
 
   // {

@@ -34,11 +34,6 @@ export const routes: Routes = [
         path: 'matiere',
         loadComponent: () => import('./matiere/matiere.component').then(m => m.MatiereComponent),
         data: { title: 'Matières' }
-      },
-      {
-        path: 'ecole',
-        loadComponent: () => import('./ecole/ecole.component').then(m => m.EcoleComponent),
-        data: { title: 'Écoles' }
       }
     ]
   }

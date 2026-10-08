@@ -1,196 +1,139 @@
 <main class="dashboard">
   <header class="dashboard-header">
     <div>
-      <p class="eyebrow">PILOTAGE</p>
       <h1>Tableau de bord</h1>
-      <p class="dashboard-context">Vue d’ensemble des effectifs, des paiements et de l’activité scolaire.</p>
+      <p class="dashboard-context">Vue d’ensemble de votre établissement et de son activité.</p>
     </div>
-    <form class="dashboard-filters" #filterForm="ngForm" (ngSubmit)="rechercher()">
-      <label class="filter-field">
-        <span>École</span>
-        <select
-          class="form-select"
-          name="ecole"
-          [ngModel]="ecoleSelectionnee"
-          (ngModelChange)="changerEcole($event)"
-          required>
-          <option [ngValue]="null">Choisissez une école</option>
-          <option *ngFor="let ecole of ecoles" [ngValue]="ecole.idEcole">{{ ecole.nomEcole }}</option>
-        </select>
-      </label>
-      <label class="filter-field">
-        <span>Année scolaire</span>
-        <select
-          class="form-select"
-          name="annee"
-          [ngModel]="anneeSelectionnee"
-          (ngModelChange)="changerAnnee($event)"
-          [disabled]="!annees.length"
-          required>
-          <option [ngValue]="null">Choisissez une année</option>
-          <option *ngFor="let annee of annees" [ngValue]="annee.id">{{ annee.nom }}</option>
-        </select>
-      </label>
-      <button class="btn btn-primary search-button" type="submit" [disabled]="filterForm.invalid || loading || loadingFiltres">
-        {{ loading ? 'Recherche…' : 'Rechercher' }}
-      </button>
-    </form>
+    <label class="year-picker">
+      <span>Année scolaire</span>
+      <select
+        class="form-select"
+        [ngModel]="anneeSelectionnee"
+        (ngModelChange)="changerAnnee($event)"
+        [disabled]="!annees.length">
+        <option *ngFor="let annee of annees" [ngValue]="annee.id">{{ annee.nom }}</option>
+      </select>
+    </label>
   </header>
 
   <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
     {{ errorMessage }}
-    <button class="btn btn-sm btn-outline-danger ms-3" type="button" (click)="reessayer()" [disabled]="loading || loadingFiltres">Réessayer</button>
+    <button class="btn btn-sm btn-outline-danger ms-3" type="button" (click)="reessayer()">Réessayer</button>
   </div>
 
-  <p *ngIf="loadingFiltres" class="loading-message" role="status">Chargement des écoles et des années…</p>
+  <section class="chart-grid" aria-label="Graphiques des indicateurs de l’établissement">
+    <article class="chart-card">
+      <div class="chart-heading">
+        <div>
+          <h2>Activité de l’établissement</h2>
+          <p>Effectifs et suivi pour l’année scolaire sélectionnée</p>
+        </div>
+        <span class="chart-badge">Effectifs</span>
+      </div>
+      <p *ngIf="loading || loadingEvolution" class="trend-message" role="status">Chargement des données…</p>
+      <div *ngIf="!loading && !loadingEvolution && !errorMessage && !errorEvolution" class="bar-chart">
+        <div class="bar-row">
+          <span class="bar-label">Emplois du temps</span>
+          <div class="bar-track" role="progressbar" aria-label="Emplois du temps" [attr.aria-valuenow]="totalEmplois" [attr.aria-valuemin]="0" [attr.aria-valuemax]="maximumActivite">
+            <div class="bar-fill" [style.width.%]="largeurActivite(totalEmplois)"></div>
+          </div>
+          <strong class="bar-value">{{ totalEmplois | number }}</strong>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Émargements</span>
+          <div class="bar-track" role="progressbar" aria-label="Émargements" [attr.aria-valuenow]="totalEmargements" [attr.aria-valuemin]="0" [attr.aria-valuemax]="maximumActivite">
+            <div class="bar-fill" [style.width.%]="largeurActivite(totalEmargements)"></div>
+          </div>
+          <strong class="bar-value">{{ totalEmargements | number }}</strong>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Élèves inscrits</span>
+          <div class="bar-track" role="progressbar" aria-label="Élèves inscrits" [attr.aria-valuenow]="totalEleves" [attr.aria-valuemin]="0" [attr.aria-valuemax]="maximumActivite">
+            <div class="bar-fill" [style.width.%]="largeurActivite(totalEleves)"></div>
+          </div>
+          <strong class="bar-value">{{ totalEleves | number }}</strong>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Classes</span>
+          <div class="bar-track" role="progressbar" aria-label="Classes" [attr.aria-valuenow]="classes.length" [attr.aria-valuemin]="0" [attr.aria-valuemax]="maximumActivite">
+            <div class="bar-fill" [style.width.%]="largeurActivite(classes.length)"></div>
+          </div>
+          <strong class="bar-value">{{ classes.length | number }}</strong>
+        </div>
+      </div>
+    </article>
 
-  <ng-container *ngIf="hasSearched">
-  <section class="metric-grid" aria-label="Indicateurs de l’année scolaire">
-    <article class="metric-card">
-      <span class="metric-label">Élèves inscrits</span>
-      <strong>{{ !hasSearched ? '—' : loading ? '…' : errorMessage ? '—' : (totalEleves | number) }}</strong>
-      <span class="metric-hint">Pour l’année sélectionnée</span>
-    </article>
-    <article class="metric-card">
-      <span class="metric-label">Classes</span>
-      <strong>{{ !hasSearched ? '—' : loading ? '…' : errorMessage ? '—' : (totalClasses | number) }}</strong>
-      <span class="metric-hint">Dans le périmètre sélectionné</span>
-    </article>
-    <article class="metric-card">
-      <span class="metric-label">Enseignants</span>
-      <strong>{{ !hasSearched ? '—' : loading ? '…' : errorMessage ? '—' : (totalEnseignants | number) }}</strong>
-      <span class="metric-hint">Dans l’école sélectionnée</span>
-    </article>
-    <article class="metric-card">
-      <span class="metric-label">Matières enseignées</span>
-      <strong>{{ !hasSearched ? '—' : loading ? '…' : errorMessage ? '—' : (totalMatieres | number) }}</strong>
-      <span class="metric-hint">Pour l’année sélectionnée</span>
-    </article>
-    <article class="metric-card">
-      <span class="metric-label">Paiements reçus</span>
-      <strong>{{ !hasSearched ? '—' : loading ? '…' : errorMessage ? '—' : (totalPaiements | number:'1.0-0') }}</strong>
-      <span class="metric-hint">FCFA</span>
-    </article>
-    <article class="metric-card">
-      <span class="metric-label">Émargements</span>
-      <strong>{{ !hasSearched ? '—' : loading ? '…' : errorMessage ? '—' : (totalEmargements | number) }}</strong>
-      <span class="metric-hint">Honoraires validés : {{ !hasSearched ? '—' : loading ? '…' : errorMessage ? '—' : (totalHonoraires | number:'1.0-0') }} FCFA</span>
+    <article class="chart-card">
+      <div class="chart-heading">
+        <div>
+          <h2>Suivi financier</h2>
+          <p>Montants pour l’année scolaire sélectionnée</p>
+        </div>
+        <span class="chart-badge">FCFA</span>
+      </div>
+      <p *ngIf="loading" class="trend-message" role="status">Chargement des données…</p>
+      <div *ngIf="!loading && !errorMessage" class="bar-chart">
+        <div class="bar-row">
+          <span class="bar-label">Paiements scolaires reçus</span>
+          <div class="bar-track" role="progressbar" aria-label="Paiements scolaires reçus" [attr.aria-valuenow]="totalPaiements" [attr.aria-valuemin]="0" [attr.aria-valuemax]="maximumFinancier">
+            <div class="bar-fill" [style.width.%]="largeurFinanciere(totalPaiements)"></div>
+          </div>
+          <strong class="bar-value">{{ totalPaiements | number:'1.0-0' }}</strong>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Honoraires enseignants validés</span>
+          <div class="bar-track" role="progressbar" aria-label="Honoraires enseignants validés" [attr.aria-valuenow]="totalHonorairesBruts" [attr.aria-valuemin]="0" [attr.aria-valuemax]="maximumFinancier">
+            <div class="bar-fill" [style.width.%]="largeurFinanciere(totalHonorairesBruts)"></div>
+          </div>
+          <strong class="bar-value">{{ totalHonorairesBruts | number:'1.0-0' }}</strong>
+        </div>
+        <p class="chart-note">Honoraires estimés en brut, hors avances.</p>
+      </div>
     </article>
   </section>
 
-  <section class="table-card" aria-labelledby="summary-title">
-    <div class="section-heading">
+  <ng-template #loadingValue>
+    <span class="metric-loading" [attr.aria-label]="loading || loadingEvolution ? 'Chargement' : 'Indisponible'">
+      {{ loading || loadingEvolution ? '…' : '—' }}
+    </span>
+  </ng-template>
+
+  <section class="trend-card" aria-labelledby="trend-title">
+    <div class="trend-heading">
       <div>
-        <h2 id="summary-title">Synthèse par classe</h2>
-        <p>Effectifs, activité et montants pour l’école et l’année sélectionnées.</p>
+        <h2 id="trend-title">Évolution des emplois du temps</h2>
+        <p>Nombre d’emplois enregistrés par année scolaire</p>
       </div>
-      <span class="section-badge" *ngIf="hasSearched">{{ anneeSelectionneeNom }}</span>
+      <span class="trend-total" *ngIf="!loadingEvolution">{{ evolutionEmplois.length }} année(s)</span>
     </div>
 
-    <div *ngIf="!hasSearched" class="empty-state">Sélectionnez une école et une année, puis cliquez sur « Rechercher ».</div>
-    <p *ngIf="hasSearched && loading" class="loading-message" role="status">Chargement de la synthèse…</p>
-    <div *ngIf="hasSearched && !loading && errorMessage" class="empty-state">Les indicateurs ne sont pas disponibles.</div>
-    <div *ngIf="hasSearched && !loading && !errorMessage && !lignes.length" class="empty-state">
-      Aucune classe à afficher pour cette sélection.
+    <p *ngIf="errorEvolution" class="alert alert-warning mb-0" role="status">
+      {{ errorEvolution }}
+      <button class="btn btn-sm btn-outline-warning ms-3" type="button" (click)="reessayer()">Réessayer</button>
+    </p>
+    <p *ngIf="loadingEvolution" class="trend-message" role="status">Chargement de l’évolution…</p>
+    <p *ngIf="!loadingEvolution && !errorEvolution && !evolutionEmplois.length" class="trend-message">
+      Aucune année scolaire à afficher.
+    </p>
+
+    <div class="trend-list" *ngIf="!loadingEvolution && !errorEvolution && evolutionEmplois.length">
+      <div class="trend-row" *ngFor="let item of evolutionEmplois">
+        <span class="trend-year">{{ item.annee.nom }}</span>
+        <div
+          class="trend-track"
+          role="progressbar"
+          [attr.aria-label]="'Emplois du temps pour ' + item.annee.nom"
+          [attr.aria-valuenow]="item.nombre"
+          [attr.aria-valuemin]="0"
+          [attr.aria-valuemax]="maximumEmplois">
+          <div class="trend-bar" [style.width.%]="largeurBarre(item.nombre)"></div>
+        </div>
+        <strong class="trend-count">{{ item.nombre | number }}</strong>
+      </div>
     </div>
 
-    <div class="table-responsive" *ngIf="hasSearched && !loading && !errorMessage && lignes.length">
-      <table class="table table-hover align-middle mb-0">
-        <thead>
-          <tr>
-            <th>Classe</th>
-            <th class="text-end">Élèves</th>
-            <th class="text-end">Emplois du temps</th>
-            <th class="text-end">Émargements</th>
-            <th class="text-end">Paiements reçus (FCFA)</th>
-            <th class="text-end">Honoraires validés (FCFA)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let ligne of lignes">
-            <td class="fw-semibold">{{ ligne.classe.nom }}</td>
-            <td class="text-end">{{ ligne.eleves | number }}</td>
-            <td class="text-end">{{ ligne.emplois | number }}</td>
-            <td class="text-end">{{ ligne.emargements | number }}</td>
-            <td class="text-end text-primary fw-semibold">{{ ligne.paiements | number:'1.0-0' }}</td>
-            <td class="text-end">{{ ligne.honoraires | number:'1.0-0' }}</td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <th>Total</th>
-            <th class="text-end">{{ totalEleves | number }}</th>
-            <th class="text-end">{{ totalEmplois | number }}</th>
-            <th class="text-end">{{ totalEmargements | number }}</th>
-            <th class="text-end">{{ totalPaiements | number:'1.0-0' }}</th>
-            <th class="text-end">{{ totalHonoraires | number:'1.0-0' }}</th>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-  </section>
-  </ng-container>
-
-  <section class="chart-grid" aria-label="Graphiques du tableau de bord">
-    <article class="chart-card">
-      <div class="section-heading">
-        <div>
-          <h2>Évolution des emplois du temps</h2>
-          <p>Nombre d’emplois par année scolaire</p>
-        </div>
-        <span class="section-badge" *ngIf="!loadingEvolution && evolutionEmplois.length">{{ evolutionEmplois.length }} année(s)</span>
-      </div>
-      <p *ngIf="errorEvolution" class="alert alert-warning mb-0" role="status">{{ errorEvolution }}</p>
-      <p *ngIf="loadingEvolution" class="loading-message" role="status">Chargement de l’évolution…</p>
-      <p *ngIf="!loadingEvolution && !errorEvolution && !evolutionEmplois.length && ecoleSelectionnee !== null" class="empty-state">
-        Aucune année scolaire à afficher.
-      </p>
-      <p *ngIf="ecoleSelectionnee === null" class="empty-state">Choisissez une école pour afficher le graphique.</p>
-      <div class="bar-chart" *ngIf="!loadingEvolution && !errorEvolution && evolutionEmplois.length">
-        <div class="bar-row" *ngFor="let item of evolutionEmplois">
-          <span class="bar-label">{{ item.annee.nom }}</span>
-          <div
-            class="bar-track"
-            role="progressbar"
-            [attr.aria-label]="'Emplois du temps pour ' + item.annee.nom"
-            [attr.aria-valuenow]="item.nombre"
-            [attr.aria-valuemin]="0"
-            [attr.aria-valuemax]="maximumEmplois">
-            <div class="bar-fill" [style.width.%]="largeurBarre(item.nombre, maximumEmplois)"></div>
-          </div>
-          <strong class="bar-value">{{ item.nombre | number }}</strong>
-        </div>
-      </div>
-      <p class="chart-note" *ngIf="evolutionEmplois.length">La comparaison est réalisée par année scolaire, sans date de création par emploi.</p>
-    </article>
-
-    <article class="chart-card">
-      <div class="section-heading">
-        <div>
-          <h2>Paiements par classe</h2>
-          <p>Montants reçus pour l’année scolaire sélectionnée</p>
-        </div>
-        <span class="section-badge">FCFA</span>
-      </div>
-      <p *ngIf="loadingPaiementsGraphique" class="loading-message" role="status">Chargement des paiements…</p>
-      <p *ngIf="errorPaiementsGraphique" class="alert alert-warning mb-0" role="status">{{ errorPaiementsGraphique }}</p>
-      <div class="bar-chart" *ngIf="!loadingPaiementsGraphique && !errorPaiementsGraphique && paiementsGraphique.length">
-        <div class="bar-row" *ngFor="let resume of paiementsGraphique">
-          <span class="bar-label">{{ resume.classe.nom }}</span>
-          <div
-            class="bar-track"
-            role="progressbar"
-            [attr.aria-label]="'Paiements reçus pour ' + resume.classe.nom"
-            [attr.aria-valuenow]="resume.paiements"
-            [attr.aria-valuemin]="0"
-            [attr.aria-valuemax]="maximumPaiementsClasse">
-            <div class="bar-fill" [style.width.%]="largeurBarre(resume.paiements, maximumPaiementsClasse)"></div>
-          </div>
-          <strong class="bar-value">{{ resume.paiements | number:'1.0-0' }}</strong>
-        </div>
-      </div>
-      <p *ngIf="!loadingPaiementsGraphique && !errorPaiementsGraphique && !paiementsGraphique.length && ecoleSelectionnee !== null" class="empty-state">Aucun paiement à afficher pour cette sélection.</p>
-      <p *ngIf="ecoleSelectionnee === null" class="empty-state">Choisissez une école et une année pour afficher le graphique.</p>
-    </article>
+    <p class="trend-footnote">
+      L’application ne conserve pas de date de création pour chaque emploi ; la comparaison est faite par année scolaire.
+    </p>
   </section>
 </main>
