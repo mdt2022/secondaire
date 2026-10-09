@@ -96,10 +96,19 @@ export class EnseignerComponent implements OnInit {
       next: data => {
         this.matieres = [...data].sort((a, b) =>
           String(a.libelle ?? '').localeCompare(String(b.libelle ?? ''), 'fr', { sensitivity: 'base' })
-          || Number(a.coefficient) - Number(b.coefficient)
-          || Number(a.horaire) - Number(b.horaire)
         );
-        this.matieresAffectation = this.matieres;
+        const libelles = new Set<string>();
+        this.matieresAffectation = this.matieres.filter(matiere => {
+          const libelleNormalise = String(matiere.libelle ?? '')
+            .trim()
+            .replace(/\s+/g, ' ')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLocaleLowerCase('fr');
+          if (!libelleNormalise || libelles.has(libelleNormalise)) return false;
+          libelles.add(libelleNormalise);
+          return true;
+        });
       },
       error: () => Swal.fire('Erreur', 'Impossible de charger les matières', 'error')
     });

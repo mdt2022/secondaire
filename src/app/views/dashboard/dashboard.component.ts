@@ -158,7 +158,7 @@ export class DashboardComponent implements OnInit {
     this.loadingEvolution = true;
     this.errorEvolution = '';
 
-    const annees = [...this.annees].sort((a, b) => a.id - b.id);
+    const annees = [...this.annees].sort((a, b) => b.id - a.id);
     const requetes: Observable<Emploidutemps[]>[] = annees.map(annee =>
       this.emploiService.parAnneeAndEcole(annee.id, ecoleId)
     );

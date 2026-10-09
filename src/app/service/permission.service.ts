@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 
 export const permissionModules = [
   { code: 'DASHBOARD', label: 'Tableau de bord' },
+  { code: 'CONFIGURATION', label: 'Configuration' },
   { code: 'AVANCES', label: 'Avances' },
   { code: 'ADMINISTRATEURS', label: 'Administrateurs' },
   { code: 'CLASSES', label: 'Classes' },
@@ -17,7 +18,7 @@ export const permissionModules = [
   { code: 'MATIERES_ENSEIGNEES', label: 'Matières enseignées' },
   { code: 'NOTES', label: 'Notes' },
   { code: 'PAIEMENTS', label: 'Paiements' },
-  { code: 'POINTAGES', label: 'Pointages et émargements' }
+  { code: 'POINTAGES', label: 'Pointages' }
 ] as const;
 
 export const permissionActions = [
@@ -76,6 +77,7 @@ export class PermissionService {
     if (!role) return false;
     const roleName = role.nom?.trim().toUpperCase();
     if (moduleCode === 'ROLES') return roleName === 'DEV' || roleName === 'TEST';
+    if (moduleCode === 'CONFIGURATION' && (roleName === 'DEV' || roleName === 'TEST')) return true;
 
     if (role.permissionsConfigured !== true) {
       if (roleName === 'DEV') return true;
@@ -88,6 +90,7 @@ export class PermissionService {
   moduleForUrl(url: string): string | null {
     const segments = url.split('?')[0].split('/').filter(Boolean);
     if (segments[0] === 'configuration') {
+      if (!segments[1]) return 'CONFIGURATION';
       if (segments[1] === 'role') return 'ROLES';
       const configurationModules: Record<string, string> = {
         avance: 'AVANCES',
