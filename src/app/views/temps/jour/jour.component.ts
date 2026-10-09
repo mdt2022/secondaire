@@ -132,7 +132,7 @@ export class JourComponent implements OnInit {
   }
 
   /**********impression */
-  async printEmploi(): Promise<void> {
+async printEmploi(): Promise<void> {
   if (this.emplois.length === 0) {
     Swal.fire('Aucune donnée', 'Aucun emploi du temps à imprimer.', 'info');
     return;
@@ -169,17 +169,17 @@ export class JourComponent implements OnInit {
   const dateImpression = new Date().toLocaleDateString('fr-FR');
 
   this.emploisParClasse.forEach((bloc, index) => {
-    const tableHeightEstimated = 14 + (bloc.emplois.length * 10) + 10;
+    //const tableHeightEstimated = 14 + (bloc.emplois.length * 10) + 10;
 
     // Si le tableau entier ne tient pas dans l'espace restant (en gardant 25mm de marge pour le footer)
-    if (positionY + tableHeightEstimated > pageHeight - 28) {
+    if (positionY > pageHeight - 35) {
       doc.addPage();
       positionY = 20; // Repositionnement propre en haut de la nouvelle page
     }
 
     doc.setFont('times', 'bold');
     doc.setFontSize(13);
-    doc.text(bloc.classe, 15, positionY + 6);
+    doc.text(bloc.classe, 15, positionY + 4);
 
     const body = bloc.emplois.map(emploi => [
       `${emploi.professeur?.prenom ?? ''} ${emploi.professeur?.nom ?? ''}`.trim(),
@@ -190,16 +190,16 @@ export class JourComponent implements OnInit {
     ]);
 
     autoTable(doc, {
-      startY: positionY + 11,
-      head: [['Professeur', 'Horaires', 'Matière', 'Nb heures', 'Emargement']],
+      startY: positionY + 7,
+      head: [['Professeur', 'Horaires', 'Matière', 'NB h.', 'Emargement']],
       body,
       theme: 'grid',
       pageBreak: 'auto',
       margin: { bottom: 25, left: 10, right: 10 },
       styles: {
         fontSize: 9,
-        cellPadding: 2,
-        minCellHeight: 10,
+        cellPadding: 1.5,
+        minCellHeight: 0,
         lineColor: [40, 40, 40],
         lineWidth: 0.25,
         textColor: [20, 20, 20],
@@ -224,7 +224,7 @@ export class JourComponent implements OnInit {
     });
 
     // On récupère la fin réelle du tableau généré pour positionner le suivant
-    positionY = (doc as any).lastAutoTable.finalY + 3;
+    positionY = (doc as any).lastAutoTable.finalY + 7;
   });
 
   // ==========================================
