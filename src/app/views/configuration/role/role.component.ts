@@ -105,7 +105,11 @@ export class RoleComponent implements OnInit {
         : ['AVANCES', 'ADMINISTRATEURS', 'CLASSES', 'AFFECTATIONS_CLASSES', 'MATIERES'];
     const modules = normalizedName === 'DEV'
       ? this.modules
-      : this.modules.filter(module => !excludedModules.includes(module.code));
+      : this.modules.filter(module =>
+        module.code === 'CONFIGURATION'
+          ? normalizedName === 'TEST'
+          : !excludedModules.includes(module.code)
+      );
     return modules.flatMap(module =>
       this.actions.map(action => this.permissionCode(module.code, action.code))
     );

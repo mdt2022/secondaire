@@ -88,10 +88,11 @@
         <select class="form-control mb-2" [(ngModel)]="a.classeId">
       <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
     </select>
-        <div class="mt-2">
-            <label *ngFor="let m of matieres" class="me-3">
-        <input type="checkbox" [value]="m.id" (change)="onMatiereToggle($event, a, m.id)"> {{ m.libelle }}
-      </label>
+        <div class="subject-checkbox-list mt-2">
+            <label *ngFor="let m of matieresAffectation" class="subject-checkbox">
+                <input type="checkbox" [value]="m.id" (change)="onMatiereToggle($event, a, m.id)">
+                <span>{{ m.libelle }}</span>
+            </label>
         </div>
     </div>
 

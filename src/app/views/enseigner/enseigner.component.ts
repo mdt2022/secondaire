@@ -5,6 +5,7 @@ import { EnseignantService } from '../../service/enseignant.service';
 import { ClasseEcoleService } from '../../service/classeecole.service';
 import { MatiereService } from '../../service/matiere.service';
 import { AuthService } from '../../service/auth.service';
+import { Matiere } from '../../model/matiere';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -26,6 +27,7 @@ export class EnseignerComponent implements OnInit {
 
   classes: any[] = [];
   matieres: any[] = [];
+  matieresAffectation: Matiere[] = [];
   professeurs: any[] = [];
 
   selectedEnseigner: Enseigner | null = null;
@@ -91,7 +93,23 @@ export class EnseignerComponent implements OnInit {
 
   loadMatieres(): void {
     this.matiereService.getAll().subscribe({
-      next: data => this.matieres = data,
+      next: data => {
+        this.matieres = [...data].sort((a, b) =>
+          String(a.libelle ?? '').localeCompare(String(b.libelle ?? ''), 'fr', { sensitivity: 'base' })
+        );
+        const libelles = new Set<string>();
+        this.matieresAffectation = this.matieres.filter(matiere => {
+          const libelleNormalise = String(matiere.libelle ?? '')
+            .trim()
+            .replace(/\s+/g, ' ')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLocaleLowerCase('fr');
+          if (!libelleNormalise || libelles.has(libelleNormalise)) return false;
+          libelles.add(libelleNormalise);
+          return true;
+        });
+      },
       error: () => Swal.fire('Erreur', 'Impossible de charger les matières', 'error')
     });
   }

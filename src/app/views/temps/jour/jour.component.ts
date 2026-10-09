@@ -153,23 +153,23 @@ export class JourComponent implements OnInit {
   if (logo) doc.addImage(logo, 'PNG', 15, 10, 25, 25);
 
   doc.setFont('times', 'bold');
-  doc.setFontSize(15);
+  doc.setFontSize(16);
   const descriptionLignes = doc.splitTextToSize(descriptionEcole.toUpperCase(), pageWidth - 75);
   doc.text(descriptionLignes, pageWidth / 2 + 10, 16, { align: 'center' });
 
   const titreY = Math.max(34, 16 + descriptionLignes.length * 6 + 5);
-  doc.setFontSize(16);
+  doc.setFontSize(17);
   doc.text("FICHE D'EMARGEMENTS", pageWidth / 2, titreY, { align: 'center' });
 
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
+  doc.setFontSize(11);
   doc.text(`Jour : ${jour}  Année scolaire : ${anneeNom}`, pageWidth / 2, titreY + 7, { align: 'center' });
 
   let positionY = titreY + 13;
   const dateImpression = new Date().toLocaleDateString('fr-FR');
 
   this.emploisParClasse.forEach((bloc, index) => {
-    const tableHeightEstimated = 12 + (bloc.emplois.length * 8) + 10;
+    const tableHeightEstimated = 14 + (bloc.emplois.length * 10) + 10;
 
     // Si le tableau entier ne tient pas dans l'espace restant (en gardant 25mm de marge pour le footer)
     if (positionY + tableHeightEstimated > pageHeight - 28) {
@@ -178,31 +178,29 @@ export class JourComponent implements OnInit {
     }
 
     doc.setFont('times', 'bold');
-    doc.setFontSize(12);
+    doc.setFontSize(13);
     doc.text(bloc.classe, 15, positionY + 6);
 
     const body = bloc.emplois.map(emploi => [
       `${emploi.professeur?.prenom ?? ''} ${emploi.professeur?.nom ?? ''}`.trim(),
       `${emploi.heuredebut} -- ${emploi.heurefin}`,
       emploi.matiere?.libelle ?? '',
-      emploi.matiere?.coefficient ?? '',
-      emploi.matiere?.horaire ?? '',
       emploi.nbreheure ?? '',
       ''
     ]);
 
     autoTable(doc, {
       startY: positionY + 11,
-      head: [['Professeur', 'Horaires', 'Matière', 'Coef.', 'Horaire h', 'Nb heures', 'Emargement']],
+      head: [['Professeur', 'Horaires', 'Matière', 'Nb heures', 'Emargement']],
       body,
       theme: 'grid',
       pageBreak: 'auto',
       margin: { bottom: 25, left: 10, right: 10 },
       styles: {
-        fontSize: 8,
+        fontSize: 9,
         cellPadding: 2,
-        minCellHeight: 9,
-        lineColor: [70, 70, 70],
+        minCellHeight: 10,
+        lineColor: [40, 40, 40],
         lineWidth: 0.25,
         textColor: [20, 20, 20],
         valign: 'middle',
@@ -210,25 +208,23 @@ export class JourComponent implements OnInit {
       },
       rowPageBreak: 'avoid',
       headStyles: {
-        fillColor: [40, 100, 180],
-        textColor: [255, 255, 255],
+        fillColor: [230, 230, 230],
+        textColor: [0, 0, 0],
         fontStyle: 'bold',
-        lineColor: [50, 50, 50],
+        lineColor: [30, 30, 30],
         lineWidth: 0.3
       },
       columnStyles: {
-        0: { cellWidth: 34 },
-        1: { cellWidth: 24, halign: 'center' },
-        2: { cellWidth: 31 },
-        3: { cellWidth: 13, halign: 'center' },
-        4: { cellWidth: 17, halign: 'center' },
-        5: { cellWidth: 17, halign: 'center' },
-        6: { cellWidth: 'auto' }
+        0: { cellWidth: 52 },
+        1: { cellWidth: 25, halign: 'center' },
+        2: { cellWidth: 66 },
+        3: { cellWidth: 14, halign: 'center' },
+        4: { cellWidth: 25 }
       }
     });
 
     // On récupère la fin réelle du tableau généré pour positionner le suivant
-    positionY = (doc as any).lastAutoTable.finalY + 15;
+    positionY = (doc as any).lastAutoTable.finalY + 3;
   });
 
   // ==========================================
@@ -240,7 +236,7 @@ export class JourComponent implements OnInit {
     doc.setPage(i); // On cible la page courante
     
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
+    doc.setFontSize(9);
     
     // Affiche l’adresse de l’établissement dans le pied de page.
     const adresseLignes = doc.splitTextToSize(adresseEcole.trim(), pageWidth - 80);
