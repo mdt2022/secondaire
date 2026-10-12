@@ -1,3 +1,4 @@
+/// <reference types="node" />
 // Installer     npm install jspdf jspdf-autotable
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -7,6 +8,7 @@ import { PointageService } from '../../../../service/pointage.service';
 import autoTable from 'jspdf-autotable';
 import jsPDF from 'jspdf';
 import Swal from 'sweetalert2';
+import * as ExcelJS from 'exceljs';
 
 @Component({
   selector: 'app-fiche-validee',
@@ -571,6 +573,93 @@ imprimerFichePaiement() {
 
     doc.save(`fiche_paiement_${this.dateDebut}_${this.dateFin}.pdf`);
   };
+}
+
+async exporterFichePaiementExcel(): Promise<void> {
+  if (!this.filteredFiche.length) {
+    Swal.fire('Aucune donnée', 'Aucune donnée à exporter.', 'info');
+    return;
+  }
+
+  try {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const ecole = user?.administrateur?.ecole;
+    const enseignant = this.filteredFiche[0]?.enseignant;
+    const nomComplet = `${enseignant?.prenom || ''} ${enseignant?.nom || ''}`.trim();
+    let totalNH = 0;
+    let totalMontant = 0;
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Fiche de paiement');
+    worksheet.mergeCells('A1:F1');
+    worksheet.getCell('A1').value = 'FICHE DE PAIEMENT ENSEIGNANT';
+    worksheet.getCell('A1').font = { bold: true, size: 16 };
+    worksheet.addRow(['École', ecole?.descriptionEcole || '']);
+    worksheet.addRow(['Adresse', ecole?.adresseEcole || '']);
+    worksheet.addRow(['Période', `du ${this.dateDebut} au ${this.dateFin}`]);
+    worksheet.addRow(['Enseignant', nomComplet]);
+    worksheet.addRow([]);
+    const headerRow = worksheet.addRow([
+      'Jour', 'Matière', 'Classe', 'Heure', 'NH', 'Montant (CFA)'
+    ]);
+    headerRow.font = { bold: true };
+    headerRow.eachCell(cell => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFD9EAD3' }
+      };
+    });
+
+    this.filteredFiche.forEach(pointage => {
+      const nh = pointage.emploidutemps?.matiere?.horaire || 0;
+      const montant = (pointage.enseignant?.tarif || 0) * nh;
+
+      totalNH += nh;
+      totalMontant += montant;
+      worksheet.addRow([
+        pointage.emploidutemps?.jour || '',
+        pointage.emploidutemps?.matiere?.libelle || '',
+        pointage.emploidutemps?.classe?.nom || '',
+        `${pointage.emploidutemps?.heuredebut || ''} - ${pointage.emploidutemps?.heurefin || ''}`,
+        nh,
+        montant
+      ]);
+    });
+
+    const totalRow = worksheet.addRow(['', '', '', 'TOTAL', totalNH, totalMontant]);
+    const advanceRow = worksheet.addRow(['', '', '', 'Avance sur salaire', '', this.avance]);
+    const netRow = worksheet.addRow(['', '', '', 'Montant net', '', this.montantNetFiltered]);
+    [totalRow, advanceRow, netRow].forEach(row => {
+      row.font = { bold: true };
+    });
+    worksheet.addRow([]);
+    worksheet.addRow(['Fait le', new Date().toLocaleDateString('fr-FR')]);
+    worksheet.columns = [
+      { width: 16 },
+      { width: 24 },
+      { width: 18 },
+      { width: 24 },
+      { width: 12 },
+      { width: 20 }
+    ];
+
+    const dateDebutFichier = this.dateDebut.replace(/\//g, '-');
+    const dateFinFichier = this.dateFin.replace(/\//g, '-');
+    const buffer = await workbook.xlsx.writeBuffer();
+    const file = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    });
+    const url = URL.createObjectURL(file);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `fiche_paiement_${dateDebutFichier}_${dateFinFichier}.xlsx`;
+    link.click();
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Erreur lors de l’export Excel de la fiche de paiement:', error);
+    Swal.fire('Erreur', 'Impossible de générer la fiche de paiement Excel.', 'error');
+  }
 }
 
 

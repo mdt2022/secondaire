@@ -294,10 +294,16 @@
                     <!-- <div class="text-muted small">
                         <i class="bi bi-info-circle me-1"></i> Cliquez sur les en-têtes pour trier • Double-cliquez pour inverser l'ordre
                     </div> -->
-                    <button class="btn btn-primary" (click)="imprimerFichePaiement()" [disabled]="displayedFiche.length === 0">
-            <i class="bi bi-printer me-2"></i>
-            IMPRIMER SA FICHE DE PAIEMENT
-          </button>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" (click)="imprimerFichePaiement()" [disabled]="displayedFiche.length === 0">
+                            <i class="bi bi-printer me-2"></i>
+                            IMPRIMER SA FICHE DE PAIEMENT
+                        </button>
+                        <button class="btn btn-success" (click)="exporterFichePaiementExcel()" [disabled]="displayedFiche.length === 0">
+                            <i class="bi bi-file-earmark-excel me-2"></i>
+                            TÉLÉCHARGER EN EXCEL
+                        </button>
+                    </div>
                 </div>
             </div>
 

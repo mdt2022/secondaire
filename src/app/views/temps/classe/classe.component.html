@@ -25,14 +25,14 @@
                     </select>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-6 d-flex align-items-center gap-2 flex-wrap">
                     <button class="btn btn-primary" type="submit">
                         Rechercher
                     </button>
-                    <button class="btn btn-secondary ms-2" type="button" (click)="resetForm()">
+                    <button class="btn btn-secondary" type="button" (click)="resetForm()">
                         Annuler
                     </button>
-                    <button *ngIf="rechercheEffectuee" class="btn btn-success ms-2" type="button" (click)="printEmploi()" [disabled]="emploisTable.length === 0">
+                    <button *ngIf="rechercheEffectuee" class="btn btn-success" type="button" (click)="printEmploi()" [disabled]="emploisTable.length === 0">
                         Imprimer
                     </button>
                 </div>
