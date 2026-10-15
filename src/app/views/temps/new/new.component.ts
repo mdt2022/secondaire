@@ -113,8 +113,41 @@ export class NewComponent implements OnInit {
       ecole: { idEcole: this.user.administrateur.ecole.idEcole }
     } as Partial<Emploidutemps>;
 
+    const idEcole = this.user.administrateur.ecole.idEcole;
+    this.emploiService.parJour(f.jour, anneeuvId, idEcole).subscribe({
+      next: emploisDuJour => {
+        const doublon = emploisDuJour.some(emploi =>
+          emploi.id !== this.currentId && this.estDoublon(emploi, payload)
+        );
+        if (doublon) {
+          Swal.fire(
+            'Emploi déjà existant',
+            'Un emploi du temps identique existe déjà pour ce professeur, cette classe, cette matière, ce jour et ces horaires.',
+            'warning'
+          );
+          return;
+        }
+
+        this.verifierEffectifEtEnregistrer(payload, anneeuvId, classeId, idEcole);
+      },
+      error: err => {
+        console.error('Erreur vérification doublon emploi du temps', err);
+        Swal.fire(
+          'Vérification impossible',
+          'Impossible de vérifier si cet emploi du temps existe déjà. Aucun emploi du temps n’a été enregistré.',
+          'error'
+        );
+      }
+    });
+  }
+
+  private verifierEffectifEtEnregistrer(
+    payload: Partial<Emploidutemps>,
+    anneeuvId: number,
+    classeId: number,
+    idEcole: number
+  ): void {
     if (!this.editMode) {
-      const idEcole = this.user.administrateur.ecole.idEcole;
       this.verificationEffectifEnCours = true;
       this.eleveecoleService.getByClasseAndAnnee([
         String(anneeuvId),
@@ -140,6 +173,18 @@ export class NewComponent implements OnInit {
     }
 
     this.enregistrer(payload);
+  }
+
+  private estDoublon(emploi: Emploidutemps, candidat: Partial<Emploidutemps>): boolean {
+    const normaliserHeure = (heure: string): string => heure?.split(':').slice(0, 2).join(':');
+
+    return emploi.jour === candidat.jour
+      && normaliserHeure(emploi.heuredebut) === normaliserHeure(candidat.heuredebut ?? '')
+      && normaliserHeure(emploi.heurefin) === normaliserHeure(candidat.heurefin ?? '')
+      && Number(emploi.matiere?.id) === Number(candidat.matiere?.id)
+      && Number(emploi.professeur?.id) === Number(candidat.professeur?.id)
+      && Number(emploi.classe?.id) === Number(candidat.classe?.id)
+      && Number(emploi.anneeuv?.id) === Number(candidat.anneeuv?.id);
   }
 
   private enregistrer(payload: Partial<Emploidutemps>): void {

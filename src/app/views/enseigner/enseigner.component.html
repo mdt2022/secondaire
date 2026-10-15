@@ -32,7 +32,9 @@
         <div class="col-md-3">
             <select class="form-select" [(ngModel)]="filterMatiereId" (change)="applyAll()">
       <option [ngValue]="null">Toutes les matières</option>
-      <option *ngFor="let m of matieres" [ngValue]="m.id">{{ m.libelle }}</option>
+      <option *ngFor="let m of matieres" [ngValue]="m.id">
+        {{ m.libelle }} — Coeff. {{ m.coefficient }} — Horaire : {{ m.horaire }} h
+      </option>
     </select>
         </div>
     </div>
@@ -52,7 +54,10 @@
                 <td>{{ i + 1 + page * size }}</td>
                 <td>{{ e.classe.nom }}</td>
                 <td>{{ e.enseignant.prenom }} {{ e.enseignant.nom }}</td>
-                <td>{{ e.matiere.libelle }}</td>
+                <td>
+                    {{ e.matiere.libelle }}
+                    <small class="text-muted">— Coeff. {{ e.matiere.coefficient }} — Horaire : {{ e.matiere.horaire }} h</small>
+                </td>
                 <td>
                     <button class="btn btn-warning btn-sm me-1" (click)="edit(e)">modifier</button>
                     <button class="btn btn-danger btn-sm" (click)="delete(e.id)">supprimer</button>
@@ -91,7 +96,7 @@
         <div class="subject-checkbox-list mt-2">
             <label *ngFor="let m of matieresAffectation" class="subject-checkbox">
                 <input type="checkbox" [value]="m.id" (change)="onMatiereToggle($event, a, m.id)">
-                <span>{{ m.libelle }}</span>
+                <span>{{ m.libelle }} — Coeff. {{ m.coefficient }} — Horaire : {{ m.horaire }} h</span>
             </label>
         </div>
     </div>
@@ -107,7 +112,9 @@
     <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
   </select>
     <select class="form-control mb-3" [(ngModel)]="selectedEnseigner!.matiere.id">
-    <option *ngFor="let m of matieres" [value]="m.id">{{ m.libelle }}</option>
+    <option *ngFor="let m of matieres" [value]="m.id">
+      {{ m.libelle }} — Coeff. {{ m.coefficient }} — Horaire : {{ m.horaire }} h
+    </option>
   </select>
     <button class="btn btn-info" (click)="update()">Enregistrer</button>
     <button class="btn btn-secondary ms-2" (click)="switchView('list')">Annuler</button>

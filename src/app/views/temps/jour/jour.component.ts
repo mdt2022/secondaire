@@ -162,8 +162,10 @@ export class JourComponent implements OnInit {
     const pageHeight = doc.internal.pageSize.getHeight();
     const logo = await this.loadLogoForPdf();
     const dateImpression = new Date().toLocaleDateString('fr-FR');
-    const descriptionLignes = doc.splitTextToSize(descriptionEcole.trim().toUpperCase(), pageWidth - 65);
-    const titreY = 12 + descriptionLignes.length * 4.5 + 2;
+    doc.setFont('times', 'bold');
+    doc.setFontSize(11);
+    const descriptionLignes = doc.splitTextToSize(descriptionEcole.trim().toUpperCase(), pageWidth - 37);
+    const titreY = 10 + descriptionLignes.length * 5 + 3;
     const informationsY = titreY + 6;
     const debutTableauY = informationsY + 7;
 
@@ -172,12 +174,12 @@ export class JourComponent implements OnInit {
       head: [['N°', 'PRÉNOMS ET NOM', 'ÉTABLIS', 'Jour de la SEM', 'Classe', 'HEURES', 'MATIÈRE', 'NBRE', 'ÉMARGEMENT']],
       body: rows,
       theme: 'grid',
-      margin: { top: debutTableauY, bottom: 16, left: 8, right: 8 },
+      margin: { top: debutTableauY, bottom: 16, left: 5, right: 5 },
       styles: {
         font: 'times',
-        fontSize: 8,
-        cellPadding: 1.2,
-        minCellHeight: 8,
+        fontSize: 9,
+        cellPadding: 1.4,
+        minCellHeight: 8.5,
         lineColor: [40, 40, 40],
         lineWidth: 0.2,
         textColor: [20, 20, 20],
@@ -190,25 +192,28 @@ export class JourComponent implements OnInit {
         fontStyle: 'bold',
         lineColor: [30, 30, 30],
         lineWidth: 0.3,
-        fontSize: 8,
+        fontSize: 9,
         halign: 'center'
       },
       columnStyles: {
         0: { cellWidth: 7, halign: 'center' },
-        1: { cellWidth: 39 },
+        1: { cellWidth: 38 },
         2: { cellWidth: 19, halign: 'center' },
-        3: { cellWidth: 18, halign: 'center' },
+        3: { cellWidth: 19, halign: 'center' },
         4: { cellWidth: 14, halign: 'center' },
         5: { cellWidth: 23, halign: 'center' },
         6: { cellWidth: 34 },
         7: { cellWidth: 10, halign: 'center' },
-        8: { cellWidth: 30 }
+        8: { cellWidth: 36 }
       },
       didDrawPage: () => {
-        if (logo) doc.addImage(logo, 'PNG', 8, 7, 19, 19);
+        if (logo) doc.addImage(logo, 'PNG', 5, 6, 25, 25);
         doc.setFont('times', 'bold');
         doc.setFontSize(11);
-        doc.text(descriptionLignes, pageWidth / 2 + 8, 12, { align: 'center' });
+        doc.text(descriptionLignes, pageWidth / 2 + 12.5, 10, {
+          align: 'center',
+          maxWidth: pageWidth - 40
+        });
         doc.setFontSize(13);
         doc.text("FICHE D'EMARGEMENT", pageWidth / 2, titreY, { align: 'center' });
         doc.setFont('helvetica', 'normal');
