@@ -133,127 +133,109 @@ export class JourComponent implements OnInit {
 
   /**********impression */
   async printEmploi(): Promise<void> {
-  if (this.emplois.length === 0) {
-    Swal.fire('Aucune donnée', 'Aucun emploi du temps à imprimer.', 'info');
-    return;
-  }
-
-  const { jour, anneeuv } = this.emploiForm.value;
-  const anneeNom = this.annees.find(annee => annee.id == anneeuv)?.nom ?? '';
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const ecole = user?.administrateur?.ecole ?? user?.parametre?.ecole;
-  const descriptionEcole = ecole?.descriptionEcole ?? '';
-  const adresseEcole = ecole?.adresseEcole ?? '';
-
-  const doc = new jsPDF('p', 'mm', 'a4');
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const logo = await this.loadLogoForPdf();
-
-  if (logo) doc.addImage(logo, 'PNG', 15, 10, 25, 25);
-
-  doc.setFont('times', 'bold');
-  doc.setFontSize(16);
-  const descriptionLignes = doc.splitTextToSize(descriptionEcole.toUpperCase(), pageWidth - 75);
-  doc.text(descriptionLignes, pageWidth / 2 + 10, 16, { align: 'center' });
-
-  const titreY = Math.max(34, 16 + descriptionLignes.length * 6 + 5);
-  doc.setFontSize(17);
-  doc.text("FICHE D'EMARGEMENTS", pageWidth / 2, titreY, { align: 'center' });
-
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(11);
-  doc.text(`Jour : ${jour}  Année scolaire : ${anneeNom}`, pageWidth / 2, titreY + 7, { align: 'center' });
-
-  let positionY = titreY + 13;
-  const dateImpression = new Date().toLocaleDateString('fr-FR');
-
-  this.emploisParClasse.forEach((bloc, index) => {
-    const tableHeightEstimated = 14 + (bloc.emplois.length * 10) + 10;
-
-    // Si le tableau entier ne tient pas dans l'espace restant (en gardant 25mm de marge pour le footer)
-    if (positionY + tableHeightEstimated > pageHeight - 28) {
-      doc.addPage();
-      positionY = 20; // Repositionnement propre en haut de la nouvelle page
+    if (this.emplois.length === 0) {
+      Swal.fire('Aucune donnée', 'Aucun emploi du temps à imprimer.', 'info');
+      return;
     }
 
-    doc.setFont('times', 'bold');
-    doc.setFontSize(13);
-    doc.text(bloc.classe, 15, positionY + 6);
-
-    const body = bloc.emplois.map(emploi => [
-      `${emploi.professeur?.prenom ?? ''} ${emploi.professeur?.nom ?? ''}`.trim(),
-      `${emploi.heuredebut} -- ${emploi.heurefin}`,
-      emploi.matiere?.libelle ?? '',
-      emploi.nbreheure ?? '',
-      ''
+    const { jour, anneeuv } = this.emploiForm.value;
+    const anneeNom = this.annees.find(annee => annee.id == anneeuv)?.nom ?? '';
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const ecole = user?.administrateur?.ecole ?? user?.parametre?.ecole;
+    const nomEcole = ecole?.nomEcole ?? ecole?.descriptionEcole ?? '';
+    const descriptionEcole = ecole?.descriptionEcole ?? nomEcole;
+    const adresseEcole = ecole?.adresseEcole ?? '';
+    const rows = this.emplois.map((emploi, index) => [
+        String(index + 1),
+        `${emploi.professeur?.prenom ?? ''} ${emploi.professeur?.nom ?? ''}`.trim(),
+        nomEcole,
+        jour,
+        emploi.classe?.nom ?? '',
+        `${emploi.heuredebut} - ${emploi.heurefin}`,
+        emploi.matiere?.libelle ?? '',
+        Math.round(Number(emploi.nbreheure) || 0),
+        ''
     ]);
 
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const logo = await this.loadLogoForPdf();
+    const dateImpression = new Date().toLocaleDateString('fr-FR');
+    const descriptionLignes = doc.splitTextToSize(descriptionEcole.trim().toUpperCase(), pageWidth - 65);
+    const titreY = 12 + descriptionLignes.length * 4.5 + 2;
+    const informationsY = titreY + 6;
+    const debutTableauY = informationsY + 7;
+
     autoTable(doc, {
-      startY: positionY + 11,
-      head: [['Professeur', 'Horaires', 'Matière', 'Nb heures', 'Emargement']],
-      body,
+      startY: debutTableauY,
+      head: [['N°', 'PRÉNOMS ET NOM', 'ÉTABLIS', 'Jour de la SEM', 'Classe', 'HEURES', 'MATIÈRE', 'NBRE', 'ÉMARGEMENT']],
+      body: rows,
       theme: 'grid',
-      pageBreak: 'auto',
-      margin: { bottom: 25, left: 10, right: 10 },
+      margin: { top: debutTableauY, bottom: 16, left: 8, right: 8 },
       styles: {
-        fontSize: 9,
-        cellPadding: 2,
-        minCellHeight: 10,
+        font: 'times',
+        fontSize: 8,
+        cellPadding: 1.2,
+        minCellHeight: 8,
         lineColor: [40, 40, 40],
-        lineWidth: 0.25,
+        lineWidth: 0.2,
         textColor: [20, 20, 20],
         valign: 'middle',
         overflow: 'linebreak'
       },
-      rowPageBreak: 'avoid',
       headStyles: {
         fillColor: [230, 230, 230],
         textColor: [0, 0, 0],
         fontStyle: 'bold',
         lineColor: [30, 30, 30],
-        lineWidth: 0.3
+        lineWidth: 0.3,
+        fontSize: 8,
+        halign: 'center'
       },
       columnStyles: {
-        0: { cellWidth: 52 },
-        1: { cellWidth: 25, halign: 'center' },
-        2: { cellWidth: 66 },
-        3: { cellWidth: 14, halign: 'center' },
-        4: { cellWidth: 25 }
+        0: { cellWidth: 7, halign: 'center' },
+        1: { cellWidth: 39 },
+        2: { cellWidth: 19, halign: 'center' },
+        3: { cellWidth: 18, halign: 'center' },
+        4: { cellWidth: 14, halign: 'center' },
+        5: { cellWidth: 23, halign: 'center' },
+        6: { cellWidth: 34 },
+        7: { cellWidth: 10, halign: 'center' },
+        8: { cellWidth: 30 }
+      },
+      didDrawPage: () => {
+        if (logo) doc.addImage(logo, 'PNG', 8, 7, 19, 19);
+        doc.setFont('times', 'bold');
+        doc.setFontSize(11);
+        doc.text(descriptionLignes, pageWidth / 2 + 8, 12, { align: 'center' });
+        doc.setFontSize(13);
+        doc.text("FICHE D'EMARGEMENT", pageWidth / 2, titreY, { align: 'center' });
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.text(`Jour : ${jour}    Année scolaire : ${anneeNom}`, pageWidth / 2, informationsY, { align: 'center' });
       }
     });
 
-    // On récupère la fin réelle du tableau généré pour positionner le suivant
-    positionY = (doc as any).lastAutoTable.finalY + 3;
-  });
-
-  // ==========================================
-  // APPLICATION DU PIED DE PAGE SUR TOUTES LES PAGES
-  // ==========================================
-  const totalPages = doc.internal.pages.length - 1; // jsPDF indexe avec un élément vide à la fin
-  
-  for (let i = 1; i <= totalPages; i++) {
-    doc.setPage(i); // On cible la page courante
-    
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    
-    // Affiche l’adresse de l’établissement dans le pied de page.
-    const adresseLignes = doc.splitTextToSize(adresseEcole.trim(), pageWidth - 80);
-    if (adresseLignes.length) {
-      doc.text(adresseLignes, pageWidth / 2, pageHeight - 14, { align: 'center' });
+    const totalPages = doc.internal.pages.length - 1;
+    for (let page = 1; page <= totalPages; page++) {
+      doc.setPage(page);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7);
+      doc.setDrawColor(120, 120, 120);
+      doc.setLineWidth(0.2);
+      doc.line(8, pageHeight - 13, pageWidth - 8, pageHeight - 13);
+      const adresseLignes = doc.splitTextToSize(adresseEcole.trim(), 65);
+      if (adresseLignes.length) {
+        doc.text(adresseLignes, 8, pageHeight - 8 - (adresseLignes.length - 1) * 3);
+      }
+      doc.text(`Imprimé le : ${dateImpression}`, pageWidth / 2, pageHeight - 7, { align: 'center' });
+      doc.text(`Page ${page} / ${totalPages}`, pageWidth - 8, pageHeight - 7, { align: 'right' });
     }
-    
-    // 2. Date d'impression en bas à gauche
-    doc.text(`Imprimé le : ${dateImpression}`, 15, pageHeight - 8, { align: 'left' });
-    
-    // 3. Pagination à droite
-    doc.text(`Page ${i} / ${totalPages}`, pageWidth - 15, pageHeight - 8, { align: 'right' });
-  }
 
-  const jourFichier = String(jour || 'jour').toLowerCase().replace(/[^a-z0-9-]/g, '-');
-  const anneeFichier = String(anneeNom || 'annee').replace(/[^a-zA-Z0-9-]/g, '-');
-  doc.save(`emploi-du-temps-${jourFichier}-${anneeFichier}.pdf`);
+    const jourFichier = String(jour || 'jour').toLowerCase().replace(/[^a-z0-9-]/g, '-');
+    const anneeFichier = String(anneeNom || 'annee').replace(/[^a-zA-Z0-9-]/g, '-');
+    doc.save(`fiche-emargement-${jourFichier}-${anneeFichier}.pdf`);
 }
 
 /*****fin de impression */
