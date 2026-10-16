@@ -15,6 +15,12 @@ import { Pointage, PointageWritePayload } from '../../../model/pointage';
 import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 
+type EmploiPresence = Emploidutemps & {
+  present: boolean;
+  nbreheure: number;
+  presenceDate: string;
+};
+
 @Component({
   selector: 'app-enseignant',
   standalone: true,
@@ -30,8 +36,8 @@ export class EnseignantComponent implements OnInit {
   enseignants: Enseignant[] = [];
   annees: Anneeuv[] = [];
 
-  emploisTable: (Emploidutemps & { present: boolean; nbreheure: number })[] = [];
-  pagedEmplois: (Emploidutemps & { present: boolean; nbreheure: number })[] = [];
+  emploisTable: EmploiPresence[] = [];
+  pagedEmplois: EmploiPresence[] = [];
 
   loading = false;
   savingPresence = false;
@@ -116,10 +122,14 @@ export class EnseignantComponent implements OnInit {
             return {
               ...e,
               present: cache ?? false,
-              nbreheure: this.calculHeures(e.heuredebut, e.heurefin)
+              nbreheure: this.calculHeures(e.heuredebut, e.heurefin),
+              presenceDate: this.formatDateForInput(this.selectedDate)
             };
           });
 
+        this.emploisTable.forEach(emploi => {
+          emploi.present = this.getCachedPresence(emploi.id, emploi.presenceDate) ?? emploi.present;
+        });
         this.loadPresenceCache();
         this.page = 1;
         this.totalPages = Math.ceil(this.emploisTable.length / this.pageSize);
@@ -161,9 +171,19 @@ export class EnseignantComponent implements OnInit {
   prevPage(): void { if (this.page > 1) { this.page--; this.updatePage(); } }
 
   // ---------------- Gestion des présences ----------------
-  togglePresence(row: any): void {
+  togglePresence(row: EmploiPresence): void {
     row.present = !row.present;
-    this.savePresenceCache(row.id, row.present);
+    if (row.id != null && this.isValidDateInput(row.presenceDate)) {
+      this.savePresenceCache(row.id, row.present, row.presenceDate);
+    }
+  }
+
+  updatePresenceDate(row: EmploiPresence, event: Event): void {
+    const date = (event.target as HTMLInputElement).value;
+    row.presenceDate = date;
+    row.present = this.isValidDateInput(date)
+      ? this.getCachedPresence(row.id, date) ?? false
+      : false;
   }
 
   savePresence(): void {
@@ -172,6 +192,11 @@ export class EnseignantComponent implements OnInit {
     const presentes = this.emploisTable.filter(e => e.present && e.id != null);
     if (!presentes.length) {
       Swal.fire('Aucune présence', 'Cochez au moins un enseignant à enregistrer.', 'warning');
+      return;
+    }
+
+    if (presentes.some(emploi => !this.isValidDateInput(emploi.presenceDate))) {
+      Swal.fire('Date invalide', 'Veuillez choisir une date valide pour chaque présence sélectionnée.', 'warning');
       return;
     }
 
@@ -187,31 +212,31 @@ export class EnseignantComponent implements OnInit {
       return;
     }
 
-    const datevalider = this.formatDate(this.selectedDate || new Date());
     const professeurId = Number(this.emploiForm?.get('professeur')?.value);
+    const dates = presentes.map(emploi => emploi.presenceDate).sort();
 
     this.savingPresence = true;
 
     this.pointageService.rechercher({
       enseignantId: professeurId || undefined,
       ecoleId: this.idEcole,
-      dateDebut: this.normalizeDateValue(datevalider),
-      dateFin: this.normalizeDateValue(datevalider)
+      dateDebut: dates[0],
+      dateFin: dates[dates.length - 1]
     }).subscribe({
       next: pointages => {
         const existingKeys = new Set(pointages.map(pointage =>
           `${Number(pointage.emploidutemps?.id)}:${this.normalizeDateValue(pointage.datevalider)}`
         ));
         const dejaEnregistrees = presentes.filter(emploi =>
-          existingKeys.has(`${Number(emploi.id)}:${this.normalizeDateValue(datevalider)}`)
+          existingKeys.has(`${Number(emploi.id)}:${emploi.presenceDate}`)
         );
         const aEnregistrer = presentes.filter(emploi =>
-          !existingKeys.has(`${Number(emploi.id)}:${this.normalizeDateValue(datevalider)}`)
+          !existingKeys.has(`${Number(emploi.id)}:${emploi.presenceDate}`)
         );
 
         if (aEnregistrer.length === 0) {
           presentes.forEach(emploi => {
-            if (emploi.id != null) this.savePresenceCache(emploi.id, true);
+            if (emploi.id != null) this.savePresenceCache(emploi.id, true, emploi.presenceDate);
           });
           this.savingPresence = false;
           Swal.fire(
@@ -230,7 +255,7 @@ export class EnseignantComponent implements OnInit {
             emploidutemps: { id: emploiId },
             enseignant: { id: enseignantId },
             valider: 'OUI',
-            datevalider
+            datevalider: this.formatDateFromInput(emploi.presenceDate)
           };
 
           return this.pointageService.create(pointage);
@@ -240,7 +265,7 @@ export class EnseignantComponent implements OnInit {
           next: () => {
             presentes.forEach(emploi => {
               if (emploi.id != null) {
-                this.savePresenceCache(emploi.id, true);
+                this.savePresenceCache(emploi.id, true, emploi.presenceDate);
               }
             });
             this.savingPresence = false;
@@ -269,6 +294,27 @@ export class EnseignantComponent implements OnInit {
     const mois = String(date.getMonth() + 1).padStart(2, '0');
     const jour = String(date.getDate()).padStart(2, '0');
     return `${jour}/${mois}/${annee}`;
+  }
+
+  private formatDateForInput(date: Date): string {
+    const annee = date.getFullYear();
+    const mois = String(date.getMonth() + 1).padStart(2, '0');
+    const jour = String(date.getDate()).padStart(2, '0');
+    return `${annee}-${mois}-${jour}`;
+  }
+
+  private formatDateFromInput(value: string): string {
+    const [annee, mois, jour] = value.split('-');
+    return `${jour}/${mois}/${annee}`;
+  }
+
+  private isValidDateInput(value: string): boolean {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+    const [annee, mois, jour] = value.split('-').map(Number);
+    const date = new Date(annee, mois - 1, jour);
+    return date.getFullYear() === annee &&
+      date.getMonth() === mois - 1 &&
+      date.getDate() === jour;
   }
 
   private normalizeDateValue(value?: string | null): string {
@@ -304,21 +350,21 @@ export class EnseignantComponent implements OnInit {
     }
   }
 
-  private buildPresenceCacheKey(id: number): string {
-    const dayKey = this.formatDate(this.selectedDate || new Date());
+  private buildPresenceCacheKey(id: number, date: string = this.formatDateForInput(this.selectedDate)): string {
+    const dayKey = this.formatDateFromInput(date);
     return `${dayKey}:${id}`;
   }
 
-  savePresenceCache(id: number, present: boolean): void {
+  savePresenceCache(id: number, present: boolean, date?: string): void {
     const cache = this.getPresenceCacheObject();
-    cache[this.buildPresenceCacheKey(id)] = present;
+    cache[this.buildPresenceCacheKey(id, date)] = present;
     localStorage.setItem('presenceCache', JSON.stringify(cache));
   }
 
-  getCachedPresence(id?: number): boolean | undefined {
+  getCachedPresence(id?: number, date: string = this.formatDateForInput(this.selectedDate)): boolean | undefined {
     if (!id) return undefined;
     const cache = this.getPresenceCacheObject();
-    return cache[this.buildPresenceCacheKey(id)];
+    return cache[this.buildPresenceCacheKey(id, date)];
   }
 
   loadPresenceCache(): void {
@@ -326,7 +372,7 @@ export class EnseignantComponent implements OnInit {
 
     this.emploisTable.forEach(row => {
       if (row.id !== undefined) {
-        const key = this.buildPresenceCacheKey(row.id);
+        const key = this.buildPresenceCacheKey(row.id, row.presenceDate);
         if (cache[key] !== undefined) {
           row.present = Boolean(cache[key]);
         }

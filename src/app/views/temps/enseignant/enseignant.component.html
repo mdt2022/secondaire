@@ -68,7 +68,14 @@
                     <td>
                         <input type="checkbox" [checked]="row?.present ?? false" (change)="togglePresence(row)" />
                     </td>
-                    <td>{{ selectedDate | date:'dd/MM/yyyy' }}</td>
+                    <td>
+                        <input
+                            type="date"
+                            class="form-control form-control-sm"
+                            [value]="row.presenceDate"
+                            (change)="updatePresenceDate(row, $event)"
+                            aria-label="Date de présence" />
+                    </td>
                 </tr>
             </tbody>
         </table>
