@@ -16,6 +16,10 @@ export class PointageService {
     return this.http.get<Pointage[]>(this.apiUrl);
   }
 
+  getByEcole(ecoleId: number): Observable<Pointage[]> {
+    return this.http.get<Pointage[]>(`${this.apiUrl}/ecole/${ecoleId}`);
+  }
+
   getById(id: number): Observable<Pointage> {
     return this.http.get<Pointage>(`${this.apiUrl}/${id}`);
   }
@@ -40,8 +44,9 @@ export class PointageService {
     return this.http.post<ResultatSimulation>(`${this.apiUrl}/simuler`, simulation);
   }
 
-  calculerHonoraires(dateDebut: string, dateFin: string): Observable<any> {
+  calculerHonoraires(ecoleId: number, dateDebut: string, dateFin: string): Observable<any> {
     let params = new HttpParams()
+      .set('ecoleId', ecoleId)
       .set('dateDebut', dateDebut)
       .set('dateFin', dateFin);
     return this.http.get<any>(`${this.apiUrl}/honoraires`, { params });

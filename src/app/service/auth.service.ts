@@ -56,7 +56,10 @@ export class AuthService {
 
   getEcoleId(): number | null {
     const user = this.getAdminData();
-    return user?.administrateur?.ecole?.idEcole ?? null;
+    const rawEcoleId = user?.administrateur?.ecole?.idEcole
+      ?? user?.parametre?.ecole?.idEcole;
+    const ecoleId = Number(rawEcoleId);
+    return Number.isSafeInteger(ecoleId) && ecoleId > 0 ? ecoleId : null;
   }
 
   saveToken(token: string): void {

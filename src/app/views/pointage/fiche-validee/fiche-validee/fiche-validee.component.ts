@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { PointageService } from '../../../../service/pointage.service';
+import { AuthService } from '../../../../service/auth.service';
 import autoTable from 'jspdf-autotable';
 import jsPDF from 'jspdf';
 import Swal from 'sweetalert2';
@@ -50,7 +51,8 @@ export class FicheValideeComponent implements OnInit {
 
   constructor(
     private pointageService: PointageService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {
     const today = new Date();
     this.dateDebut = this.formatDate(today);
@@ -58,13 +60,24 @@ export class FicheValideeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      this.selectedEcoleId = params['ecoleId'] ? +params['ecoleId'] : undefined;
-      this.selectedEnseignantId = params['enseignantId'] ? +params['enseignantId'] : undefined;
-      this.dateDebut = params['dateDebut'] || this.dateDebut;
-      this.dateFin = params['dateFin'] || this.dateFin;
+    const navigationState = (window.history.state ?? {}) as {
+      enseignantId?: unknown;
+      dateDebut?: unknown;
+      dateFin?: unknown;
+    };
+    const ecoleId = this.authService.getEcoleId();
+    this.selectedEcoleId = ecoleId ?? undefined;
 
-      if (this.selectedEnseignantId && this.dateDebut && this.dateFin) {
+    this.route.queryParams.subscribe(params => {
+      const enseignantId = navigationState.enseignantId ?? params['enseignantId'];
+      const dateDebut = navigationState.dateDebut ?? params['dateDebut'];
+      const dateFin = navigationState.dateFin ?? params['dateFin'];
+
+      this.selectedEnseignantId = Number(enseignantId) || undefined;
+      this.dateDebut = typeof dateDebut === 'string' ? dateDebut : this.dateDebut;
+      this.dateFin = typeof dateFin === 'string' ? dateFin : this.dateFin;
+
+      if (this.selectedEcoleId && this.selectedEnseignantId && this.dateDebut && this.dateFin) {
         this.loadFicheValidee();
       }
     });

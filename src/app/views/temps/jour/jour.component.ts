@@ -4,13 +4,9 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 
 import { EmploidutempsService } from '../../../service/emploidutemps.service';
 import { AnneeuvService } from '../../../service/anneeuv.service';
-import { EnseignantService } from '../../../service/enseignant.service';
-import { EnseignerService } from '../../../service/enseigner.service';
 
 import { Emploidutemps } from '../../../model/emploidutemps';
 import { Anneeuv } from '../../../model/anneeuv';
-import { Enseignant } from '../../../model/enseignant';
-import { Enseigner } from '../../../model/enseigner';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import Swal from 'sweetalert2';
@@ -25,23 +21,20 @@ import Swal from 'sweetalert2';
 export class JourComponent implements OnInit {
 
   emploiForm!: FormGroup;
-  idEcole!: number;
+  idEcole: number | null = null;
   emplois: Emploidutemps[] = [];
   emploisParClasse: { classe: string; emplois: Emploidutemps[] }[] = [];
   rechercheEffectuee = false;
-
+  chargement = false;
+  erreurChargement = '';
   annees: Anneeuv[] = [];
-  enseignants: Enseignant[] = [];
-  enseignes: Enseigner[] = [];
 
   jours: string[] = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
   constructor(
     private fb: FormBuilder,
     private emploiService: EmploidutempsService,
-    private anneeService: AnneeuvService,
-    private enseignantService: EnseignantService,
-    private enseignerService: EnseignerService
+    private anneeService: AnneeuvService
   ) { }
 
   ngOnInit(): void {
@@ -51,18 +44,19 @@ export class JourComponent implements OnInit {
     });
 
     this.loadAnnees();
-    this.loadEnseignants();
-    this.loadEnseignes();
     this.getEcoleFromUser();
   }
  // ---------------- Récupération école ----------------
   getEcoleFromUser(): void {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    this.idEcole =
-      user?.parametre?.ecole?.idEcole ||
-      user?.administrateur?.ecole?.idEcole;
-    if (!this.idEcole) console.error('ID école introuvable', user);
+    const ecoleId = Number(
+      user?.parametre?.ecole?.idEcole ??
+      user?.administrateur?.ecole?.idEcole
+    );
+    this.idEcole = Number.isSafeInteger(ecoleId) && ecoleId > 0 ? ecoleId : null;
+    if (!this.idEcole) console.error('ID école introuvable');
   }
+
   loadAnnees(): void {
     this.anneeService.getAll().subscribe({
       next: data => this.annees = data,
@@ -70,30 +64,34 @@ export class JourComponent implements OnInit {
     });
   }
 
-  loadEnseignants(): void {
-    this.enseignantService.getAll().subscribe({
-      next: data => this.enseignants = data,
-      error: err => console.error('Erreur chargement enseignants', err)
-    });
-  }
-
-  loadEnseignes(): void {
-    this.enseignerService.getAll().subscribe({
-      next: data => this.enseignes = data,
-      error: err => console.error('Erreur chargement matières', err)
-    });
-  }
-
   onSubmit(): void {
-    if (this.emploiForm.invalid) return;
+    if (this.emploiForm.invalid) {
+      this.emploiForm.markAllAsTouched();
+      return;
+    }
+
+    this.rechercheEffectuee = false;
+    this.erreurChargement = '';
+    this.emplois = [];
+    this.emploisParClasse = [];
+
+    if (!this.idEcole) {
+      this.erreurChargement = 'Impossible de rechercher les emplois : l’école de l’utilisateur est introuvable.';
+      return;
+    }
 
     const { jour, anneeuv } = this.emploiForm.value;
 
-    this.rechercheEffectuee = false;
-    this.emploiService.parJour(jour,anneeuv,this.idEcole).subscribe({
+    this.chargement = true;
+
+    this.emploiService.parJour(jour, anneeuv, this.idEcole).subscribe({
       next: data => {
         this.emplois = data
-          .filter(e => e.jour === jour && e.anneeuv?.id == anneeuv)
+          .filter(e =>
+            e.jour === jour &&
+            Number(e.anneeuv?.id) === Number(anneeuv) &&
+            Number(e.ecole?.idEcole) === this.idEcole
+          )
           .map(e => ({
             ...e,
             nbreheure: this.calcHeures(e.heuredebut, e.heurefin)
@@ -101,21 +99,37 @@ export class JourComponent implements OnInit {
 
         this.groupByClasse();
         this.rechercheEffectuee = true;
+        this.chargement = false;
       },
-      error: err => console.error('Erreur chargement emplois', err)
+      error: err => {
+        console.error('Erreur chargement emplois', err);
+        this.erreurChargement = 'Le chargement des emplois du temps a échoué. Veuillez réessayer.';
+        this.chargement = false;
+      }
     });
   }
 
   private calcHeures(debut: string, fin: string): number {
     if (!debut || !fin) return 0;
 
-    const [h1, m1] = debut.split(':').map(Number);
-    const [h2, m2] = fin.split(':').map(Number);
+    const parseMinutes = (heure: string): number | null => {
+      const match = /^(\d{1,2}):([0-5]\d)(?::[0-5]\d)?$/.exec(heure);
+      if (!match) return null;
 
-    let minutes = (h2 * 60 + m2) - (h1 * 60 + m1);
+      const heures = Number(match[1]);
+      if (heures > 23) return null;
+
+      return heures * 60 + Number(match[2]);
+    };
+
+    const minutesDebut = parseMinutes(debut);
+    const minutesFin = parseMinutes(fin);
+    if (minutesDebut === null || minutesFin === null) return 0;
+
+    let minutes = minutesFin - minutesDebut;
     if (minutes < 0) minutes = 0;
 
-    return Math.round((minutes / 60) * 100) / 100; // arrondi à 2 décimales
+    return Math.round((minutes / 60) * 100) / 100;
   }
 
   private groupByClasse(): void {
@@ -153,7 +167,7 @@ export class JourComponent implements OnInit {
         emploi.classe?.nom ?? '',
         `${emploi.heuredebut} - ${emploi.heurefin}`,
         emploi.matiere?.libelle ?? '',
-        Math.round(Number(emploi.nbreheure) || 0),
+        (Number(emploi.nbreheure) || 0).toLocaleString('fr-FR', { maximumFractionDigits: 2 }),
         ''
     ]);
 

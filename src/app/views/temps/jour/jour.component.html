@@ -15,21 +15,31 @@
                 <div class="col-md-3">
                     <select class="form-select" formControlName="anneeuv">
                         <option value="">-- Sélectionner l’année --</option>
-                        <option *ngFor="let a of annees" [value]="a.id">{{ a.nom }}</option>
+                        <option *ngFor="let a of annees" [ngValue]="a.id">{{ a.nom }}</option>
                     </select>
                 </div>
 
                 <div class="col-md-3">
-                    <button class="btn btn-primary" type="submit">Afficher</button>
+                    <button class="btn btn-primary" type="submit" [disabled]="chargement">
+                        {{ chargement ? 'Chargement...' : 'Afficher' }}
+                    </button>
                 </div>
 
                 <div class="col-md-3 text-end">
-                    <button *ngIf="rechercheEffectuee" class="btn btn-success" type="button" (click)="printEmploi()">🖨️ Imprimer</button>
+                    <button *ngIf="rechercheEffectuee && emplois.length > 0" class="btn btn-success" type="button" (click)="printEmploi()">🖨️ Imprimer</button>
                 </div>
 
             </div>
         </form>
     </div>
+</div>
+
+<div *ngIf="erreurChargement" class="alert alert-danger" role="alert">
+    {{ erreurChargement }}
+</div>
+
+<div *ngIf="rechercheEffectuee && emplois.length === 0" class="alert alert-info" role="status">
+    Aucun emploi du temps trouvé pour ce jour et cette année scolaire.
 </div>
 
 <!-- EMPLOIS -->

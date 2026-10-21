@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Pointage } from '../../../../model/pointage';
 import { Enseignant } from '../../../../model/enseignant';
+import { AuthService } from '../../../../service/auth.service';
 import Swal from 'sweetalert2';
 @Component({
   selector: 'app-liste-pointage',
@@ -20,26 +21,43 @@ export class ListePointageComponent implements OnInit {
   pointages: Pointage[] = [];
   selectedIds: number[] = [];
   enseignants: Enseignant[] = [];
+  private ecoleId: number | null = null;
 
   constructor(
     private pointageService: PointageService,
-    private enseignantService: EnseignantService
+    private enseignantService: EnseignantService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.ecoleId = this.authService.getEcoleId();
+    if (!this.ecoleId) {
+      Swal.fire('Établissement introuvable', 'Impossible d’identifier l’établissement de l’utilisateur.', 'error');
+      return;
+    }
     this.loadPointages();
     this.loadEnseignants();
   }
 
   loadPointages(): void {
-    this.pointageService.getAll().subscribe(data => {
-      this.pointages = data;
+    if (!this.ecoleId) return;
+    this.pointageService.getByEcole(this.ecoleId).subscribe({
+      next: data => this.pointages = data,
+      error: error => {
+        console.error('Erreur lors du chargement des pointages :', error);
+        Swal.fire('Erreur', 'Impossible de charger les pointages de cet établissement.', 'error');
+      }
     });
   }
 
   loadEnseignants(): void {
-    this.enseignantService.getAll().subscribe(data => {
-      this.enseignants = data;
+    if (!this.ecoleId) return;
+    this.enseignantService.getEnseignantEcole(this.ecoleId).subscribe({
+      next: data => this.enseignants = data,
+      error: error => {
+        console.error('Erreur lors du chargement des enseignants :', error);
+        Swal.fire('Erreur', 'Impossible de charger les enseignants de cet établissement.', 'error');
+      }
     });
   }
 

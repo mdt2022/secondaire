@@ -37,12 +37,22 @@ export class PointageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.ecoleId = this.authService.getEcoleId()
+    this.ecoleId = this.authService.getEcoleId();
+    if (!this.ecoleId) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Établissement introuvable',
+        text: 'Impossible d’identifier l’établissement de l’utilisateur.',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
     this.ChargerEnseignant();
   }
 
   ChargerEnseignant(): void {
-    
+      if (!this.ecoleId) return;
+
       this.enseignantService.getEnseignantEcole(this.ecoleId).subscribe({
         next: (data) => {
           this.enseignants = data;
@@ -85,8 +95,7 @@ export class PointageComponent implements OnInit {
     if (!this.validateDates()) return;
 
     this.router.navigate(['/pointage/fiche-validee'], {
-      queryParams: {
-        ecoleId: this.ecoleId,
+      state: {
         enseignantId: this.selectedEnseignantId,
         dateDebut: this.dateDebut,
         dateFin: this.dateFin
@@ -95,10 +104,10 @@ export class PointageComponent implements OnInit {
   }
 
   goToPaiement(): void {
+    if (!this.validateDates()) return;
+
     this.router.navigate(['/pointage/honoraires'], {
-      queryParams: {
-        ecoleId: this.ecoleId,
-        enseignantId: this.selectedEnseignantId,
+      state: {
         dateDebut: this.dateDebut,
         dateFin: this.dateFin
       }

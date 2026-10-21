@@ -20,6 +20,7 @@ export class HonorairesComponent implements OnInit {
   dateDebut: string;
   dateFin: string;
   honoraires: any;
+  ecoleId: number | null = null;
   totalMontant: number = 0;
   totalAvances: number = 0;
   isLoading: boolean = false;
@@ -39,15 +40,34 @@ export class HonorairesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-     this.user = this.authService.getAdminData();
+    this.user = this.authService.getAdminData();
+    this.ecoleId = this.authService.getEcoleId();
+    const navigationState = (window.history.state ?? {}) as {
+      dateDebut?: unknown;
+      dateFin?: unknown;
+    };
+    if (typeof navigationState.dateDebut === 'string' && typeof navigationState.dateFin === 'string') {
+      this.dateDebut = navigationState.dateDebut;
+      this.dateFin = navigationState.dateFin;
+    }
+
+    if (!this.ecoleId) {
+      Swal.fire('Établissement introuvable', 'Impossible d’identifier l’établissement de l’utilisateur.', 'error');
+      return;
+    }
     this.calculerHonoraires();
   }
 
   
 calculerHonoraires(): void {
   if (!this.validateDates()) return;
+  if (!this.ecoleId) {
+    Swal.fire('Établissement introuvable', 'Impossible d’identifier l’établissement de l’utilisateur.', 'error');
+    return;
+  }
 
-  this.pointageService.calculerHonoraires(this.dateDebut, this.dateFin).subscribe({
+  this.isLoading = true;
+  this.pointageService.calculerHonoraires(this.ecoleId, this.dateDebut, this.dateFin).subscribe({
     next: (data) => {
       this.honoraires = data;
       this.totalMontant = data.totalMontant || 0;
