@@ -43,4 +43,28 @@ describe('PermissionService', () => {
       expect(service.canAccessUrl(user, '/configuration')).toBeTrue();
     }
   });
+
+  it('requires configuration access to manage schools', () => {
+    const configuredUser = {
+      administrateur: {
+        role: {
+          nom: 'Gestion',
+          permissionsConfigured: true,
+          permissions: ['CONFIGURATION:READ']
+        }
+      }
+    };
+    const unprivilegedUser = {
+      administrateur: {
+        role: {
+          nom: 'Gestion',
+          permissionsConfigured: true,
+          permissions: ['MATIERES:READ']
+        }
+      }
+    };
+
+    expect(service.canAccessUrl(configuredUser, '/configuration/ecole')).toBeTrue();
+    expect(service.canAccessUrl(unprivilegedUser, '/configuration/ecole')).toBeFalse();
+  });
 });

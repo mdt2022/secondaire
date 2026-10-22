@@ -48,6 +48,12 @@ export class ConfigurationComponent {
       url: '/configuration/matiere',
       icon: 'bi bi-mortarboard',
       color: 'primary'
+    },
+    {
+      title: 'Écoles',
+      url: '/configuration/ecole',
+      icon: 'bi bi-buildings',
+      color: 'info'
     }
   ];
 

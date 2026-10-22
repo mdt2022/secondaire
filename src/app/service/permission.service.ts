@@ -97,7 +97,8 @@ export class PermissionService {
         administrateur: 'ADMINISTRATEURS',
         classe: 'CLASSES',
         classeecole: 'AFFECTATIONS_CLASSES',
-        matiere: 'MATIERES'
+        matiere: 'MATIERES',
+        ecole: 'CONFIGURATION'
       };
       return segments[1] ? configurationModules[segments[1]] ?? null : null;
     }
