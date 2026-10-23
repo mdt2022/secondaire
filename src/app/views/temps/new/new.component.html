@@ -83,11 +83,36 @@
       <table class="table table-bordered table-striped">
         <thead>
           <tr>
-            <th>Jour</th>
-            <th>Matière</th>
-            <th>Classe</th>
-            <th>Heure début</th>
-            <th>Heure fin</th>
+            <th>
+              <button type="button" class="btn btn-link p-0 text-dark text-decoration-none" (click)="sort('jour')">
+                Jour {{ sortColumn === 'jour' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
+              </button>
+            </th>
+            <th>
+              <button type="button" class="btn btn-link p-0 text-dark text-decoration-none" (click)="sort('matiere')">
+                Matière {{ sortColumn === 'matiere' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
+              </button>
+            </th>
+            <th>
+              <button type="button" class="btn btn-link p-0 text-dark text-decoration-none" (click)="sort('enseignant')">
+                Enseignant {{ sortColumn === 'enseignant' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
+              </button>
+            </th>
+            <th>
+              <button type="button" class="btn btn-link p-0 text-dark text-decoration-none" (click)="sort('classe')">
+                Classe {{ sortColumn === 'classe' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
+              </button>
+            </th>
+            <th>
+              <button type="button" class="btn btn-link p-0 text-dark text-decoration-none" (click)="sort('heuredebut')">
+                Heure début {{ sortColumn === 'heuredebut' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
+              </button>
+            </th>
+            <th>
+              <button type="button" class="btn btn-link p-0 text-dark text-decoration-none" (click)="sort('heurefin')">
+                Heure fin {{ sortColumn === 'heurefin' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
+              </button>
+            </th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -96,6 +121,7 @@
           <tr *ngFor="let e of pagedEmplois">
             <td>{{ e.jour }}</td>
             <td>{{ e.matiere.libelle }}</td>
+            <td>{{ e.professeur.prenom }} {{ e.professeur.nom }}</td>
             <td>{{ e.classe.nom }}</td>
             <td>{{ e.heuredebut }}</td>
             <td>{{ e.heurefin }}</td>

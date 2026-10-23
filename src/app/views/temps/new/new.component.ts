@@ -47,6 +47,8 @@ export class NewComponent implements OnInit {
   pageSize = 10;
   totalPages = 1;
   searchTerm = '';
+  sortColumn: 'jour' | 'matiere' | 'enseignant' | 'classe' | 'heuredebut' | 'heurefin' | '' = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
 
   editMode = false;
   currentId?: number;
@@ -280,9 +282,45 @@ export class NewComponent implements OnInit {
       (e.professeur?.nom || '').toLowerCase().includes(term) ||
       (e.professeur?.prenom || '').toLowerCase().includes(term)
     );
+    if (this.sortColumn) {
+      this.filteredEmplois.sort((a, b) => {
+        const valueA = this.getSortValue(a, this.sortColumn);
+        const valueB = this.getSortValue(b, this.sortColumn);
+        const result = valueA.localeCompare(valueB, 'fr', { numeric: true, sensitivity: 'base' });
+        return this.sortDirection === 'asc' ? result : -result;
+      });
+    }
     this.page = 1;
     this.totalPages = Math.ceil(this.filteredEmplois.length / this.pageSize);
     this.updatePage();
+  }
+
+  sort(column: NonNullable<typeof this.sortColumn>): void {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+    this.applyFilter();
+  }
+
+  private getSortValue(emploi: Emploidutemps, column: NonNullable<typeof this.sortColumn>): string {
+    switch (column) {
+      case 'jour':
+        return emploi.jour || '';
+      case 'matiere':
+        return emploi.matiere?.libelle || '';
+      case 'enseignant':
+        return `${emploi.professeur?.prenom || ''} ${emploi.professeur?.nom || ''}`.trim();
+      case 'classe':
+        return emploi.classe?.nom || '';
+      case 'heuredebut':
+        return emploi.heuredebut || '';
+      case 'heurefin':
+        return emploi.heurefin || '';
+    }
+    return '';
   }
 
   updatePage(): void {
