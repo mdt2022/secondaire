@@ -17,6 +17,7 @@ import { Matiere } from '../../../model/matiere';
 import Swal from 'sweetalert2';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { User } from '../../../model/user';
 
 @Component({
   selector: 'app-classe',
@@ -37,7 +38,7 @@ export class ClasseComponent implements OnInit {
   emploisTable: any[] = [];
   loading = false;
   rechercheEffectuee = false;
-  user: any;
+  user!: User;
 
   constructor(
     private fb: FormBuilder,
@@ -109,7 +110,8 @@ export class ClasseComponent implements OnInit {
     };
 
     this.loading = true;
-    this.emploiService.getAll().subscribe({
+    this.emploiService.parClasseAnneeEcole(
+      classe,anneeuv,this.user.administrateur.ecole.idEcole).subscribe({
       next: (res) => {
         const filtres = res.filter(e => Number(e.classe?.id) === Number(classe) && Number(e.anneeuv?.id) === Number(anneeuv));
         this.emploisTable = this.buildTable(filtres);
