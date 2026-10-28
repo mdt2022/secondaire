@@ -26,6 +26,10 @@ export class EmploidutempsService {
   getAll(): Observable<Emploidutemps[]> {
     return this.http.get<Emploidutemps[]>(this.apiUrl);
   }
+  //emploi du temps par classe annee ecole
+  parClasseAnneeEcole(classeID:any,anneeuvId:any,ecoleId:any):Observable<Emploidutemps[]>{
+    return this.http.get<Emploidutemps[]>(`${this.apiUrl}/classe/${classeID}/annee/${anneeuvId}/ecole/${ecoleId}`);
+  }
   //emploi du temps par annee ecole
   parAnneeAndEcole(anneeuvId:any,ecoleId:any): Observable<Emploidutemps[]>{
     return this.http.get<Emploidutemps[]>(`${this.apiUrl}/annee/${anneeuvId}/ecole/${ecoleId}`);
