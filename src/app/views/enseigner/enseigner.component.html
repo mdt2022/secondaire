@@ -1,121 +1,199 @@
 <!-- LIST -->
-<div *ngIf="viewMode === 'list'">
-    <div class="d-flex justify-content-between mb-3">
-        <h3>Liste des matières enseignées</h3>
-        <button class="btn btn-success" (click)="switchView('create')">Affecter des matières à un enseignant</button>
+<div *ngIf="viewMode === 'list'" class="card shadow-sm p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <h3 class="fw-bold text-dark m-0">Liste des matières enseignées</h3>
+        <button class="btn btn-success d-flex align-items-center gap-2" (click)="switchView('create')">
+            <i class="bi bi-plus-circle"></i> Affecter des matières à un enseignant
+        </button>
     </div>
 
     <!-- FILTRES ET RECHERCHE  -->
-    <div class="row mb-3 g-2">
+    <div class="row mb-4 g-3">
         <!-- Recherche texte -->
         <div class="col-md-4">
-            <input type="text" class="form-control" placeholder="Rechercher..." [(ngModel)]="searchText" (input)="applyAll()">
+            <div class="form-floating">
+                <input type="text" id="search" class="form-control" placeholder="Rechercher..." [(ngModel)]="searchText" (input)="applyAll()">
+                <label for="search">Rechercher...</label>
+            </div>
         </div>
 
         <!-- Filtre Classe -->
         <div class="col-md-2">
-            <select class="form-select" [(ngModel)]="filterClasseId" (change)="applyAll()">
-      <option [ngValue]="null">Toutes les classes</option>
-      <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.nom }}</option>
-    </select>
+            <div class="form-floating">
+                <select id="filterClasse" class="form-select" [(ngModel)]="filterClasseId" (change)="applyAll()">
+                    <option [ngValue]="null">Toutes les classes</option>
+                    <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.nom }}</option>
+                </select>
+                <label for="filterClasse">Classe</label>
+            </div>
         </div>
 
         <!-- Filtre Professeur -->
         <div class="col-md-3">
-            <select class="form-select" [(ngModel)]="filterProfesseurId" (change)="applyAll()">
-      <option [ngValue]="null">Tous les professeurs</option>
-      <option *ngFor="let p of professeurs" [ngValue]="p.id">{{ p.prenom }} {{ p.nom }}</option>
-    </select>
+            <div class="form-floating">
+                <select id="filterProf" class="form-select" [(ngModel)]="filterProfesseurId" (change)="applyAll()">
+                    <option [ngValue]="null">Tous les professeurs</option>
+                    <option *ngFor="let p of professeurs" [ngValue]="p.id">{{ p.prenom }} {{ p.nom }}</option>
+                </select>
+                <label for="filterProf">Professeur</label>
+            </div>
         </div>
 
         <!-- Filtre Matière -->
         <div class="col-md-3">
-            <select class="form-select" [(ngModel)]="filterMatiereId" (change)="applyAll()">
-      <option [ngValue]="null">Toutes les matières</option>
-      <option *ngFor="let m of matieres" [ngValue]="m.id">
-        {{ m.libelle }} — Coeff. {{ m.coefficient }} — Horaire : {{ m.horaire }} h
-      </option>
-    </select>
+            <div class="form-floating">
+                <select id="filterMat" class="form-select" [(ngModel)]="filterMatiereId" (change)="applyAll()">
+                    <option [ngValue]="null">Toutes les matières</option>
+                    <option *ngFor="let m of matieres" [ngValue]="m.id">
+                        {{ m.libelle }} (Coeff. {{ m.coefficient }})
+                    </option>
+                </select>
+                <label for="filterMat">Matière</label>
+            </div>
         </div>
     </div>
 
-    <table class="table table-bordered table-hover">
-        <thead class="table-light">
-            <tr>
-                <th>#</th>
-                <th>Classe</th>
-                <th>Professeur</th>
-                <th>Matière</th>
-                <th style="width:120px;">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let e of pagedData; let i = index">
-                <td>{{ i + 1 + page * size }}</td>
-                <td>{{ e.classe.nom }}</td>
-                <td>{{ e.enseignant.prenom }} {{ e.enseignant.nom }}</td>
-                <td>
-                    {{ e.matiere.libelle }}
-                    <small class="text-muted">— Coeff. {{ e.matiere.coefficient }} — Horaire : {{ e.matiere.horaire }} h</small>
-                </td>
-                <td>
-                    <button class="btn btn-warning btn-sm me-1" (click)="edit(e)">modifier</button>
-                    <button class="btn btn-danger btn-sm" (click)="delete(e.id)">supprimer</button>
-                </td>
-            </tr>
-            <tr *ngIf="pagedData.length === 0">
-                <td colspan="5" class="text-center text-muted">Aucune donnée trouvée</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle border">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col" class="ps-3">#</th>
+                    <th scope="col">Classe</th>
+                    <th scope="col">Professeur</th>
+                    <th scope="col">Matière</th>
+                    <th scope="col" style="width:140px;" class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let e of pagedData; let i = index">
+                    <td class="ps-3 fw-semibold">{{ i + 1 + page * size }}</td>
+                    <td><span class="badge bg-light text-dark border">{{ e.classe.nom }}</span></td>
+                    <td class="fw-medium">{{ e.enseignant.prenom }} {{ e.enseignant.nom }}</td>
+                    <td>
+                        <span class="fw-semibold text-primary">{{ e.matiere.libelle }}</span>
+                        <div class="text-muted small">Coeff. {{ e.matiere.coefficient }} — Horaire : {{ e.matiere.horaire }} h</div>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-outline-warning btn-sm me-1" (click)="edit(e)" title="Modifier">
+                            ⚙️
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" (click)="delete(e.id)" title="Supprimer">
+                            🗑️
+                        </button>
+                    </td>
+                </tr>
+                <tr *ngIf="pagedData.length === 0">
+                    <td colspan="5" class="text-center py-4 text-muted">
+                         Aucune donnée trouvée
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-    <div class="mt-3 d-flex justify-content-between">
-        <button class="btn btn-outline-primary" [disabled]="page === 0" (click)="prevPage()">Précédent</button>
-        <span class="align-self-center">Page {{ page + 1 }} / {{ totalPages }}</span>
-        <button class="btn btn-outline-primary" [disabled]="page + 1 >= totalPages" (click)="nextPage()">Suivant</button>
+    <div class="mt-3 d-flex justify-content-between align-items-center">
+        <button class="btn btn-outline-primary px-3" [disabled]="page === 0" (click)="prevPage()">
+            Précédent
+        </button>
+        <span class="text-muted fw-medium">Page {{ page + 1 }} sur {{ totalPages }}</span>
+        <button class="btn btn-outline-primary px-3" [disabled]="page + 1 >= totalPages" (click)="nextPage()">
+            Suivant
+        </button>
     </div>
 </div>
 
 <!--  CREATE  -->
-<div *ngIf="viewMode === 'create'">
-    <h3>Affecter des matières</h3>
+<div *ngIf="viewMode === 'create'" class="card shadow-sm p-4 mx-auto" style="max-width: 800px;">
+    <div class="mb-4 pb-2 border-bottom">
+        <h3 class="fw-bold text-success">Affecter de nouvelles matières</h3>
+        <p class="text-muted small mb-0">Configurez les classes et matières à attribuer à un enseignant.</p>
+    </div>
 
-    <select class="form-control mb-2" [(ngModel)]="selectedProfesseurId">
-    <option [ngValue]="null">Professeur</option>
-    <option *ngFor="let p of professeurs" [value]="p.id">{{ p.prenom }} {{ p.nom }}</option>
-  </select>
-    <label for="">Nombre de classes</label>
-    <input type="number" class="form-control mb-2" [(ngModel)]="nombreClasse" placeholder="Nombre de classes">
-    <button class="btn btn-success mb-3" (click)="generateAffectations()">Générer</button>
-
-    <div *ngFor="let a of affectations; let i=index" class="border rounded p-3 mb-3">
-        <h6>Classe {{ i + 1 }}</h6>
-        <select class="form-control mb-2" [(ngModel)]="a.classeId">
-      <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
-    </select>
-        <div class="subject-checkbox-list mt-2">
-            <label *ngFor="let m of matieresAffectation" class="subject-checkbox">
-                <input type="checkbox" [value]="m.id" (change)="onMatiereToggle($event, a, m.id)">
-                <span>{{ m.libelle }} — Coeff. {{ m.coefficient }} — Horaire : {{ m.horaire }} h</span>
-            </label>
+    <div class="row g-3 mb-4">
+        <div class="col-md-7">
+            <div class="form-floating">
+                <select id="createProf" class="form-select" [(ngModel)]="selectedProfesseurId">
+                    <option [ngValue]="null">Sélectionner un professeur...</option>
+                    <option *ngFor="let p of professeurs" [value]="p.id">{{ p.prenom }} {{ p.nom }}</option>
+                </select>
+                <label for="createProf">Professeur référent</label>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form-floating">
+                <input id="createNbClasse" type="number" class="form-control" [(ngModel)]="nombreClasse" placeholder="Nombre de classes">
+                <label for="createNbClasse">Nombre de classes à affecter</label>
+            </div>
         </div>
     </div>
 
-    <button class="btn btn-primary" (click)="saveAffectations()">Enregistrer</button>
-    <button class="btn btn-secondary ms-2" (click)="switchView('list')">Annuler</button>
+    <div class="d-grid mb-4">
+        <button class="btn btn-success py-2 fw-semibold" (click)="generateAffectations()">
+            🛠️ Générer les blocs de configuration
+        </button>
+    </div>
+
+    <!-- Blocs générés dynamiquement -->
+    <div *ngFor="let a of affectations; let i=index" class="card bg-light border-start border-primary border-4 p-3 mb-3 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="text-primary fw-bold mb-0">Configuration : Classe N° {{ i + 1 }}</h6>
+        </div>
+        
+        <div class="form-floating mb-3">
+            <select id="aClasse-{{i}}" class="form-select" [(ngModel)]="a.classeId">
+                <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+            </select>
+            <label for="aClasse-{{i}}">Attribuer à la classe</label>
+        </div>
+
+        <div class="bg-white p-3 rounded border">
+            <label class="form-label fw-semibold text-secondary small mb-2 d-block">Matières à enseigner :</label>
+            <div class="row g-2">
+                <div *ngFor="let m of matieresAffectation" class="col-100">
+                    <div class="form-check p-2 border rounded hover-bg-light">
+                        <input class="form-check-input ms-1" type="checkbox" id="check-{{i}}-{{m.id}}" [value]="m.id" (change)="onMatiereToggle($event, a, m.id)">
+                        <label class="form-check-label ps-2 w-100" for="check-{{i}}-{{m.id}}">
+                            <span class="fw-medium text-dark">{{ m.libelle }}</span> 
+                            <span class="badge bg-secondary ms-2 small">Coeff. {{ m.coefficient }}</span>
+                            <span class="text-muted small ms-2">({{ m.horaire }}h)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+        <button class="btn btn-secondary px-4" (click)="switchView('list')">Annuler</button>
+        <button class="btn btn-primary px-4 fw-semibold" [disabled]="affectations.length === 0" (click)="saveAffectations()">Enregistrer l'affectation</button>
+    </div>
 </div>
 
 <!--  EDIT  -->
-<div *ngIf="viewMode === 'edit'">
-    <h3>Modifier l’affectation</h3>
-    <select class="form-control mb-2" [(ngModel)]="selectedEnseigner!.classe.id">
-    <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
-  </select>
-    <select class="form-control mb-3" [(ngModel)]="selectedEnseigner!.matiere.id">
-    <option *ngFor="let m of matieres" [value]="m.id">
-      {{ m.libelle }} — Coeff. {{ m.coefficient }} — Horaire : {{ m.horaire }} h
-    </option>
-  </select>
-    <button class="btn btn-info" (click)="update()">Enregistrer</button>
-    <button class="btn btn-secondary ms-2" (click)="switchView('list')">Annuler</button>
+<div *ngIf="viewMode === 'edit'" class="card shadow-sm p-4 mx-auto" style="max-width: 500px;">
+    <div class="mb-4 pb-2 border-bottom">
+        <h3 class="fw-bold text-warning">Modifier l’affectation</h3>
+        <p class="text-muted small mb-0">Ajustez la classe ou la matière sélectionnée.</p>
+    </div>
+
+    <div class="form-floating mb-3">
+        <select id="editClasse" class="form-select" [(ngModel)]="selectedEnseigner!.classe.id">
+            <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+        </select>
+        <label for="editClasse">Classe</label>
+    </div>
+
+    <div class="form-floating mb-4">
+        <select id="editMatiere" class="form-select" [(ngModel)]="selectedEnseigner!.matiere.id">
+            <option *ngFor="let m of matieres" [value]="m.id">
+                {{ m.libelle }} — Coeff. {{ m.coefficient }} ({{ m.horaire }}h)
+            </option>
+        </select>
+        <label for="editMatiere">Matière affectée</label>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+        <button class="btn btn-secondary" (click)="switchView('list')">Annuler</button>
+        <button class="btn btn-info text-white fw-semibold" (click)="update()">Mettre à jour</button>
+    </div>
 </div>
