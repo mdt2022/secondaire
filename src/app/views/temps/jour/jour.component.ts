@@ -94,7 +94,7 @@ export class JourComponent implements OnInit {
           )
           .map(e => ({
             ...e,
-            nbreheure: this.calcHeures(e.heuredebut, e.heurefin)
+            // nbreheure: this.calcHeures(e.heuredebut, e.heurefin)
           }));
 
         this.groupByClasse();
@@ -109,28 +109,28 @@ export class JourComponent implements OnInit {
     });
   }
 
-  private calcHeures(debut: string, fin: string): number {
-    if (!debut || !fin) return 0;
+  // private calcHeures(debut: string, fin: string): number {
+  //   if (!debut || !fin) return 0;
 
-    const parseMinutes = (heure: string): number | null => {
-      const match = /^(\d{1,2}):([0-5]\d)(?::[0-5]\d)?$/.exec(heure);
-      if (!match) return null;
+  //   const parseMinutes = (heure: string): number | null => {
+  //     const match = /^(\d{1,2}):([0-5]\d)(?::[0-5]\d)?$/.exec(heure);
+  //     if (!match) return null;
 
-      const heures = Number(match[1]);
-      if (heures > 23) return null;
+  //     const heures = Number(match[1]);
+  //     if (heures > 23) return null;
 
-      return heures * 60 + Number(match[2]);
-    };
+  //     return heures * 60 + Number(match[2]);
+  //   };
 
-    const minutesDebut = parseMinutes(debut);
-    const minutesFin = parseMinutes(fin);
-    if (minutesDebut === null || minutesFin === null) return 0;
+  //   const minutesDebut = parseMinutes(debut);
+  //   const minutesFin = parseMinutes(fin);
+  //   if (minutesDebut === null || minutesFin === null) return 0;
 
-    let minutes = minutesFin - minutesDebut;
-    if (minutes < 0) minutes = 0;
+  //   let minutes = minutesFin - minutesDebut;
+  //   if (minutes < 0) minutes = 0;
 
-    return Math.round((minutes / 60) * 100) / 100;
-  }
+  //   return Math.round((minutes / 60) * 100) / 100;
+  // }
 
   private groupByClasse(): void {
     const map = new Map<string, Emploidutemps[]>();
@@ -167,7 +167,7 @@ export class JourComponent implements OnInit {
         emploi.classe?.nom ?? '',
         `${emploi.heuredebut} - ${emploi.heurefin}`,
         emploi.matiere?.libelle ?? '',
-        (Number(emploi.nbreheure) || 0).toLocaleString('fr-FR', { maximumFractionDigits: 2 }),
+        (Number(emploi.matiere.horaire) || 0).toLocaleString('fr-FR', { maximumFractionDigits: 2 }),
         ''
     ]);
 
@@ -192,7 +192,7 @@ export class JourComponent implements OnInit {
       styles: {
         font: 'times',
         fontSize: 9,
-        cellPadding: 1.4,
+        cellPadding: 0,
         minCellHeight: 8.5,
         lineColor: [40, 40, 40],
         lineWidth: 0.2,

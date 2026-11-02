@@ -183,7 +183,7 @@ export class ClasseComponent implements OnInit {
       head: [['Horaire', ...jours]],
       body,
       theme: 'grid',
-      styles: { fontSize: 9, cellPadding: 3, valign: 'middle' },
+      styles: { fontSize: 9, cellPadding: 1, valign: 'middle' },
       headStyles: { fillColor: [40, 100, 180] },
       didDrawPage: () => {
         doc.setFontSize(8);
