@@ -191,9 +191,9 @@ export class JourComponent implements OnInit {
       margin: { top: debutTableauY, bottom: 16, left: 5, right: 5 },
       styles: {
         font: 'times',
-        fontSize: 9,
+        fontSize: 8,
         cellPadding: 0,
-        minCellHeight: 8.5,
+        minCellHeight: 5,
         lineColor: [40, 40, 40],
         lineWidth: 0.2,
         textColor: [20, 20, 20],
