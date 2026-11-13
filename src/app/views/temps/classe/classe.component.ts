@@ -98,22 +98,13 @@ export class ClasseComponent implements OnInit {
     }
 
     this.rechercheEffectuee = false;
-    const payload: any = {
-      jour: this.emploiForm.value.jour,
-      heuredebut: this.emploiForm.value.heuredebut,
-      heurefin: this.emploiForm.value.heurefin,
-      matiere: { id: this.emploiForm.value.matiere },
-      professeur: { id: this.emploiForm.value.enseignant },
-      classe: { id: classe },
-      anneeuv: { id: anneeuv },
-      ecole: { idEcole: this.user.administrateur.ecole.idEcole }
-    };
+
 
     this.loading = true;
     this.emploiService.parAnneeAndEcole(11,11).subscribe({
       next: (res) => {
         const filtres = res.filter(e => Number(e.classe?.id) === Number(classe) && Number(e.anneeuv?.id) === Number(anneeuv));
-        this.emploisTable = this.buildTable(filtres);
+        this.emploisTable =  this.buildTable(filtres);
         this.rechercheEffectuee = true;
         this.loading = false;
       },
