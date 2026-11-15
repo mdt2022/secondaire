@@ -212,20 +212,52 @@ imprimerPDF() {
       ligneY + 23
     );
 
-    // DONNÉES DU TABLEAU
-    const rows: any[] = [];
+// DONNÉES DU TABLEAU : UN SEUL ENREGISTREMENT PAR ENSEIGNANT
+const rows: any[] = [];
 
-    this.honoraires.details.forEach((r: any) => {
-      rows.push([
-        r.enseignantPrenom || '',
-        r.enseignantNom || '',
-        r.totalHeures || 0,
-        formatMontant(r.montantBrut),
-        formatMontant(r.avance),
-        formatMontant(r.montantNet),
-        ''
-      ]);
+const enseignantsUniques = new Map<string, any>();
+
+this.honoraires.details.forEach((r: any) => {
+  const cle = `${(r.enseignantNom || '').trim().toLowerCase()}_${(r.enseignantPrenom || '').trim().toLowerCase()}`;
+
+  if (!enseignantsUniques.has(cle)) {
+    enseignantsUniques.set(cle, {
+      ...r,
+      totalHeures: 0,
+      montantBrut: 0,
+      avance: 0,
+      montantNet: 0
     });
+  }
+
+  const enseignant = enseignantsUniques.get(cle);
+
+  enseignant.totalHeures += Number(r.totalHeures || 0);
+  enseignant.montantBrut += Number(r.montantBrut || 0);
+  enseignant.avance += Number(r.avance || 0);
+  enseignant.montantNet += Number(r.montantNet || 0);
+});
+
+// TRI ALPHABÉTIQUE PAR NOM
+const detailsTries = Array.from(enseignantsUniques.values()).sort(
+  (a, b) => (a.enseignantNom || '').localeCompare(
+    b.enseignantNom || '',
+    'fr',
+    { sensitivity: 'base' }
+  )
+);
+
+detailsTries.forEach((r: any) => {
+  rows.push([
+    r.enseignantPrenom || '',
+    r.enseignantNom || '',
+    r.totalHeures,
+    formatMontant(r.montantBrut),
+    formatMontant(r.avance),
+    formatMontant(r.montantNet),
+    ''
+  ]);
+});
 
     // TABLEAU
     autoTable(doc, {
