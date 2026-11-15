@@ -128,54 +128,155 @@ calculerHonoraires(): void {
     }
   }
 
-  
+ 
+
 imprimerPDF() {
   const doc = new jsPDF('p', 'mm', 'a4');
 
   const logo = new Image();
   logo.src = 'assets/logo.png';
 
-  const user = this.user; 
-  logo.onload = () => {
-   
-    const nomEcole = user?.administrateur?.ecole?.descriptionEcole || 'Nom de l\'école';
-    const adresseEcole = user?.administrateur?.ecole?.adresseEcole || 'Adresse non disponible';
+  const user = this.user;
 
-   
-    doc.addImage(logo, 'PNG', 15, 10, 25, 25);
+  const nomEcole =
+    user?.administrateur?.ecole?.descriptionEcole || 'Nom de l\'école';
 
-    doc.setFontSize(9);
-    doc.text(nomEcole, 60, 18);
+  const adresseEcole =
+    user?.administrateur?.ecole?.adresseEcole || 'Adresse non disponible';
 
+  const formatMontant = (montant: number): string => {
+    return new Intl.NumberFormat('fr-FR', {
+      maximumFractionDigits: 0
+    }).format(Number(montant || 0)).replace(/[\u202f\u00a0]/g, ' ');
+  };
+
+  const genererPDF = (logoCharge: boolean) => {
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+
+    // LOGO
+    if (logoCharge) {
+      doc.addImage(logo, 'PNG', 15, 10, 25, 25);
+    }
+
+    // NOM DE L'ÉCOLE
+    const nomX = logoCharge ? 45 : 15;
+    const largeurTexte = logoCharge ? 150 : 180;
+
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
-    doc.setFillColor(200, 225, 255);
-    doc.rect(15, 40, 180, 10, 'F');
-    doc.text('ETAT DES HONORAIRES DES PROFESSEURS', 60, 47);
+    doc.setTextColor(0, 0, 0);
 
-    doc.setFontSize(11);
-    doc.text(`Mois : Du ${this.dateDebut} au ${this.dateFin}`, 15, 60);
+    const nomLines = doc.splitTextToSize(nomEcole, largeurTexte);
+    doc.text(nomLines, nomX, 17);
 
+    // ADRESSE DE L'ÉCOLE
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+
+    const adresseLines = doc.splitTextToSize(adresseEcole, largeurTexte);
+
+    const adresseY = 17 + nomLines.length * 5 + 2;
+    doc.text(adresseLines, nomX, adresseY);
+
+    // LIGNE DE SÉPARATION
+    const ligneY = Math.max(
+      36,
+      adresseY + adresseLines.length * 4 + 3
+    );
+
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.4);
+    doc.line(15, ligneY, pageWidth - 15, ligneY);
+
+    // TITRE
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+
+    doc.text(
+      'ETAT DES HONORAIRES DES PROFESSEURS',
+      pageWidth / 2,
+      ligneY + 12,
+      { align: 'center' }
+    );
+
+    // PÉRIODE
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+
+    doc.text(
+      `Mois : Du ${this.dateDebut} au ${this.dateFin}`,
+      15,
+      ligneY + 23
+    );
+
+    // DONNÉES DU TABLEAU
     const rows: any[] = [];
+
     this.honoraires.details.forEach((r: any) => {
       rows.push([
-        r.enseignantPrenom,
-        r.enseignantNom,
-        r.totalHeures,
-        r.montantBrut,
-        r.avance,
-        r.montantNet,
+        r.enseignantPrenom || '',
+        r.enseignantNom || '',
+        r.totalHeures || 0,
+        formatMontant(r.montantBrut),
+        formatMontant(r.avance),
+        formatMontant(r.montantNet),
         ''
       ]);
     });
 
+    // TABLEAU
     autoTable(doc, {
-      startY: 65,
+      startY: ligneY + 28,
+
+      margin: {
+        left: 15,
+        right: 15,
+        bottom: 22
+      },
+
       head: [[
-        'Prénom', 'Nom', 'Heures', 'Montant brut', 'Avance', 'Montant Net', 'Emargement'
+        'Prénom',
+        'Nom',
+        'Heures',
+        'Montant brut',
+        'Avance',
+        'Montant Net',
+        'Emargement'
       ]],
+
       body: rows,
-      styles: { fontSize: 9, halign: 'center', valign: 'middle', lineColor: [0,0,0], lineWidth: 0.3 },
-      headStyles: { fillColor: [255,255,255], textColor: 0, lineColor: [0,0,0], lineWidth: 0.5, halign: 'center' },
+
+      theme: 'grid',
+
+      styles: {
+        font: 'helvetica',
+        fontSize: 9,
+        textColor: [0, 0, 0],
+        fillColor: [255, 255, 255],
+        cellPadding: 3,
+        lineColor: [0, 0, 0],
+        lineWidth: 0.3,
+        halign: 'center',
+        valign: 'middle',
+        minCellHeight: 10
+      },
+
+      headStyles: {
+        fillColor: [255, 255, 255],
+        textColor: [0, 0, 0],
+        fontStyle: 'bold',
+        lineColor: [0, 0, 0],
+        lineWidth: 0.5,
+        halign: 'center'
+      },
+
+      alternateRowStyles: {
+        fillColor: [255, 255, 255]
+      },
+
       columnStyles: {
         0: { cellWidth: 28 },
         1: { cellWidth: 30 },
@@ -185,24 +286,113 @@ imprimerPDF() {
         5: { cellWidth: 28 },
         6: { cellWidth: 25 }
       },
-      theme: 'grid',
-      didDrawPage: (data) => {
-        
-        const pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+
+      didDrawPage: () => {
+        doc.setDrawColor(0, 0, 0);
+        doc.setLineWidth(0.3);
+
+        doc.line(
+          15,
+          pageHeight - 15,
+          pageWidth - 15,
+          pageHeight - 15
+        );
+
+        doc.setFont('helvetica', 'normal');
         doc.setFontSize(8);
-        doc.text(`${adresseEcole}`, 15, pageHeight - 10);
-        doc.text(`Page ${doc.getCurrentPageInfo().pageNumber}`, 180, pageHeight - 10, { align: 'right' });
+        doc.setTextColor(0, 0, 0);
+
+        doc.text(adresseEcole, 15, pageHeight - 9, {
+          maxWidth: 150
+        });
+
+        doc.text(
+          `Page ${doc.getCurrentPageInfo().pageNumber}`,
+          pageWidth - 15,
+          pageHeight - 9,
+          { align: 'right' }
+        );
       }
     });
 
-    const finalY = (doc as any).lastAutoTable.finalY + 10;
-    doc.text(`Montant total : ${this.totalMontant} FCFA`, 15, finalY);
-    doc.text(`Avances : ${this.totalAvances} FCFA`, 15, finalY + 6);
-    doc.text(`Montant Net : ${this.totalMontant - this.totalAvances} FCFA`, 15, finalY + 12);
+    // RÉCAPITULATIF
+    let finalY = (doc as any).lastAutoTable.finalY + 10;
 
-    doc.save(`honoraires_${this.dateDebut}_${this.dateFin}.pdf`);
+    if (finalY + 42 > pageHeight - 18) {
+      doc.addPage();
+      finalY = 20;
+    }
+
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.4);
+
+    doc.rect(15, finalY, 180, 34);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+
+    doc.text('RECAPITULATIF DES HONORAIRES', 20, finalY + 7);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+
+    doc.text('Montant total :', 20, finalY + 15);
+    doc.text(
+      `${formatMontant(this.totalMontant)} FCFA`,
+      190,
+      finalY + 15,
+      { align: 'right' }
+    );
+
+    doc.text('Montant des avances :', 20, finalY + 22);
+    doc.text(
+      `${formatMontant(this.totalAvances)} FCFA`,
+      190,
+      finalY + 22,
+      { align: 'right' }
+    );
+
+    doc.setFont('helvetica', 'bold');
+
+    doc.text('Montant Net :', 20, finalY + 30);
+    doc.text(
+      `${formatMontant(this.totalMontant - this.totalAvances)} FCFA`,
+      190,
+      finalY + 30,
+      { align: 'right' }
+    );
+
+    // SIGNATURES
+    finalY += 45;
+
+    if (finalY + 25 > pageHeight - 18) {
+      doc.addPage();
+      finalY = 20;
+    }
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+
+    doc.text('Le responsable de la scolarité', 25, finalY);
+    doc.text('La Direction', 145, finalY);
+
+    doc.setLineWidth(0.3);
+    doc.line(20, finalY + 22, 85, finalY + 22);
+    doc.line(130, finalY + 22, 190, finalY + 22);
+
+    // EXPORTATION
+    doc.save(
+      `honoraires_${this.dateDebut}_${this.dateFin}.pdf`
+    );
   };
+
+  // CHARGEMENT DU LOGO
+  logo.onload = () => genererPDF(true);
+  logo.onerror = () => genererPDF(false);
 }
+
+
 
 
   private formatDateManuelle(date: Date): string {
