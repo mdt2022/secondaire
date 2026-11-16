@@ -1,0 +1,31 @@
+/* En-tête et cellules du tableau */
+.custom-table th {
+  border-bottom: 2px solid #dee2e6;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  font-size: 0.78rem;
+  letter-spacing: 0.5px;
+}
+
+.custom-table td {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: 0.92rem;
+}
+
+/* Style doux pour la pagination */
+.pagination .page-link {
+  color: #495057;
+  border-color: #dee2e6;
+  font-weight: 500;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: #ffffff;
+}
+
+.pagination .page-link:focus {
+  box-shadow: none;
+}

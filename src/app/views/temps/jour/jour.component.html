@@ -1,76 +1,149 @@
-<div class="card mb-4">
-    <div class="card-header"><strong>Gestion des emplois du temps journalier</strong></div>
+<!-- BARRE DE RECHERCHE ET ACTIONS (Masquée à l'impression) -->
+<div class="card border-0 shadow-sm mb-4 sticky-top bg-white z-2 no-print" style="top: 10px;">
+  <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+    <h5 class="mb-0 fw-bold text-primary">
+      <i class="bi bi-calendar3 me-2"></i>Gestion des emplois du temps journalier
+    </h5>
+    <span *ngIf="rechercheEffectuee && emplois.length > 0" class="badge bg-primary-subtle text-primary-emphasis rounded-pill px-3 py-2">
+      {{ emploisParClasse.length }} classe(s) • {{ emplois.length }} cours au total
+    </span>
+  </div>
 
-    <div class="card-body">
-        <form [formGroup]="emploiForm" (ngSubmit)="onSubmit()">
-            <div class="row g-3">
+  <div class="card-body py-3">
+    <form [formGroup]="emploiForm" (ngSubmit)="onSubmit()">
+      <div class="row g-2 align-items-end">
 
-                <div class="col-md-3">
-                    <select class="form-select" formControlName="jour">
-                        <option value="">-- Sélectionner le jour --</option>
-                        <option *ngFor="let j of jours" [value]="j">{{ j }}</option>
-                    </select>
-                </div>
+        <!-- Sélecteur Jour -->
+        <div class="col-md-3">
+          <label class="form-label small fw-semibold text-muted mb-1">Jour de la semaine</label>
+          <select class="form-select" formControlName="jour">
+            <option value="">-- Sélectionner le jour --</option>
+            <option *ngFor="let j of jours" [value]="j">{{ j }}</option>
+          </select>
+        </div>
 
-                <div class="col-md-3">
-                    <select class="form-select" formControlName="anneeuv">
-                        <option value="">-- Sélectionner l’année --</option>
-                        <option *ngFor="let a of annees" [ngValue]="a.id">{{ a.nom }}</option>
-                    </select>
-                </div>
+        <!-- Sélecteur Année -->
+        <div class="col-md-3">
+          <label class="form-label small fw-semibold text-muted mb-1">Année universitaire / scolaire</label>
+          <select class="form-select" formControlName="anneeuv">
+            <option value="">-- Sélectionner l’année --</option>
+            <option *ngFor="let a of annees" [ngValue]="a.id">{{ a.nom }}</option>
+          </select>
+        </div>
 
-                <div class="col-md-3">
-                    <button class="btn btn-primary" type="submit" [disabled]="chargement">
-                        {{ chargement ? 'Chargement...' : 'Afficher' }}
-                    </button>
-                </div>
+        <!-- Bouton Afficher -->
+        <div class="col-md-3">
+          <button class="btn btn-primary w-100 fw-semibold" type="submit" [disabled]="chargement">
+            <span *ngIf="chargement" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            <i *ngIf="!chargement" class="bi bi-search me-1"></i>
+            {{ chargement ? 'Chargement...' : 'Afficher' }}
+          </button>
+        </div>
 
-                <div class="col-md-3 text-end">
-                    <button *ngIf="rechercheEffectuee && emplois.length > 0" class="btn btn-success" type="button" (click)="printEmploi()">🖨️ Imprimer</button>
-                </div>
+        <!-- Bouton Imprimer -->
+        <div class="col-md-3 text-md-end">
+          <button *ngIf="rechercheEffectuee && emplois.length > 0" 
+                  class="btn btn-success w-100 w-md-auto fw-semibold shadow-sm" 
+                  type="button" 
+                  (click)="printEmploi()">
+            <i class="bi bi-printer-fill me-1"></i> Imprimer la fiche
+          </button>
+        </div>
 
-            </div>
-        </form>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ALERTES -->
+<div *ngIf="erreurChargement" class="alert alert-danger shadow-sm border-0 d-flex align-items-center no-print" role="alert">
+  <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
+  <div>{{ erreurChargement }}</div>
+</div>
+
+<div *ngIf="rechercheEffectuee && emplois.length === 0" class="alert alert-info shadow-sm border-0 d-flex align-items-center no-print" role="status">
+  <i class="bi bi-info-circle-fill fs-5 me-2"></i>
+  <div>Aucun emploi du temps trouvé pour ce jour et cette année scolaire.</div>
+</div>
+
+<!-- ZONE D'AFFICHAGE ET D'IMPRESSION DES EMPLOIS DU TEMPS -->
+<div id="emploiPrint" *ngIf="emploisParClasse && emploisParClasse.length > 0">
+
+  <!-- Titre visible UNIQUEMENT lors de l'impression -->
+  <div class="d-none d-print-block text-center mb-4 border-bottom pb-2">
+    <h3 class="fw-bold text-uppercase mb-1">Emploi du Temps Journalier</h3>
+    <p class="mb-0 fs-5">Jour : <strong>{{ emploiForm.get('jour')?.value | uppercase }}</strong></p>
+  </div>
+
+  <!-- Boucle sur chaque classe -->
+  <div *ngFor="let bloc of emploisParClasse" class="classe-section mb-4">
+    
+    <!-- En-tête de la classe -->
+    <div class="d-flex align-items-center justify-content-between bg-primary text-white px-3 py-2 rounded-top print-header">
+      <h6 class="mb-0 fw-bold text-uppercase tracking-wide">
+        <i class="bi bi-mortarboard-fill me-2"></i>Classe : {{ bloc.classe }}
+      </h6>
+      <span class="badge bg-white text-primary fw-bold">
+        {{ bloc.emplois.length }} cours
+      </span>
     </div>
-</div>
 
-<div *ngIf="erreurChargement" class="alert alert-danger" role="alert">
-    {{ erreurChargement }}
-</div>
-
-<div *ngIf="rechercheEffectuee && emplois.length === 0" class="alert alert-info" role="status">
-    Aucun emploi du temps trouvé pour ce jour et cette année scolaire.
-</div>
-
-<!-- EMPLOIS -->
-<div id="emploiPrint">
-    <div *ngFor="let bloc of emploisParClasse" class="mb-4">
-        <h5 class="mt-3 fw-bold">{{ bloc.classe }}</h5>
-
-        <table class="table table-bordered table-sm">
-            <thead class="table-light">
-                <tr>
-                    <th>Professeur</th>
-                    <th>Horaires</th>
-                    <th>Matière</th>
-                    <th>Coefficient</th>
-                    <th>Horaire h</th>
-                    <th>Nombre d’heures</th>
-                    <th>Emargement</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr *ngFor="let emploi of bloc.emplois">
-                    <td>{{ emploi.professeur.prenom }} {{ emploi.professeur.nom }}</td>
-                    <td>{{ emploi.heuredebut }} -- {{ emploi.heurefin }}</td>
-                    <td>{{ emploi.matiere.libelle }}</td>
-                    <td>{{ emploi.matiere.coefficient }}</td>
-                    <td>{{ emploi.matiere.horaire }}</td>
-                    <td>{{ emploi.matiere.horaire }}</td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- Tableau compact optimisé pour de longues listes -->
+    <div class="table-responsive shadow-sm rounded-bottom border border-top-0 bg-white">
+      <table class="table table-sm table-hover table-striped align-middle mb-0 custom-table">
+        <thead class="table-light text-secondary text-uppercase small fw-bold sticky-thead">
+          <tr>
+            <th class="ps-3" style="width: 24%;">Professeur</th>
+            <th class="text-center" style="width: 14%;">Horaires</th>
+            <th style="width: 24%;">Matière</th>
+            <th class="text-center" style="width: 8%;">Coeff.</th>
+            <th class="text-center" style="width: 9%;">Horaire (h)</th>
+            <th class="text-center" style="width: 9%;">Nb heures</th>
+            <th class="text-center pe-3" style="width: 12%;">Émargement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let emploi of bloc.emplois">
+            <!-- Professeur -->
+            <td class="ps-3 fw-semibold text-dark">
+              {{ emploi.professeur.prenom }} <span class="text-uppercase">{{ emploi.professeur.nom }}</span>
+            </td>
+            
+            <!-- Horaires -->
+            <td class="text-center">
+              <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle px-2 py-1 font-monospace">
+                {{ emploi.heuredebut }} - {{ emploi.heurefin }}
+              </span>
+            </td>
+            
+            <!-- Matière -->
+            <td class="fw-medium text-primary-emphasis">
+              {{ emploi.matiere.libelle }}
+            </td>
+            
+            <!-- Coefficient -->
+            <td class="text-center">
+              <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis">
+                {{ emploi.matiere.coefficient }}
+              </span>
+            </td>
+            
+            <!-- Horaire h -->
+            <td class="text-center text-muted">
+              {{ emploi.matiere.horaire }} h
+            </td>
+            
+            <!-- Nombre d'heures -->
+            <td class="text-center fw-bold text-dark">
+              {{ emploi.matiere.horaire }} h
+            </td>
+            
+            <!-- Case d'émargement -->
+            <td class="pe-3 emargement-cell"></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+
+  </div>
 </div>

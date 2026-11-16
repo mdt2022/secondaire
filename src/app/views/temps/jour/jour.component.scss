@@ -1,0 +1,81 @@
+/* Optimisation pour les longs tableaux à l'écran */
+.custom-table th {
+  border-bottom: 2px solid #dee2e6;
+  padding-top: 9px;
+  padding-bottom: 9px;
+  font-size: 0.78rem;
+  letter-spacing: 0.4px;
+}
+
+.custom-table td {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  font-size: 0.9rem;
+}
+
+/* Zone dédiée à la signature (compacte mais suffisante) */
+.emargement-cell {
+  border-left: 1px dashed #ced4da !important;
+  min-width: 115px;
+  height: 38px;
+  background-color: #ffffff !important;
+}
+
+/* Règles spécifiques pour l'impression (A4 propre) */
+@media print {
+  /* Masque la barre de recherche et tout ce qui a la classe no-print */
+  .no-print {
+    display: none !important;
+  }
+
+  #emploiPrint {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Évite qu'un bloc classe ne soit coupé en deux sur deux pages si possible */
+  .classe-section {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    margin-bottom: 1.5rem !important;
+  }
+
+  /* Si une classe a énormément de lignes et doit passer sur 2 pages, répète l'en-tête du tableau */
+  thead {
+    display: table-header-group;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Force l'impression des couleurs de fond */
+  .print-header {
+    background-color: #0d6efd !important;
+    color: #ffffff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    padding: 5px 10px !important;
+  }
+
+  /* Bordures fines et nettes pour économiser l'encre et garder la lisibilité */
+  .custom-table, .custom-table th, .custom-table td {
+    border: 1px solid #999999 !important;
+  }
+
+  .custom-table td {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    font-size: 0.82rem !important;
+  }
+
+  .emargement-cell {
+    height: 34px !important;
+  }
+
+  .shadow-sm {
+    box-shadow: none !important;
+  }
+}

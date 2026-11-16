@@ -1,70 +1,109 @@
 <div class="container py-5">
+  <!-- En-tête de la page -->
   <div class="text-center mb-5">
-    <h2 class="fw-extrabold display-6 text-dark mb-2">Gestion des Programmes</h2>
-    <div class="mx-auto bg-primary mb-3" style="height: 4px; width: 60px; border-radius: 2px;"></div>
-    <p class="text-secondary lead">Sélectionnez un module pour administrer vos emplois du temps</p>
+    <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 mb-2 fw-semibold text-uppercase tracking-wide">
+      Administration & Planification
+    </span>
+    <h2 class="fw-bold display-6 text-dark mb-2">Gestion des Programmes</h2>
+    <div class="mx-auto bg-primary mb-3" style="height: 4px; width: 65px; border-radius: 4px;"></div>
+    <p class="text-secondary lead mx-auto" style="max-width: 600px;">
+      Sélectionnez un module ci-dessous pour consulter, planifier ou administrer vos emplois du temps.
+    </p>
   </div>
 
+  <!-- Grille des modules -->
   <div class="row g-4 justify-content-center">
-    
-    <!-- Carte 1 -->
-    <div class="col-6 col-md-4 col-lg-2-5">
+
+    <!-- Carte 1 : Liste (Nouvelle carte ajoutée) -->
+    <div class="col-6 col-md-4 col-lg-3">
+      <a [routerLink]="['../liste']" class="menu-card-modern">
+        <div class="icon-wrapper bg-soft-purple">
+          <i class="fas fa-list-ul"></i>
+        </div>
+        <div class="card-content">
+          <span class="card-title">Liste globale</span>
+          <small class="card-subtitle">Tous les programmes</small>
+        </div>
+      </a>
+    </div>
+
+    <!-- Carte 2 : Enseignants -->
+    <div class="col-6 col-md-4 col-lg-3">
       <a [routerLink]="['../enseignant']" class="menu-card-modern">
         <div class="icon-wrapper bg-soft-primary">
           <i class="fas fa-user-tie"></i>
         </div>
-        <span>Enseignants</span>
+        <div class="card-content">
+          <span class="card-title">Enseignants</span>
+          <small class="card-subtitle">Planning par prof</small>
+        </div>
       </a>
     </div>
 
-    <!-- Carte 2 -->
-    <div class="col-6 col-md-4 col-lg-2-5">
+    <!-- Carte 3 : Par Semaine -->
+    <div class="col-6 col-md-4 col-lg-3">
       <a [routerLink]="['../semaine']" class="menu-card-modern">
         <div class="icon-wrapper bg-soft-success">
           <i class="fas fa-calendar-alt"></i>
         </div>
-        <span>Par Semaine</span>
+        <div class="card-content">
+          <span class="card-title">Par Semaine</span>
+          <small class="card-subtitle">Vue hebdomadaire</small>
+        </div>
       </a>
     </div>
 
-    <!-- Carte 3 -->
-    <div class="col-6 col-md-4 col-lg-2-5">
+    <!-- Carte 4 : Journalier -->
+    <div class="col-6 col-md-4 col-lg-3">
       <a [routerLink]="['../jour']" class="menu-card-modern">
         <div class="icon-wrapper bg-soft-info">
           <i class="fas fa-clock"></i>
         </div>
-        <span>Journalier</span>
+        <div class="card-content">
+          <span class="card-title">Journalier</span>
+          <small class="card-subtitle">Fiche du jour & émargement</small>
+        </div>
       </a>
     </div>
 
-    <!-- Carte 4 -->
-    <div class="col-6 col-md-4 col-lg-2-5">
+    <!-- Carte 5 : Par Classe -->
+    <div class="col-6 col-md-4 col-lg-3">
       <a [routerLink]="['../classe']" class="menu-card-modern">
         <div class="icon-wrapper bg-soft-warning">
           <i class="fas fa-chalkboard"></i>
         </div>
-        <span>Par Classe</span>
+        <div class="card-content">
+          <span class="card-title">Par Classe</span>
+          <small class="card-subtitle">Emploi du temps salle/groupe</small>
+        </div>
       </a>
     </div>
 
-    <!-- Carte 5 (Spéciale : Ajout) -->
-    <div class="col-6 col-md-4 col-lg-2-5">
-      <a [routerLink]="['../new']" class="menu-card-modern highlight">
-        <div class="icon-wrapper bg-primary text-white">
-          <i class="fas fa-plus-circle"></i>
-        </div>
-        <span>Nouveau</span>
-      </a>
-    </div>
-    
-    <!-- Carte 6 (Spéciale : Ajout) -->
-    <div class="col-6 col-md-4 col-lg-2-5">
+    <!-- Carte 6 : Transférer -->
+    <div class="col-6 col-md-4 col-lg-3">
       <a [routerLink]="['../transfert']" class="menu-card-modern">
-        <div class="icon-wrapper bg-soft-info">
+        <div class="icon-wrapper bg-soft-teal">
           <i class="fas fa-right-left"></i>
         </div>
-        <span>Transférer</span>
+        <div class="card-content">
+          <span class="card-title">Transférer</span>
+          <small class="card-subtitle">Dupliquer ou déplacer</small>
+        </div>
       </a>
     </div>
+
+    <!-- Carte 7 : Nouveau (Action principale mise en avant) -->
+    <div class="col-6 col-md-4 col-lg-3">
+      <a [routerLink]="['../new']" class="menu-card-modern highlight">
+        <div class="icon-wrapper bg-primary text-white shadow-sm">
+          <i class="fas fa-plus"></i>
+        </div>
+        <div class="card-content">
+          <span class="card-title text-primary">Nouveau</span>
+          <small class="card-subtitle">Créer un créneau</small>
+        </div>
+      </a>
+    </div>
+
   </div>
 </div>

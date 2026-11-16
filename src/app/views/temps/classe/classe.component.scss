@@ -1,0 +1,88 @@
+/* Structure de la grille horaire */
+.timetable-grid {
+  border-color: #e2e8f0;
+  table-layout: fixed;
+  min-width: 900px; /* Garantit la lisibilité sur petit écran avec scroll horizontal */
+}
+
+.timetable-grid th {
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #cbd5e1;
+}
+
+/* Cellules des jours */
+.slot-cell {
+  padding: 6px !important;
+  vertical-align: middle;
+  background-color: #ffffff;
+  height: 68px;
+}
+
+/* Carte visuelle pour chaque matière programmée */
+.course-pill {
+  background-color: #eff6ff;
+  border-left: 4px solid #0d6efd;
+  border-radius: 6px;
+  padding: 6px 8px;
+  text-align: left;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.course-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(13, 110, 253, 0.12);
+  background-color: #e0f2fe;
+}
+
+.course-title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #1e3a8a;
+  line-height: 1.25;
+}
+
+.course-prof {
+  display: block;
+  font-size: 0.74rem;
+  color: #475569;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Optimisation spécifique pour l'impression en format Paysage */
+@media print {
+  @page {
+    size: landscape;
+    margin: 10mm;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .timetable-grid {
+    min-width: 100% !important;
+    border: 1px solid #64748b !important;
+  }
+
+  .timetable-grid th,
+  .timetable-grid td {
+    border: 1px solid #94a3b8 !important;
+  }
+
+  .course-pill {
+    background-color: #f1f5f9 !important;
+    border-left: 3px solid #0d6efd !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    padding: 4px 6px;
+  }
+
+  .slot-cell {
+    height: auto !important;
+    padding: 4px !important;
+  }
+}

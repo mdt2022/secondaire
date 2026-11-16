@@ -1,61 +1,107 @@
-/* Style global des cartes */
+/* Style de base de la carte */
 .menu-card-modern {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem 1rem;
-    background: #ffffff;
-    border-radius: 1.25rem;
-    text-decoration: none;
-    color: #334155;
-    font-weight: 600;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    height: 100%;
-    border: 1px solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #ffffff;
+  border: 1px solid #edf2f7;
+  border-radius: 16px;
+  padding: 1.75rem 1.25rem;
+  text-decoration: none;
+  height: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  overflow: hidden;
 }
 
 /* Effet au survol */
 .menu-card-modern:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    color: #0d6efd;
-    background: #f8fafc;
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(13, 110, 253, 0.12);
+  border-color: #cfe2ff;
 }
 
-/* Style des icônes */
+/* Conteneur circulaire de l'icône */
 .icon-wrapper {
-    width: 60px;
-    height: 60px;
-    border-radius: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    transition: transform 0.3s ease;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.65rem;
+  margin-bottom: 1rem;
+  transition: transform 0.25s ease;
 }
 
 .menu-card-modern:hover .icon-wrapper {
-    transform: scale(1.1) rotate(5deg);
+  transform: scale(1.1);
 }
 
-/* Couleurs douces pour les fonds d'icônes */
-.bg-soft-primary { background-color: #e0e7ff; color: #4338ca; }
-.bg-soft-success { background-color: #dcfce7; color: #15803d; }
-.bg-soft-info    { background-color: #e0f2fe; color: #0369a1; }
-.bg-soft-warning { background-color: #fef3c7; color: #b45309; }
+/* Textes de la carte */
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
-/* Carte mise en avant (Ajouter) */
+.card-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #1e293b;
+  transition: color 0.2s ease;
+}
+
+.menu-card-modern:hover .card-title {
+  color: #0d6efd;
+}
+
+.card-subtitle {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* Carte spéciale "Nouveau" mise en valeur */
 .menu-card-modern.highlight {
-    border: 1px solid #0d6efd44;
+  background: linear-gradient(145deg, #ffffff 0%, #f0f7ff 100%);
+  border: 1px dashed #9ec5fe;
 }
 
-/* Adaptation mobile (5 colonnes sur grand écran) */
-@media (min-width: 992px) {
-    .col-lg-2-5 {
-        flex: 0 0 auto;
-        width: 20%;
-    }
+.menu-card-modern.highlight:hover {
+  border-style: solid;
+  border-color: #0d6efd;
+}
+
+/* Palettes de couleurs douces (Soft backgrounds) */
+.bg-soft-primary {
+  background-color: #e7f1ff;
+  color: #0d6efd;
+}
+
+.bg-soft-success {
+  background-color: #e6f8f0;
+  color: #198754;
+}
+
+.bg-soft-info {
+  background-color: #e0f7fa;
+  color: #0dcaf0;
+}
+
+.bg-soft-warning {
+  background-color: #fff8e1;
+  color: #f59e0b;
+}
+
+.bg-soft-purple {
+  background-color: #f3e8ff;
+  color: #7c3aed;
+}
+
+.bg-soft-teal {
+  background-color: #e6fffa;
+  color: #0d9488;
 }

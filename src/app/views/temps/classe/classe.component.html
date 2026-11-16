@@ -1,95 +1,199 @@
-<div class="card mb-4">
-    <div class="card-header">
-        <strong>Gestion des emplois du temps par classe</strong>
-    </div>
+<!-- BARRE DE RECHERCHE ET ACTIONS (Masquée à l'impression) -->
+<div class="card border-0 shadow-sm mb-4 no-print">
+  <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+    <h5 class="mb-0 fw-bold text-primary">
+      <i class="fas fa-chalkboard-teacher me-2"></i>Gestion des emplois du temps par classe
+    </h5>
+    <span *ngIf="rechercheEffectuee && emploisTable.length > 0" class="badge bg-primary-subtle text-primary-emphasis rounded-pill px-3 py-2 fw-semibold">
+      {{ emploisTable.length }} créneau(x) horaire(s)
+    </span>
+  </div>
 
-    <div class="card-body">
-        <form [formGroup]="emploiForm" (ngSubmit)="onSubmit()">
-            <div class="row g-3">
+  <div class="card-body py-3">
+    <form [formGroup]="emploiForm" (ngSubmit)="onSubmit()">
+      <div class="row g-3 align-items-end">
 
-                <div class="col-md-3">
-                    <select class="form-select" formControlName="classe">
-                        <option value="">-- Classe --</option>
-                        <option *ngFor="let c of classes" [ngValue]="c.id">
-                            {{ c.nom }}
-                        </option>
-                    </select>
-                </div>
+        <!-- Sélecteur Classe -->
+        <div class="col-md-3">
+          <label class="form-label small fw-semibold text-muted mb-1">Classe</label>
+          <select class="form-select" formControlName="classe">
+            <option value="">-- Sélectionner la classe --</option>
+            <option *ngFor="let c of classes" [ngValue]="c.id">
+              {{ c.nom }}
+            </option>
+          </select>
+        </div>
 
-                <div class="col-md-3">
-                    <select class="form-select" formControlName="anneeuv">
-                        <option value="">-- Année --</option>
-                        <option *ngFor="let a of annees" [ngValue]="a.id">
-                            {{ a.nom }}
-                        </option>
-                    </select>
-                </div>
+        <!-- Sélecteur Année -->
+        <div class="col-md-3">
+          <label class="form-label small fw-semibold text-muted mb-1">Année universitaire / scolaire</label>
+          <select class="form-select" formControlName="anneeuv">
+            <option value="">-- Sélectionner l’année --</option>
+            <option *ngFor="let a of annees" [ngValue]="a.id">
+              {{ a.nom }}
+            </option>
+          </select>
+        </div>
 
-                <div class="col-md-6 d-flex align-items-center gap-2 flex-wrap">
-                    <button class="btn btn-primary" type="submit">
-                        Rechercher
-                    </button>
-                    <button class="btn btn-secondary" type="button" (click)="resetForm()">
-                        Annuler
-                    </button>
-                    <button *ngIf="rechercheEffectuee" class="btn btn-success" type="button" (click)="printEmploi()" [disabled]="emploisTable.length === 0">
-                        Imprimer
-                    </button>
-                </div>
+        <!-- Boutons d'action -->
+        <div class="col-md-6 d-flex align-items-center justify-content-md-end gap-2 flex-wrap">
+          <button class="btn btn-primary fw-semibold px-3 shadow-sm" type="submit" [disabled]="loading">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            <i *ngIf="!loading" class="fas fa-search me-1"></i> Rechercher
+          </button>
 
-            </div>
-        </form>
-    </div>
+          <button class="btn btn-outline-secondary fw-semibold px-3" type="button" (click)="resetForm()">
+            <i class="fas fa-rotate-left me-1"></i> Annuler
+          </button>
+
+          <button *ngIf="rechercheEffectuee" 
+                  class="btn btn-success fw-semibold px-3 shadow-sm" 
+                  type="button" 
+                  (click)="printEmploi()" 
+                  [disabled]="emploisTable.length === 0">
+            <i class="fas fa-print me-1"></i> Imprimer
+          </button>
+        </div>
+
+      </div>
+    </form>
+  </div>
 </div>
 
-<div *ngIf="loading" class="text-center my-4">
-    <div class="spinner-border text-primary"></div>
-    <p>Chargement...</p>
+<!-- ÉTAT DE CHARGEMENT -->
+<div *ngIf="loading" class="card border-0 shadow-sm my-4 no-print">
+  <div class="card-body text-center py-5">
+    <div class="spinner-border text-primary mb-3" style="width: 2.5rem; height: 2.5rem;" role="status"></div>
+    <p class="text-secondary fw-medium mb-0">Chargement de la grille hebdomadaire...</p>
+  </div>
 </div>
 
-<div class="card">
-    <div class="card-body">
-        <table class="table table-striped table-hover">
-            <thead class="table-light">
-                <tr>
-                    <th>Horaire</th>
-                    <th>Lundi</th>
-                    <th>Mardi</th>
-                    <th>Mercredi</th>
-                    <th>Jeudi</th>
-                    <th>Vendredi</th>
-                    <th>Samedi</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
+<!-- GRILLE EMPLOI DU TEMPS (Écran + Impression) -->
+<div id="emploiPrint" class="card border-0 shadow-sm" *ngIf="!loading">
+  
+  <!-- En-tête visible UNIQUEMENT à l'impression -->
+  <div class="d-none d-print-block text-center pt-3 pb-2 border-bottom">
+    <h4 class="fw-bold text-uppercase mb-1">Emploi du Temps Hebdomadaire</h4>
+    <p class="mb-0 text-muted">Année académique en cours</p>
+  </div>
 
-            <tbody>
-                <tr *ngFor="let row of emploisTable">
-                    <td>{{ row.heure }}</td>
+  <div class="card-body p-0">
+    <div class="table-responsive rounded">
+      <table class="table table-bordered align-middle mb-0 timetable-grid">
+        <thead class="table-light text-secondary text-uppercase small fw-bold text-center">
+          <tr>
+            <th class="bg-primary text-white py-3 print-th-dark" style="width: 11%;">Horaire</th>
+            <th class="py-3" style="width: 13.5%;">Lundi</th>
+            <th class="py-3" style="width: 13.5%;">Mardi</th>
+            <th class="py-3" style="width: 13.5%;">Mercredi</th>
+            <th class="py-3" style="width: 13.5%;">Jeudi</th>
+            <th class="py-3" style="width: 13.5%;">Vendredi</th>
+            <th class="py-3" style="width: 13.5%;">Samedi</th>
+            <th class="py-3 no-print" style="width: 8%;">Action</th>
+          </tr>
+        </thead>
 
-                    <td>{{ row.Lundi?.matiere?.libelle || '' }}</td>
-                    <td>{{ row.Mardi?.matiere?.libelle || '' }}</td>
-                    <td>{{ row.Mercredi?.matiere?.libelle || '' }}</td>
-                    <td>{{ row.Jeudi?.matiere?.libelle || '' }}</td>
-                    <td>{{ row.Vendredi?.matiere?.libelle || '' }}</td>
-                    <td>{{ row.Samedi?.matiere?.libelle || '' }}</td>
+        <tbody>
+          <tr *ngFor="let row of emploisTable">
+            <!-- Colonne Horaire -->
+            <td class="text-center fw-bold bg-light-subtle text-dark font-monospace">
+              <span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle px-2 py-2 w-100">
+                {{ row.heure }}
+              </span>
+            </td>
 
-                    <td>
-                        <ng-container *ngIf="getEmploi(row) as emploi">
+            <!-- Lundi -->
+            <td class="slot-cell">
+              <div *ngIf="row.Lundi?.matiere" class="course-pill">
+                <div class="course-title">{{ row.Lundi.matiere.libelle }}</div>
+                <small *ngIf="row.Lundi?.professeur" class="course-prof">
+                  {{ row.Lundi.professeur.prenom }} {{ row.Lundi.professeur.nom }}
+                </small>
+              </div>
+            </td>
 
-                            <a class="btn btn-warning btn-sm me-1" [routerLink]="['/temps/edit', emploi.id]">
-                                ✏️
-                            </a>
+            <!-- Mardi -->
+            <td class="slot-cell">
+              <div *ngIf="row.Mardi?.matiere" class="course-pill">
+                <div class="course-title">{{ row.Mardi.matiere.libelle }}</div>
+                <small *ngIf="row.Mardi?.professeur" class="course-prof">
+                  {{ row.Mardi.professeur.prenom }} {{ row.Mardi.professeur.nom }}
+                </small>
+              </div>
+            </td>
 
-                            <button class="btn btn-danger btn-sm" (click)="deleteEmploi(emploi.id)">
-                                🗑️
-                            </button>
+            <!-- Mercredi -->
+            <td class="slot-cell">
+              <div *ngIf="row.Mercredi?.matiere" class="course-pill">
+                <div class="course-title">{{ row.Mercredi.matiere.libelle }}</div>
+                <small *ngIf="row.Mercredi?.professeur" class="course-prof">
+                  {{ row.Mercredi.professeur.prenom }} {{ row.Mercredi.professeur.nom }}
+                </small>
+              </div>
+            </td>
 
-                        </ng-container>
-                    </td>
+            <!-- Jeudi -->
+            <td class="slot-cell">
+              <div *ngIf="row.Jeudi?.matiere" class="course-pill">
+                <div class="course-title">{{ row.Jeudi.matiere.libelle }}</div>
+                <small *ngIf="row.Jeudi?.professeur" class="course-prof">
+                  {{ row.Jeudi.professeur.prenom }} {{ row.Jeudi.professeur.nom }}
+                </small>
+              </div>
+            </td>
 
-                </tr>
-            </tbody>
-        </table>
+            <!-- Vendredi -->
+            <td class="slot-cell">
+              <div *ngIf="row.Vendredi?.matiere" class="course-pill">
+                <div class="course-title">{{ row.Vendredi.matiere.libelle }}</div>
+                <small *ngIf="row.Vendredi?.professeur" class="course-prof">
+                  {{ row.Vendredi.professeur.prenom }} {{ row.Vendredi.professeur.nom }}
+                </small>
+              </div>
+            </td>
+
+            <!-- Samedi -->
+            <td class="slot-cell">
+              <div *ngIf="row.Samedi?.matiere" class="course-pill">
+                <div class="course-title">{{ row.Samedi.matiere.libelle }}</div>
+                <small *ngIf="row.Samedi?.professeur" class="course-prof">
+                  {{ row.Samedi.professeur.prenom }} {{ row.Samedi.professeur.nom }}
+                </small>
+              </div>
+            </td>
+
+            <!-- Colonne Action (Masquée à l'impression) -->
+            <td class="text-center no-print">
+              <ng-container *ngIf="getEmploi(row) as emploi">
+                <div class="btn-group btn-group-sm shadow-sm" role="group">
+                  <a class="btn btn-outline-warning" 
+                     [routerLink]="['/temps/edit', emploi.id]" 
+                     title="Modifier ce créneau">
+                    <i class="fas fa-pen"></i>
+                  </a>
+                  <button class="btn btn-outline-danger" 
+                          type="button" 
+                          (click)="deleteEmploi(emploi.id)" 
+                          title="Supprimer ce créneau">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </ng-container>
+            </td>
+          </tr>
+
+          <!-- Message si aucun résultat -->
+          <tr *ngIf="emploisTable.length === 0">
+            <td colspan="8" class="text-center py-5">
+              <div class="text-muted">
+                <i class="fas fa-table fs-1 mb-3 d-block opacity-50"></i>
+                <h6 class="fw-bold text-dark mb-1">Aucun emploi du temps affiché</h6>
+                <p class="small mb-0">Choisissez une classe et une année scolaire pour visualiser la grille.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+  </div>
 </div>
