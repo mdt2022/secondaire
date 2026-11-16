@@ -76,17 +76,12 @@ export class ClasseComponent implements OnInit {
   }
 
   loadClassesByEcole(): void {
-    const ecoleId = this.user?.administrateur?.ecole?.idEcole;
-    if (!ecoleId) return console.error('Aucun idEcole trouvé');
 
-    this.classeService.getAllClasseParEcole(ecoleId).subscribe(res => this.classes = res);
+    this.classeService.getAllClasseParEcole(this.user.administrateur.ecole.idEcole).subscribe(res => this.classes = res);
   }
 
   loadEnseignantsByEcole(): void {
-    const ecoleId = this.user?.administrateur?.ecole?.idEcole;
-    if (!ecoleId) return console.error('Aucun idEcole trouvé');
-
-    this.enseignantService.getEnseignantEcole(ecoleId).subscribe(res => this.enseignants = res);
+    this.enseignantService.getEnseignantEcole(this.user.administrateur.ecole.idEcole).subscribe(res => this.enseignants = res);
   }
 
 
@@ -101,7 +96,11 @@ export class ClasseComponent implements OnInit {
 
 
     this.loading = true;
-    this.emploiService.parAnneeAndEcole(11,11).subscribe({
+    this.emploiService.parClasseAnneeEcole(
+      classe,
+      anneeuv,
+      this.user.administrateur.ecole.idEcole
+    ).subscribe({
       next: (res) => {
         const filtres = res.filter(e => Number(e.classe?.id) === Number(classe) && Number(e.anneeuv?.id) === Number(anneeuv));
         this.emploisTable =  this.buildTable(filtres);
