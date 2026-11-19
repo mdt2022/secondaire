@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CardModule, ButtonModule, TableModule } from '@coreui/angular';
 
@@ -26,6 +26,7 @@ import Swal from 'sweetalert2';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     CardModule,
     ButtonModule,
     TableModule
@@ -49,6 +50,15 @@ export class NewComponent implements OnInit {
   verificationEffectifEnCours = false;
   verificationEffectifErreur = false;
   private verificationEffectifId = 0;
+    // Propriétés de recherche pour les 3 listes
+  matiereSearchText = '';
+  showMatiereDropdown = false;
+
+  enseignantSearchText = '';
+  showEnseignantDropdown = false;
+
+  classeSearchText = '';
+  showClasseDropdown = false;
 
   jours: string[] = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
@@ -267,6 +277,14 @@ export class NewComponent implements OnInit {
       classe: e.classe?.id,
       anneeuv: e.anneeuv?.id
     });
+
+    this.matiereSearchText = e.matiere
+      ? `${e.matiere.libelle} | Coef ${e.matiere.coefficient} | Horaire ${e.matiere.horaire} h`
+      : '';
+    this.enseignantSearchText = e.professeur
+      ? `${e.professeur.prenom} ${e.professeur.nom}`
+      : '';
+    this.classeSearchText = e.classe?.nom || '';
   }
 
   resetForm(): void {
@@ -277,9 +295,115 @@ export class NewComponent implements OnInit {
     this.effectifClasse = null;
     this.verificationEffectifEnCours = false;
     this.verificationEffectifErreur = false;
+
+    this.matiereSearchText = '';
+    this.enseignantSearchText = '';
+    this.classeSearchText = '';
   }
 
   backToList(): void {
     this.router.navigate(['/emploidutemps/liste']);
+  }
+  // --- Getters filtrés ---
+  get filteredEnseignes(): Enseigner[] {
+    const term = this.matiereSearchText.toLowerCase().trim();
+    const seenIds = new Set<number>();
+
+    return this.enseignes.filter(e => {
+      const matiereId = e.matiere?.id;
+      if (!matiereId || seenIds.has(matiereId)) {
+        return false;
+      }
+      const match = !term || (e.matiere?.libelle || '').toLowerCase().includes(term);
+      if (match) {
+        seenIds.add(matiereId);
+      }
+      return match;
+    });
+  }
+
+
+  get filteredEnseignants(): Enseignant[] {
+    const term = this.enseignantSearchText.toLowerCase().trim();
+    if (!term) return this.enseignants;
+    return this.enseignants.filter(ens =>
+      `${ens.prenom || ''} ${ens.nom || ''}`.toLowerCase().includes(term)
+    );
+  }
+
+  get filteredClasses(): Classe[] {
+    const term = this.classeSearchText.toLowerCase().trim();
+    if (!term) return this.classes;
+    return this.classes.filter(c =>
+      (c.nom || '').toLowerCase().includes(term) ||
+      (c.filiere || '').toLowerCase().includes(term) ||
+      (c.options || '').toLowerCase().includes(term)
+    );
+  }
+
+  // --- Actions Matière ---
+  selectMatiere(e: Enseigner): void {
+    this.emploiForm.patchValue({ matiere: e.matiere.id });
+    this.matiereSearchText = `${e.matiere.libelle} | Coef ${e.matiere.coefficient} | Horaire ${e.matiere.horaire} h`;
+    this.showMatiereDropdown = false;
+  }
+
+  onMatiereSearchInput(): void {
+    this.showMatiereDropdown = true;
+    this.emploiForm.patchValue({ matiere: '' });
+  }
+
+  clearMatiere(): void {
+    this.matiereSearchText = '';
+    this.emploiForm.patchValue({ matiere: '' });
+    this.showMatiereDropdown = true;
+  }
+
+  // --- Actions Enseignant ---
+  selectEnseignant(ens: Enseignant): void {
+    this.emploiForm.patchValue({ enseignant: ens.id });
+    this.enseignantSearchText = `${ens.prenom} ${ens.nom}`;
+    this.showEnseignantDropdown = false;
+  }
+
+  onEnseignantSearchInput(): void {
+    this.showEnseignantDropdown = true;
+    this.emploiForm.patchValue({ enseignant: '' });
+  }
+
+  clearEnseignant(): void {
+    this.enseignantSearchText = '';
+    this.emploiForm.patchValue({ enseignant: '' });
+    this.showEnseignantDropdown = true;
+  }
+
+  // --- Actions Classe ---
+  selectClasse(c: Classe): void {
+    this.emploiForm.patchValue({ classe: c.id });
+    this.classeSearchText = c.nom;
+    this.showClasseDropdown = false;
+    this.verifierEffectifClasse(); // Déclenche automatiquement ta vérification d'effectif
+  }
+
+  onClasseSearchInput(): void {
+    this.showClasseDropdown = true;
+    this.emploiForm.patchValue({ classe: '' });
+    this.effectifClasse = null;
+  }
+
+  clearClasse(): void {
+    this.classeSearchText = '';
+    this.emploiForm.patchValue({ classe: '' });
+    this.effectifClasse = null;
+    this.showClasseDropdown = true;
+  }
+
+  // --- Fermeture différée au blur ---
+  hideDropdown(type: 'matiere' | 'enseignant' | 'classe'): void {
+    setTimeout(() => {
+      if (type === 'matiere') this.showMatiereDropdown = false;
+      if (type === 'enseignant') this.showEnseignantDropdown = false;
+      if (type === 'classe') this.showClasseDropdown = false;
+    }, 150);
   }
 }

@@ -10,6 +10,7 @@
     <form [formGroup]="emploiForm" (ngSubmit)="onSubmit()">
       <div class="row g-3">
 
+        <!-- Jour -->
         <div class="col-md-3">
           <label class="form-label fw-semibold">Jour</label>
           <select class="form-select" formControlName="jour">
@@ -18,44 +19,137 @@
           </select>
         </div>
 
+        <!-- Heure début -->
         <div class="col-md-2">
           <label class="form-label fw-semibold">Heure début</label>
           <input type="time" class="form-control" formControlName="heuredebut">
         </div>
 
+        <!-- Heure fin -->
         <div class="col-md-2">
           <label class="form-label fw-semibold">Heure fin</label>
           <input type="time" class="form-control" formControlName="heurefin">
         </div>
 
-        <div class="col-md-5">
+        <!-- Matière avec recherche -->
+        <div class="col-md-5 position-relative">
           <label class="form-label fw-semibold">Matière</label>
-          <select class="form-select" formControlName="matiere">
-            <option value="">-- Choisir --</option>
-            <option *ngFor="let e of enseignes" [value]="e.matiere.id">
-              {{ e.matiere.libelle }} | Coef {{ e.matiere.coefficient }} | Horaire {{ e.matiere.horaire }} h
-            </option>
-          </select>
+          <div class="input-group">
+            <span class="input-group-text bg-light text-muted">🔍</span>
+            <input type="text"
+                   class="form-control"
+                   placeholder="Rechercher une matière..."
+                   [(ngModel)]="matiereSearchText"
+                   [ngModelOptions]="{standalone: true}"
+                   (focus)="showMatiereDropdown = true"
+                   (input)="onMatiereSearchInput()"
+                   (blur)="hideDropdown('matiere')"
+                   autocomplete="off">
+            <button type="button"
+                    *ngIf="matiereSearchText"
+                    class="btn btn-outline-secondary"
+                    (click)="clearMatiere()"
+                    title="Effacer">✕</button>
+          </div>
+
+          <ul *ngIf="showMatiereDropdown"
+              class="list-group position-absolute w-100 shadow border rounded mt-1"
+              style="z-index: 1050; max-height: 220px; overflow-y: auto;">
+            <li *ngFor="let e of filteredEnseignes"
+                class="list-group-item list-group-item-action"
+                style="cursor: pointer;"
+                [class.active]="emploiForm.get('matiere')?.value == e.matiere.id"
+                (mousedown)="selectMatiere(e)">
+              <div class="fw-semibold">{{ e.matiere.libelle }}</div>
+              <small [ngClass]="emploiForm.get('matiere')?.value == e.matiere.id ? 'text-white-50' : 'text-muted'">
+                Coef {{ e.matiere.coefficient }} | Horaire {{ e.matiere.horaire }} h
+              </small>
+            </li>
+            <li *ngIf="filteredEnseignes.length === 0" class="list-group-item text-muted small text-center py-2">
+              Aucune matière trouvée.
+            </li>
+          </ul>
         </div>
 
-        <div class="col-md-4">
+        <!-- Enseignant avec recherche -->
+        <div class="col-md-4 position-relative">
           <label class="form-label fw-semibold">Enseignant</label>
-          <select class="form-select" formControlName="enseignant">
-            <option value="">-- Choisir --</option>
-            <option *ngFor="let ens of enseignants" [value]="ens.id">
+          <div class="input-group">
+            <span class="input-group-text bg-light text-muted">🔍</span>
+            <input type="text"
+                   class="form-control"
+                   placeholder="Rechercher un enseignant..."
+                   [(ngModel)]="enseignantSearchText"
+                   [ngModelOptions]="{standalone: true}"
+                   (focus)="showEnseignantDropdown = true"
+                   (input)="onEnseignantSearchInput()"
+                   (blur)="hideDropdown('enseignant')"
+                   autocomplete="off">
+            <button type="button"
+                    *ngIf="enseignantSearchText"
+                    class="btn btn-outline-secondary"
+                    (click)="clearEnseignant()"
+                    title="Effacer">✕</button>
+          </div>
+
+          <ul *ngIf="showEnseignantDropdown"
+              class="list-group position-absolute w-100 shadow border rounded mt-1"
+              style="z-index: 1050; max-height: 220px; overflow-y: auto;">
+            <li *ngFor="let ens of filteredEnseignants"
+                class="list-group-item list-group-item-action"
+                style="cursor: pointer;"
+                [class.active]="emploiForm.get('enseignant')?.value == ens.id"
+                (mousedown)="selectEnseignant(ens)">
               {{ ens.prenom }} {{ ens.nom }}
-            </option>
-          </select>
+            </li>
+            <li *ngIf="filteredEnseignants.length === 0" class="list-group-item text-muted small text-center py-2">
+              Aucun enseignant trouvé.
+            </li>
+          </ul>
         </div>
 
-        <div class="col-md-4">
+        <!-- Classe avec recherche -->
+        <div class="col-md-4 position-relative">
           <label class="form-label fw-semibold">Classe</label>
-          <select class="form-select" formControlName="classe" (change)="verifierEffectifClasse()">
-            <option value="">-- Choisir --</option>
-            <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
-          </select>
+          <div class="input-group">
+            <span class="input-group-text bg-light text-muted">🔍</span>
+            <input type="text"
+                   class="form-control"
+                   placeholder="Rechercher une classe..."
+                   [(ngModel)]="classeSearchText"
+                   [ngModelOptions]="{standalone: true}"
+                   (focus)="showClasseDropdown = true"
+                   (input)="onClasseSearchInput()"
+                   (blur)="hideDropdown('classe')"
+                   autocomplete="off">
+            <button type="button"
+                    *ngIf="classeSearchText"
+                    class="btn btn-outline-secondary"
+                    (click)="clearClasse()"
+                    title="Effacer">✕</button>
+          </div>
+
+          <ul *ngIf="showClasseDropdown"
+              class="list-group position-absolute w-100 shadow border rounded mt-1"
+              style="z-index: 1050; max-height: 220px; overflow-y: auto;">
+            <li *ngFor="let c of filteredClasses"
+                class="list-group-item list-group-item-action"
+                style="cursor: pointer;"
+                [class.active]="emploiForm.get('classe')?.value == c.id"
+                (mousedown)="selectClasse(c)">
+              <div class="fw-semibold">{{ c.nom }}</div>
+              <small *ngIf="c.filiere || c.options"
+                     [ngClass]="emploiForm.get('classe')?.value == c.id ? 'text-white-50' : 'text-muted'">
+                {{ c.filiere }} <span *ngIf="c.options">• {{ c.options }}</span>
+              </small>
+            </li>
+            <li *ngIf="filteredClasses.length === 0" class="list-group-item text-muted small text-center py-2">
+              Aucune classe trouvée.
+            </li>
+          </ul>
         </div>
 
+        <!-- Année universitaire -->
         <div class="col-md-4">
           <label class="form-label fw-semibold">Année universitaire</label>
           <select class="form-select" formControlName="anneeuv" (change)="verifierEffectifClasse()">
