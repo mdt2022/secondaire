@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import { Classe } from '../../../model/classe';
 import { ClasseService } from '../../../service/classe.service';
 import { CommonModule } from '@angular/common';
+import { EnseignerService } from '../../../service/enseigner.service';
 
 @Component({
   selector: 'app-classe',
@@ -19,7 +20,7 @@ export class ClasseComponent implements OnInit {
   classeForm!: FormGroup;
   editMode = false;
   currentId?: number;
-
+  enseigners: any[] = [];
   // Pagination
   searchTerm: string = '';
   currentPage = 1;
@@ -30,7 +31,11 @@ export class ClasseComponent implements OnInit {
   sortField: string = '';
   sortDirection: 'asc' | 'desc' = 'asc';
 
-  constructor(private classeService: ClasseService, private fb: FormBuilder) {}
+  constructor(
+    private classeService: ClasseService, 
+     private enseignerService: EnseignerService,
+    private fb: FormBuilder
+  ) {}
 
   ngOnInit(): void {
     this.classeForm = this.fb.group({
@@ -41,6 +46,7 @@ export class ClasseComponent implements OnInit {
     });
 
     this.loadClasses();
+    this.loadData();
   }
 
   loadClasses(): void {
@@ -162,5 +168,22 @@ delete(id: number) {
 
   get totalPagesArray(): number[] {
     return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+  loadData(): void {
+    // 1. Charger les enseignements
+    this.enseignerService.getAll().subscribe((data: any[]) => {
+      this.enseigners = data;
+    });
+
+    // 2. Charger les classes
+    this.classeService.getAll().subscribe((data: any[]) => {
+      this.classes = data;
+      this.applyFilter();
+    });
+  }
+    // Calcule le nombre de fois où la classe apparaît dans Enseigner
+  getEnseignerCount(classe: any): number {
+    if (!this.enseigners || !classe?.id) return 0;
+    return this.enseigners.filter(e => e.classe?.id === classe.id).length;
   }
 }

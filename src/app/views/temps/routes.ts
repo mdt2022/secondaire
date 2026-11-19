@@ -19,7 +19,13 @@ export const routes: Routes = [
           title: 'Emplois du temps'
         }
       },
-
+      {
+        path: 'liste',
+        loadComponent: () => import('./liste/liste.component').then(m => m.ListeComponent),
+        data: {
+          title: 'Liste'
+        }
+      },
       {
         path: 'new',
         loadComponent: () => import('./new/new.component').then(m => m.NewComponent),

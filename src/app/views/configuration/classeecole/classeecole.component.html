@@ -1,73 +1,203 @@
-<div class="container mt-4">
-    <h3>Association Classe - École</h3>
-
-    <!-- Formulaire -->
-    <form [formGroup]="form" (ngSubmit)="save()" class="row g-3 mt-3">
-        <div class="col-md-5">
-            <select formControlName="classe" class="form-select" required>
-        <option value="">-- Sélectionner une classe --</option>
-        <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
-      </select>
-        </div>
-
-        <div class="col-md-5">
-            <select formControlName="ecole" class="form-select" required>
-        <option value="">-- Sélectionner une école --</option>
-        <option *ngFor="let e of ecoles" [value]="e.idEcole">{{ e.nomEcole }}</option>
-      </select>
-        </div>
-
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">{{ editMode ? 'Modifier' : 'Ajouter' }}</button>
-        </div>
-    </form>
-
-    <!-- Recherche -->
-    <div class="mt-4 mb-2">
-        <input type="text" class="form-control" placeholder="Rechercher..." [(ngModel)]="filterText">
+<div class="container py-4">
+  <!-- En-tête de la page -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold text-dark mb-0">Association Classe - École</h2>
+      <p class="text-muted small mb-0">Associez les classes aux écoles et suivez leur utilisation dans les enseignements</p>
     </div>
+    <span class="badge bg-primary-subtle text-primary fs-6 px-3 py-2 rounded-pill">
+      Total : {{ filteredClasseEcoles().length }} association(s)
+    </span>
+  </div>
 
-    <!-- Tableau -->
-    <table class="table table-striped">
-        <thead>
+  <!-- Carte Formulaire -->
+  <div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+      <h5 class="fw-semibold text-secondary mb-0">
+        <i class="bi" [ngClass]="editMode ? 'bi-pencil-square text-warning' : 'bi-link-45deg text-primary'"></i>
+        {{ editMode ? 'Modifier l\'association' : 'Nouvelle association' }}
+      </h5>
+    </div>
+    <div class="card-body p-4">
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-4 position-relative">
+            <label class="form-label small fw-semibold text-muted">Classe <span class="text-danger">*</span></label>
+            
+            <div class="input-group">
+                <span class="input-group-text bg-light border-0 text-muted">
+                <i class="bi bi-search"></i>
+                </span>
+                <input type="text"
+                    class="form-control bg-light border-0"
+                    placeholder="Taper le nom ou la filière..."
+                    [(ngModel)]="classeSearchText"
+                    [ngModelOptions]="{standalone: true}"
+                    (focus)="showClasseDropdown = true"
+                    (input)="onClasseSearchInput()"
+                    (blur)="hideClasseDropdownWithDelay()"
+                    autocomplete="off">
+                
+                <!-- Bouton croix pour effacer rapidement -->
+                <button type="button" 
+                        *ngIf="classeSearchText" 
+                        class="btn bg-light border-0 text-muted" 
+                        (click)="clearClasseSelection()"
+                        title="Effacer">
+                <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Liste déroulante filtrée -->
+            <ul *ngIf="showClasseDropdown" 
+                class="list-group position-absolute w-100 shadow-lg border-0 rounded-3 mt-1" 
+                style="z-index: 1050; max-height: 220px; overflow-y: auto;">
+                
+                <li *ngFor="let c of getFilteredClassesForSelect()"
+                    class="list-group-item list-group-item-action border-0 d-flex justify-content-between align-items-center py-2 px-3"
+                    style="cursor: pointer;"
+                    [class.active]="form.get('classe')?.value == c.id"
+                    (mousedown)="selectClasse(c)">
+                <div>
+                    <div class="fw-semibold">{{ c.nom }}</div>
+                    <small [ngClass]="form.get('classe')?.value == c.id ? 'text-white-50' : 'text-muted'" *ngIf="c.filiere || c.options">
+                    {{ c.filiere }} <span *ngIf="c.options">• {{ c.options }}</span>
+                    </small>
+                </div>
+                <i class="bi bi-check2" *ngIf="form.get('classe')?.value == c.id"></i>
+                </li>
+
+                <li *ngIf="getFilteredClassesForSelect().length === 0" class="list-group-item text-muted small text-center py-3">
+                Aucune classe trouvée pour "{{ classeSearchText }}"
+                </li>
+            </ul>
+          </div>
+
+
+          <div class="col-md-4">
+            <label class="form-label small fw-semibold text-muted">École <span class="text-danger">*</span></label>
+            <select formControlName="ecole" class="form-select bg-light border-0" required>
+              <option value="">-- Sélectionner une école --</option>
+              <option *ngFor="let e of ecoles" [value]="e.idEcole">{{ e.nomEcole }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-4 d-flex gap-2">
+            <button type="submit" class="btn flex-grow-1 rounded-3 shadow-sm"
+                    [ngClass]="editMode ? 'btn-warning' : 'btn-primary'"
+                    [disabled]="form.invalid">
+              <i class="bi bi-check-lg me-1"></i> {{ editMode ? 'Mettre à jour' : 'Ajouter' }}
+            </button>
+
+            <button type="button" *ngIf="editMode" class="btn btn-light rounded-3 px-3" (click)="form.reset(); editMode = false">
+              Annuler
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Carte Liste & Tableau -->
+  <div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+
+      <!-- Barre de recherche et compteur -->
+      <div class="row g-3 align-items-center justify-content-between mb-3">
+        <div class="col-md-4">
+          <div class="input-group">
+            <span class="input-group-text bg-light border-0 text-muted">
+              <i class="bi bi-search"></i>
+            </span>
+            <input type="text" class="form-control bg-light border-0" placeholder="Rechercher une classe ou une école..."
+                   [(ngModel)]="filterText" (ngModelChange)="page = 1">
+          </div>
+        </div>
+
+        <div class="col-md-auto text-muted small" *ngIf="filteredClasseEcoles().length > 0">
+          Page <strong>{{ page }}</strong> sur <strong>{{ totalPages() }}</strong>
+          ({{ filteredClasseEcoles().length }} résultat(s))
+        </div>
+      </div>
+
+      <!-- Tableau Responsive -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light text-muted small text-uppercase">
             <tr>
-                <th>#</th>
-                <th (click)="sortBy('classe')" style="cursor:pointer">
-                    Classe
-                    <span *ngIf="sortColumn==='classe'">{{ sortDirection==='asc' ? '↑' : '↓' }}</span>
-                </th>
-                <th (click)="sortBy('ecole')" style="cursor:pointer">
-                    École
-                    <span *ngIf="sortColumn==='ecole'">{{ sortDirection==='asc' ? '↑' : '↓' }}</span>
-                </th>
-                <th>Actions</th>
+              <th class="ps-3 rounded-start">#</th>
+              <th (click)="sortBy('classe')" style="cursor: pointer;">
+                Classe
+                <span *ngIf="sortColumn === 'classe'" class="ms-1 text-primary">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+              </th>
+              <th (click)="sortBy('ecole')" style="cursor: pointer;">
+                École
+                <span *ngIf="sortColumn === 'ecole'" class="ms-1 text-primary">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+              </th>
+              <th class="text-center">Utilisations (Enseigner)</th>
+              <th class="text-end pe-3 rounded-end">Actions</th>
             </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let ce of filteredClasseEcoles().slice((page-1)*pageSize, page*pageSize); let i = index">
-                <td>{{ (page-1)*pageSize + i + 1 }}</td>
-                <td>{{ ce.classe.nom }}</td>
-                <td>{{ ce.ecole.nomEcole }}</td>
-                <td>
-                    <button class="btn btn-sm btn-warning me-2" (click)="edit(ce)">Modifier</button>
-                    <button class="btn btn-sm btn-danger" (click)="confirmDelete(ce.id)">Supprimer</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+          </thead>
+          <tbody class="border-top-0">
+            <tr *ngFor="let ce of filteredClasseEcoles().slice((page - 1) * pageSize, page * pageSize); let i = index">
+              <td class="ps-3 fw-semibold text-muted">{{ (page - 1) * pageSize + i + 1 }}</td>
+              <td class="fw-bold text-dark">
+                <i class="bi bi-mortarboard text-primary me-2"></i>{{ ce.classe?.nom }}
+              </td>
+              <td>
+                <span class="badge bg-secondary-subtle text-secondary rounded-pill px-3 py-1">
+                  <i class="bi bi-building me-1"></i>{{ ce.ecole?.nomEcole }}
+                </span>
+              </td>
 
-    <!-- Pagination -->
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" [class.disabled]="page===1">
-                <a class="page-link" (click)="prevPage()">Précédent</a>
-            </li>
-            <li class="page-item disabled">
-                <span class="page-link">Page {{page}} / {{totalPages()}}</span>
-            </li>
-            <li class="page-item" [class.disabled]="page===totalPages()">
-                <a class="page-link" (click)="nextPage()">Suivant</a>
-            </li>
+              <!-- Compteur dans Enseigner (Classe + École) -->
+              <td class="text-center">
+                <span class="badge rounded-pill px-3 py-2"
+                      [ngClass]="getEnseignerCount(ce) > 0 ? 'bg-info-subtle text-info-emphasis' : 'bg-light text-muted border'">
+                  <i class="bi bi-journal-bookmark me-1"></i>
+                  {{ getEnseignerCount(ce) }} fois
+                </span>
+              </td>
+
+              <td class="text-end pe-3">
+                <button class="btn btn-sm btn-outline-warning me-2 rounded-3" (click)="edit(ce)" title="Modifier">
+                  <i class="bi bi-pencil"></i> Modifier
+                </button>
+                <button class="btn btn-sm btn-outline-danger rounded-3"
+                        (click)="confirmDelete(ce.id)"
+                        [disabled]="getEnseignerCount(ce) > 0"
+                        [title]="getEnseignerCount(ce) > 0 ? 'Impossible de supprimer : association utilisée dans Enseigner' : 'Supprimer'">
+                  <i class="bi bi-trash"></i> Supprimer
+                </button>
+              </td>
+            </tr>
+
+            <!-- Message si aucun résultat -->
+            <tr *ngIf="filteredClasseEcoles().length === 0">
+              <td colspan="5" class="text-center py-5 text-muted">
+                <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                Aucune association trouvée.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <nav aria-label="Page navigation" *ngIf="totalPages() > 1" class="mt-4">
+        <ul class="pagination pagination-sm justify-content-end mb-0">
+          <li class="page-item" [class.disabled]="page === 1">
+            <button class="page-link rounded-start" (click)="prevPage()">‹ Précédent</button>
+          </li>
+          <li class="page-item disabled">
+            <span class="page-link bg-light text-dark fw-semibold">Page {{ page }} / {{ totalPages() }}</span>
+          </li>
+          <li class="page-item" [class.disabled]="page === totalPages()">
+            <button class="page-link rounded-end" (click)="nextPage()">Suivant ›</button>
+          </li>
         </ul>
-    </nav>
+      </nav>
+
+    </div>
+  </div>
 </div>

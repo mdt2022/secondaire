@@ -1,164 +1,89 @@
-<div *ngIf="!selectedEmploi">
+<c-card class="mb-4 shadow-sm border-0">
+  <c-card-header class="d-flex justify-content-between align-items-center bg-white py-3">
+    <strong>{{ editMode ? 'Modifier l\'emploi du temps' : 'Création emploi du temps' }}</strong>
+    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="backToList()">
+      ⬅ Retour à la liste
+    </button>
+  </c-card-header>
 
-  <c-card class="mb-4">
-    <c-card-header><strong>Création emploi du temps</strong></c-card-header>
+  <c-card-body>
+    <form [formGroup]="emploiForm" (ngSubmit)="onSubmit()">
+      <div class="row g-3">
 
-    <c-card-body>
-      <form [formGroup]="emploiForm" (ngSubmit)="onSubmit()">
-        <div class="row g-3">
-
-          <div class="col-md-3">
-            <label>Jour</label>
-            <select class="form-control" formControlName="jour">
-              <option value="">-- Choisir --</option>
-              <option *ngFor="let j of jours" [value]="j">{{ j }}</option>
-            </select>
-          </div>
-
-          <div class="col-md-2">
-            <label>Heure début</label>
-            <input type="time" class="form-control" formControlName="heuredebut">
-          </div>
-
-          <div class="col-md-2">
-            <label>Heure fin</label>
-            <input type="time" class="form-control" formControlName="heurefin">
-          </div>
-
-          <div class="col-md-5">
-            <label>Matière</label>
-            <select class="form-control" formControlName="matiere">
-              <option value="">-- Choisir --</option>
-              <option *ngFor="let e of enseignes" [value]="e.matiere.id">
-                {{ e.matiere.libelle }} | Coef {{ e.matiere.coefficient }} | Horaire {{ e.matiere.horaire }} h
-              </option>
-            </select>
-          </div>
-
-          <div class="col-md-4">
-            <label>Enseignant</label>
-            <select class="form-control" formControlName="enseignant">
-              <option value="">-- Choisir --</option>
-              <option *ngFor="let ens of enseignants" [value]="ens.id">
-                {{ ens.prenom }} {{ ens.nom }}
-              </option>
-            </select>
-          </div>
-
-          <div class="col-md-4">
-            <label>Classe</label>
-            <select class="form-control" formControlName="classe" (change)="verifierEffectifClasse()">
-              <option value="">-- Choisir --</option>
-              <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
-            </select>
-          </div>
-
-          <div class="col-md-4">
-            <label>Année universitaire</label>
-            <select class="form-control" formControlName="anneeuv" (change)="verifierEffectifClasse()">
-              <option value="">-- Choisir --</option>
-              <option *ngFor="let a of anneeuvs" [value]="a.id">{{ a.nom }}</option>
-            </select>
-          </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Jour</label>
+          <select class="form-select" formControlName="jour">
+            <option value="">-- Choisir --</option>
+            <option *ngFor="let j of jours" [value]="j">{{ j }}</option>
+          </select>
         </div>
 
-        <div class="col-12" *ngIf="emploiForm.get('classe')?.value && emploiForm.get('anneeuv')?.value">
-          <div *ngIf="verificationEffectifEnCours" class="form-text">Vérification de l’effectif de la classe...</div>
+        <div class="col-md-2">
+          <label class="form-label fw-semibold">Heure début</label>
+          <input type="time" class="form-control" formControlName="heuredebut">
         </div>
 
-        <div class="mt-3">
-          <button class="btn btn-primary" [disabled]="verificationEffectifEnCours || (!editMode && effectifClasse === 0)">{{ editMode ? 'Modifier' : 'Enregistrer' }}</button>
-          <button type="button" class="btn btn-secondary ms-2" (click)="resetForm()">Annuler</button>
+        <div class="col-md-2">
+          <label class="form-label fw-semibold">Heure fin</label>
+          <input type="time" class="form-control" formControlName="heurefin">
         </div>
-      </form>
-    </c-card-body>
-  </c-card>
 
-  <c-card>
-    <c-card-header>
-      <input type="text" class="form-control" placeholder="Recherche..." (input)="onSearch($event)" />
-    </c-card-header>
+        <div class="col-md-5">
+          <label class="form-label fw-semibold">Matière</label>
+          <select class="form-select" formControlName="matiere">
+            <option value="">-- Choisir --</option>
+            <option *ngFor="let e of enseignes" [value]="e.matiere.id">
+              {{ e.matiere.libelle }} | Coef {{ e.matiere.coefficient }} | Horaire {{ e.matiere.horaire }} h
+            </option>
+          </select>
+        </div>
 
-    <c-card-body>
-      <table class="table table-bordered table-striped">
-        <thead>
-          <tr>
-            <th>
-              <button type="button" class="btn btn-link p-0 text-dark text-decoration-none" (click)="sort('jour')">
-                Jour {{ sortColumn === 'jour' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
-              </button>
-            </th>
-            <th>
-              <button type="button" class="btn btn-link p-0 text-dark text-decoration-none" (click)="sort('matiere')">
-                Matière {{ sortColumn === 'matiere' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
-              </button>
-            </th>
-            <th>
-              <button type="button" class="btn btn-link p-0 text-dark text-decoration-none" (click)="sort('enseignant')">
-                Enseignant {{ sortColumn === 'enseignant' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
-              </button>
-            </th>
-            <th>
-              <button type="button" class="btn btn-link p-0 text-dark text-decoration-none" (click)="sort('classe')">
-                Classe {{ sortColumn === 'classe' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
-              </button>
-            </th>
-            <th>
-              <button type="button" class="btn btn-link p-0 text-dark text-decoration-none" (click)="sort('heuredebut')">
-                Heure début {{ sortColumn === 'heuredebut' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
-              </button>
-            </th>
-            <th>
-              <button type="button" class="btn btn-link p-0 text-dark text-decoration-none" (click)="sort('heurefin')">
-                Heure fin {{ sortColumn === 'heurefin' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
-              </button>
-            </th>
-            <th>Actions</th>
-          </tr>
-        </thead>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Enseignant</label>
+          <select class="form-select" formControlName="enseignant">
+            <option value="">-- Choisir --</option>
+            <option *ngFor="let ens of enseignants" [value]="ens.id">
+              {{ ens.prenom }} {{ ens.nom }}
+            </option>
+          </select>
+        </div>
 
-        <tbody>
-          <tr *ngFor="let e of pagedEmplois">
-            <td>{{ e.jour }}</td>
-            <td>{{ e.matiere.libelle }}</td>
-            <td>{{ e.professeur.prenom }} {{ e.professeur.nom }}</td>
-            <td>{{ e.classe.nom }}</td>
-            <td>{{ e.heuredebut }}</td>
-            <td>{{ e.heurefin }}</td>
-            <td>
-              <button class="btn btn-info btn-sm" (click)="showDetails(e)">👁️ Voir</button>
-              <button class="btn btn-warning btn-sm ms-2" (click)="edit(e)">✏️</button>
-              <button class="btn btn-danger btn-sm ms-2" (click)="delete(e.id!)">🗑️</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Classe</label>
+          <select class="form-select" formControlName="classe" (change)="verifierEffectifClasse()">
+            <option value="">-- Choisir --</option>
+            <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
+          </select>
+        </div>
 
-      <div class="d-flex justify-content-between align-items-center">
-        <button class="btn btn-secondary" (click)="prevPage()">⬅</button>
-        <span>Page {{ page }} / {{ totalPages }}</span>
-        <button class="btn btn-secondary" (click)="nextPage()">➡</button>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Année universitaire</label>
+          <select class="form-select" formControlName="anneeuv" (change)="verifierEffectifClasse()">
+            <option value="">-- Choisir --</option>
+            <option *ngFor="let a of anneeuvs" [value]="a.id">{{ a.nom }}</option>
+          </select>
+        </div>
       </div>
-    </c-card-body>
-  </c-card>
-</div>
 
-<div *ngIf="selectedEmploi">
-  <c-card class="mt-4">
-    <c-card-header>
-      <strong>Détails de l'emploi du temps</strong>
-      <button class="btn btn-sm btn-secondary float-end" (click)="backToList()">⬅ Retour</button>
-    </c-card-header>
+      <!-- Message vérification effectif -->
+      <div class="col-12 mt-2" *ngIf="emploiForm.get('classe')?.value && emploiForm.get('anneeuv')?.value">
+        <div *ngIf="verificationEffectifEnCours" class="form-text text-info">
+          Vérification de l’effectif de la classe...
+        </div>
+        <div *ngIf="!verificationEffectifEnCours && effectifClasse === 0" class="form-text text-danger">
+          Attention : Cette classe n'a aucun effectif pour cette année universitaire.
+        </div>
+      </div>
 
-    <c-card-body>
-      <p><strong>Jour :</strong> {{ selectedEmploi.jour }}</p>
-      <p><strong>Heure début :</strong> {{ selectedEmploi.heuredebut }}</p>
-      <p><strong>Heure fin :</strong> {{ selectedEmploi.heurefin }}</p>
-      <p><strong>Matière :</strong> {{ selectedEmploi.matiere.libelle }} | Coef: {{ selectedEmploi.matiere.coefficient
-        }} | Horaire: {{ selectedEmploi.matiere.horaire }} h</p>
-      <p><strong>Enseignant :</strong> {{ selectedEmploi.professeur.prenom }} {{ selectedEmploi.professeur.nom }}</p>
-      <p><strong>Classe :</strong> {{ selectedEmploi.classe.nom }}</p>
-      <p><strong>Année universitaire :</strong> {{ selectedEmploi.anneeuv.nom }}</p>
-    </c-card-body>
-  </c-card>
-</div>
+      <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary"
+                [disabled]="emploiForm.invalid || verificationEffectifEnCours || (!editMode && effectifClasse === 0)">
+          {{ editMode ? 'Mettre à jour' : 'Enregistrer' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          Réinitialiser
+        </button>
+      </div>
+    </form>
+  </c-card-body>
+</c-card>

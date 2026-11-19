@@ -1,0 +1,115 @@
+<!-- Vue Liste -->
+<div *ngIf="!selectedEmploi">
+  <c-card class="shadow-sm border-0">
+    <c-card-header class="bg-white py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <div class="flex-grow-1" style="max-width: 350px;">
+        <input type="text" class="form-control" placeholder="Rechercher..." (input)="onSearch($event)" />
+      </div>
+
+      <button type="button" class="btn btn-primary" (click)="goToNew()">
+        + Nouvel emploi du temps
+      </button>
+    </c-card-header>
+
+    <c-card-body>
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>
+                <button type="button" class="btn btn-link p-0 text-dark text-decoration-none fw-bold" (click)="sort('jour')">
+                  Jour {{ sortColumn === 'jour' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
+                </button>
+              </th>
+              <th>
+                <button type="button" class="btn btn-link p-0 text-dark text-decoration-none fw-bold" (click)="sort('matiere')">
+                  Matière {{ sortColumn === 'matiere' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
+                </button>
+              </th>
+              <th>
+                <button type="button" class="btn btn-link p-0 text-dark text-decoration-none fw-bold" (click)="sort('enseignant')">
+                  Enseignant {{ sortColumn === 'enseignant' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
+                </button>
+              </th>
+              <th>
+                <button type="button" class="btn btn-link p-0 text-dark text-decoration-none fw-bold" (click)="sort('classe')">
+                  Classe {{ sortColumn === 'classe' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
+                </button>
+              </th>
+              <th>
+                <button type="button" class="btn btn-link p-0 text-dark text-decoration-none fw-bold" (click)="sort('heuredebut')">
+                  Heure début {{ sortColumn === 'heuredebut' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
+                </button>
+              </th>
+              <th>
+                <button type="button" class="btn btn-link p-0 text-dark text-decoration-none fw-bold" (click)="sort('heurefin')">
+                  Heure fin {{ sortColumn === 'heurefin' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕' }}
+                </button>
+              </th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let e of pagedEmplois">
+              <td>{{ e.jour }}</td>
+              <td>{{ e.matiere?.libelle }}</td>
+              <td>{{ e.professeur?.prenom }} {{ e.professeur?.nom }}</td>
+              <td>{{ e.classe?.nom }}</td>
+              <td>{{ e.heuredebut }}</td>
+              <td>{{ e.heurefin }}</td>
+              <td class="text-center text-nowrap">
+                <button class="btn btn-info btn-sm text-white" (click)="showDetails(e)">👁️ Voir</button>
+                <button class="btn btn-warning btn-sm ms-2" (click)="edit(e)">✏️</button>
+                <button class="btn btn-danger btn-sm ms-2" (click)="delete(e.id!)">🗑️</button>
+              </td>
+            </tr>
+
+            <tr *ngIf="pagedEmplois.length === 0">
+              <td colspan="7" class="text-center text-muted py-4">
+                Aucun emploi du temps trouvé.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <button class="btn btn-secondary btn-sm" [disabled]="page === 1" (click)="prevPage()">⬅ Précédent</button>
+        <span class="fw-semibold">Page {{ page }} / {{ totalPages }}</span>
+        <button class="btn btn-secondary btn-sm" [disabled]="page === totalPages" (click)="nextPage()">Suivant ➡</button>
+      </div>
+    </c-card-body>
+  </c-card>
+</div>
+
+<!-- Vue Détails -->
+<div *ngIf="selectedEmploi">
+  <c-card class="mt-4 shadow-sm border-0">
+    <c-card-header class="d-flex justify-content-between align-items-center bg-white py-3">
+      <strong>Détails de l'emploi du temps</strong>
+      <button class="btn btn-sm btn-secondary" (click)="backToList()">⬅ Retour</button>
+    </c-card-header>
+
+    <c-card-body>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <p><strong>Jour :</strong> {{ selectedEmploi.jour }}</p>
+          <p><strong>Heure début :</strong> {{ selectedEmploi.heuredebut }}</p>
+          <p><strong>Heure fin :</strong> {{ selectedEmploi.heurefin }}</p>
+        </div>
+        <div class="col-md-6">
+          <p>
+            <strong>Matière :</strong> {{ selectedEmploi.matiere?.libelle }} |
+            Coef: {{ selectedEmploi.matiere?.coefficient }} |
+            Horaire: {{ selectedEmploi.matiere?.horaire }} h
+          </p>
+          <p><strong>Enseignant :</strong> {{ selectedEmploi.professeur?.prenom }} {{ selectedEmploi.professeur?.nom }}</p>
+          <p><strong>Classe :</strong> {{ selectedEmploi.classe?.nom }}</p>
+          <p><strong>Année universitaire :</strong> {{ selectedEmploi.anneeuv?.nom }}</p>
+        </div>
+      </div>
+    </c-card-body>
+  </c-card>
+</div>

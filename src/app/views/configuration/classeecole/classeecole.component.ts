@@ -8,6 +8,7 @@ import { Ecole } from '../../../model/ecole';
 import { ClasseEcoleService } from '../../../service/classeecole.service';
 import { ClasseService } from '../../../service/classe.service';
 import { EcoleService } from '../../../service/ecole.service';
+import { EnseignerService } from '../../../service/enseigner.service';
 
 @Component({
   selector: 'app-classeecole',
@@ -24,12 +25,13 @@ export class ClasseecoleComponent implements OnInit {
   form!: FormGroup;
   editMode = false;
   currentId?: number;
-
+enseigners: any[] = [];
   // Pour filtrage et tri
   filterText = '';
   sortColumn = 'classe';
   sortDirection: 'asc' | 'desc' = 'asc';
-
+  classeSearchText: string = '';
+  showClasseDropdown: boolean = false;
   // Pagination
   page = 1;
   pageSize = 10;
@@ -38,7 +40,8 @@ export class ClasseecoleComponent implements OnInit {
     private fb: FormBuilder,
     private classeEcoleService: ClasseEcoleService,
     private classeService: ClasseService,
-    private ecoleService: EcoleService
+    private ecoleService: EcoleService,
+     private enseignerService: EnseignerService
   ) {}
 
   ngOnInit(): void {
@@ -48,11 +51,23 @@ export class ClasseecoleComponent implements OnInit {
     });
     this.loadData();
   }
+  getEnseignerCount(ce: any): number {
+    if (!this.enseigners || !ce?.classe?.id || !ce?.ecole?.idEcole) {
+      return 0;
+    }
+    return this.enseigners.filter(e => 
+      e.classe?.id === ce.classe.id && 
+      e.ecole?.idEcole === ce.ecole.idEcole
+    ).length;
+  }
 
   loadData(): void {
     this.classeEcoleService.getAll().subscribe(data => this.classeEcoles = data);
     this.classeService.getAll().subscribe(data => this.classes = data);
     this.ecoleService.getAll().subscribe(data => this.ecoles = data);
+        this.enseignerService.getAll().subscribe((data: any[]) => {
+      this.enseigners = data;
+    });
   }
 
   // Tri simple
@@ -135,6 +150,7 @@ export class ClasseecoleComponent implements OnInit {
       classe: ce.classe.id,
       ecole: ce.ecole.idEcole
     });
+    this.classeSearchText = ce.classe?.nom || '';
   }
 
   confirmDelete(id?: number): void {
@@ -161,4 +177,43 @@ export class ClasseecoleComponent implements OnInit {
     this.currentId = undefined;
     this.form.reset();
   }
+  // Filtre les classes selon ce que l'utilisateur tape (nom, filière ou option)
+getFilteredClassesForSelect(): any[] {
+      if (!this.classeSearchText.trim()) {
+        return this.classes;
+      }
+      const term = this.classeSearchText.toLowerCase().trim();
+      return this.classes.filter(c =>
+        c.nom?.toLowerCase().includes(term) ||
+        c.filiere?.toLowerCase().includes(term) ||
+        c.options?.toLowerCase().includes(term)
+      );
+    }
+
+    // Quand l'utilisateur clique sur une classe dans la liste
+    selectClasse(classe: any): void {
+      this.form.patchValue({ classe: classe.id });
+      this.classeSearchText = classe.nom + (classe.filiere ? ` (${classe.filiere})` : '');
+      this.showClasseDropdown = false;
+    }
+
+    // Si l'utilisateur modifie le texte à la main, on réinitialise l'ID tant qu'il n'a pas recliqué
+    onClasseSearchInput(): void {
+      this.showClasseDropdown = true;
+      this.form.patchValue({ classe: '' });
+    }
+
+    // Effacer la sélection
+    clearClasseSelection(): void {
+      this.classeSearchText = '';
+      this.form.patchValue({ classe: '' });
+      this.showClasseDropdown = true;
+    }
+
+    // Délai court sur le blur pour laisser le temps au clic (mousedown) de s'exécuter
+    hideClasseDropdownWithDelay(): void {
+      setTimeout(() => {
+        this.showClasseDropdown = false;
+      }, 150);
+    }
 }
